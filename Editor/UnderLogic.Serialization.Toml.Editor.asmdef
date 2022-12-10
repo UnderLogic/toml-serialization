@@ -1,0 +1,18 @@
+{
+    "name": "UnderLogic.Serialization.Toml.Editor",
+    "rootNamespace": "UnderLogic.Serialization.Toml.Editor",
+    "references": [
+        "GUID:71b9810db05db4c92ac2fcd297720ffd"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

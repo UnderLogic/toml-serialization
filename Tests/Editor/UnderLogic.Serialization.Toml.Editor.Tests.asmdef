@@ -1,0 +1,21 @@
+{
+    "name": "UnderLogic.Serialization.Toml.Editor.Tests",
+    "rootNamespace": "UnderLogic.Serialization.Toml.Editor.Tests",
+    "references": [
+        "GUID:71b9810db05db4c92ac2fcd297720ffd",
+        "GUID:bae328f9094e04c76b51a61429a5c17a",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
