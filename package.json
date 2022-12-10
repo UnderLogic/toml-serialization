@@ -22,5 +22,13 @@
     "email": "erik@underlogic.tech",
     "url": "https://underlogic.tech"
   },
-  "samples": []
+  "samples": [{
+    "displayName": "Using the TOML Serializer",
+    "description": "Contains sample scene demonstrating the use of the TOML serializer to save files",
+    "path": "Samples~/Serializer"
+  }, {
+    "displayName": "Using the TOML Deserializer",
+    "description": "Contains sample scene demonstrating the use of the TOML deserializer to load files",
+    "path": "Samples~/Deserializer"
+  }]
 }
