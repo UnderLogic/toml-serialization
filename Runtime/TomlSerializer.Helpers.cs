@@ -32,5 +32,23 @@ namespace UnderLogic.Serialization.Toml
             collection = enumerable;
             return true;
         }
+
+        private static bool TryCastDictionary<T>(object value, out IDictionary<string, T> dictionary)
+        {
+            dictionary = null;
+
+            if (value is not IDictionary<string, T> dict)
+                return false;
+
+            var dictType = dict.GetType();
+            var typeArgs = dictType.GetGenericArguments();
+
+            // This is necessary because signed and unsigned integer will be casted to each other
+            if (typeArgs.Length < 2 || typeArgs[0] != typeof(string) || typeArgs[1] != typeof(T))
+                return false;
+            
+            dictionary = dict;
+            return true;
+        }
     }
 }

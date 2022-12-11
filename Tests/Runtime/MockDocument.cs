@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
         public MockDocumentArray(IEnumerable<MockRecord> collection) => records = collection.ToArray();
 
-        public string ToTomlString(string key = "records")
+        public string ToTomlString(string key = nameof(records))
         {
             var tomlRecords = records.Select(record => record.ToTomlString(key));
             return string.Join("\n", tomlRecords);
@@ -26,7 +26,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
         public MockDocumentEnumerable(IEnumerable<MockRecord> collection) => records = collection.ToList();
 
-        public string ToTomlString(string key = "records")
+        public string ToTomlString(string key = nameof(records))
         {
             var tomlRecords = records.Select(record => record.ToTomlString(key));
             return string.Join("\n", tomlRecords);

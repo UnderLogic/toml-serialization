@@ -43,146 +43,33 @@ namespace UnderLogic.Serialization.Toml
 
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
+            
+            var root = new TomlTable();
+            SerializeObject(root, obj);
+        }
 
+        private static void SerializeObject(TomlTable parent, object obj)
+        {
             var type = obj.GetType();
 
             if (!type.IsSerializable)
-                throw new InvalidOperationException($"Type {type.Name} is not serializable");
+                throw new InvalidOperationException("$Type {type.Name} is not serializable");
 
-            var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+            var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             foreach (var field in fields)
             {
                 if (field.IsNotSerialized)
                     continue;
 
-                var fieldKey = field.Name;
+                var key = field.Name;
                 var value = field.GetValue(obj);
 
-                SerializeField(writer, fieldKey, value);
-            }
-        }
-
-        private static void SerializeField(TextWriter writer, string key, object value, bool isNested = false)
-        {
-            var fieldType = value.GetType();
-
-            if (IsScalarType(fieldType))
-                SerializeKeyValue(writer, key, value);
-            else if (TryCastEnumerable<bool>(value, out var boolArray))
-                SerializeScalarArray(writer, key, boolArray);
-            else if (TryCastEnumerable<char>(value, out var charArray))
-                SerializeScalarArray(writer, key, charArray);
-            else if (TryCastEnumerable<sbyte>(value, out var int8Array))
-                SerializeScalarArray(writer, key, int8Array);
-            else if (TryCastEnumerable<short>(value, out var int16Array))
-                SerializeScalarArray(writer, key, int16Array);
-            else if (TryCastEnumerable<int>(value, out var int32Array))
-                SerializeScalarArray(writer, key, int32Array);
-            else if (TryCastEnumerable<long>(value, out var int64Array))
-                SerializeScalarArray(writer, key, int64Array);
-            else if (TryCastEnumerable<byte>(value, out var uint8Array))
-                SerializeScalarArray(writer, key, uint8Array);
-            else if (TryCastEnumerable<ushort>(value, out var uint16Array))
-                SerializeScalarArray(writer, key, uint16Array);
-            else if (TryCastEnumerable<uint>(value, out var uint32Array))
-                SerializeScalarArray(writer, key, uint32Array);
-            else if (TryCastEnumerable<ulong>(value, out var uint64Array))
-                SerializeScalarArray(writer, key, uint64Array);
-            else if (TryCastEnumerable<float>(value, out var floatArray))
-                SerializeScalarArray(writer, key, floatArray);
-            else if (TryCastEnumerable<double>(value, out var doubleArray))
-                SerializeScalarArray(writer, key, doubleArray);
-            else if (TryCastEnumerable<decimal>(value, out var decimalArray))
-                SerializeScalarArray(writer, key, decimalArray);
-            else if (TryCastEnumerable<string>(value, out var stringArray))
-                SerializeScalarArray(writer, key, stringArray);
-            else if (TryCastEnumerable<DateTime>(value, out var dateTimeArray))
-                SerializeScalarArray(writer, key, dateTimeArray);
-            else if (value is IEnumerable<object> objectArray)
-            {
-                if (isNested)
-                    throw new InvalidOperationException("Nested object arrays are not supported");
-                
-                SerializeObjectArray(writer, key, objectArray);
-            }
-            else
-            {
-                throw new InvalidOperationException($"Type {fieldType.Name} is not serializable");
-            }
-        }
-
-        private static void SerializeKeyValue(TextWriter writer, string key, object value)
-        {
-            writer.WriteLine($"{key} = {Stringify(value)}");
-        }
-
-        private static void SerializeScalarArray<T>(TextWriter writer, string key, IEnumerable<T> collection)
-        {
-            var type = typeof(T);
-            if (!IsScalarType(type))
-                throw new ArgumentException($"Type {type.Name} is not a scalar type", nameof(collection));
-
-            var values = collection.Select(Stringify);
-            var arrayString = string.Join(", ", values);
-
-            writer.WriteLine($"{key} = [{arrayString}]");
-        }
-
-        private static void SerializeObjectArray(TextWriter writer, string key, IEnumerable collection)
-        {
-            var isFirstItem = true;
-
-            foreach (var obj in collection)
-            {
-                var type = obj.GetType();
-                
-                if (!type.IsSerializable)
-                    throw new InvalidOperationException($"Type {type.Name} is not serializable");
-
-                if (!isFirstItem)
-                    writer.WriteLine();
-
-                writer.WriteLine($"[[{key}]]");
-
-                var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
-                foreach (var field in fields)
+                if (value is bool boolValue)
                 {
-                    if (field.IsNotSerialized)
-                        continue;
-
-                    var fieldKey = field.Name;
-                    var value = field.GetValue(obj);
-
-                    SerializeField(writer, fieldKey, value, true);
+                    var tomlBool = new TomlBoolean(boolValue);
                 }
-
-                isFirstItem = false;
             }
-        }
-
-        private static string Stringify<T>(T value)
-        {
-            var type = value.GetType();
-
-            switch (value)
-            {
-                case char charValue:
-                    return $"'{charValue}'";
-                case bool boolValue:
-                    return $"{boolValue}".ToLowerInvariant();
-                case decimal decimalValue:
-                    return $"{decimalValue}";
-                case string stringValue:
-                    return $"\"{stringValue}\"";
-                case DateTime dt:
-                    return $"{dt:yyyy-MM-ddTHH:mm:ss.fffZ}";
-            }
-
-            if (type.IsPrimitive)
-                return $"{value}";
-
-            throw new InvalidOperationException($"Type {type.Name} cannot be converted to a string");
         }
     }
 }
