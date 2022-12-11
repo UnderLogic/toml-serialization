@@ -6,7 +6,7 @@ namespace UnderLogic.Serialization.Toml
     [Serializable]
     internal class TomlTable
     {
-        private readonly IDictionary<string, TomlValue> _values = new Dictionary<string, TomlValue>();
+        private readonly IDictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
         
         public string Name { get; private set; }
         public TomlTable Parent { get; private set; }
@@ -17,7 +17,7 @@ namespace UnderLogic.Serialization.Toml
         {
             get
             {
-                foreach (var value in _values)
+                foreach (var value in _table)
                     yield return new TomlKeyValuePair(value.Key, value.Value);
             }
         }
@@ -42,10 +42,10 @@ namespace UnderLogic.Serialization.Toml
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            if (!_values.TryAdd(key, value))
+            if (!_table.TryAdd(key, value))
                 throw new InvalidOperationException($"Key {key} already exists in table");
         }
         
-        public override string ToString() => $"[{GetType().Name}] Values = {_values.Count}";
+        public override string ToString() => $"[{GetType().Name}] Values = {_table.Count}";
     }
 }

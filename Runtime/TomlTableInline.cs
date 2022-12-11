@@ -19,6 +19,18 @@ namespace UnderLogic.Serialization.Toml
             foreach (var pair in keyValuePairs)
                 _table.Add(pair.Key, pair.Value);
         }
+        
+        public void AddTomlValue(string key, TomlValue value)
+        {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            if (!_table.TryAdd(key, value))
+                throw new InvalidOperationException($"Key {key} already exists in table");
+        }
 
         public override string ToTomlString()
         {
