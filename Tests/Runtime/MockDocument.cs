@@ -6,11 +6,25 @@ using System.Text;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public class MockDocument
+    public class MockDocumentArray
     {
         public MockRecord[] records;
 
-        public MockDocument(IEnumerable<MockRecord> collection) => records = collection.ToArray();
+        public MockDocumentArray(IEnumerable<MockRecord> collection) => records = collection.ToArray();
+
+        public string ToTomlString(string key = "records")
+        {
+            var tomlRecords = records.Select(record => record.ToTomlString(key));
+            return string.Join("\n", tomlRecords);
+        }
+    }
+    
+    [Serializable]
+    public class MockDocumentEnumerable
+    {
+        public IList<MockRecord> records;
+
+        public MockDocumentEnumerable(IEnumerable<MockRecord> collection) => records = collection.ToList();
 
         public string ToTomlString(string key = "records")
         {

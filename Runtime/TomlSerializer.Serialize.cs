@@ -63,7 +63,7 @@ namespace UnderLogic.Serialization.Toml
             }
         }
 
-        private static void SerializeField(TextWriter writer, string key, object value)
+        private static void SerializeField(TextWriter writer, string key, object value, bool isNested = false)
         {
             var fieldType = value.GetType();
 
@@ -101,6 +101,9 @@ namespace UnderLogic.Serialization.Toml
                 SerializeScalarArray(writer, key, dateTimeArray);
             else if (value is IEnumerable<object> objectArray)
             {
+                if (isNested)
+                    throw new InvalidOperationException("Nested object arrays are not supported");
+                
                 SerializeObjectArray(writer, key, objectArray);
             }
             else
@@ -151,7 +154,7 @@ namespace UnderLogic.Serialization.Toml
                     var fieldKey = field.Name;
                     var value = field.GetValue(obj);
 
-                    SerializeField(writer, fieldKey, value);
+                    SerializeField(writer, fieldKey, value, true);
                 }
 
                 isFirstItem = false;

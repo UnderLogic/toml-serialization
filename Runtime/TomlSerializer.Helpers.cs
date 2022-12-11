@@ -7,7 +7,7 @@ namespace UnderLogic.Serialization.Toml
     {
         private static bool IsScalarType(Type t) =>
             t.IsPrimitive || t == typeof(decimal) || t == typeof(string) || t == typeof(DateTime);
-
+        
         private static bool TryCastEnumerable<T>(object value, out IEnumerable<T> collection)
         {
             collection = null;
