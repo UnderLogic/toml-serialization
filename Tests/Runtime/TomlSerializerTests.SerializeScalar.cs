@@ -20,6 +20,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase('Z')]
         [TestCase('0')]
         [TestCase('9')]
+        [TestCase('_')]
         public void Serialize_Scalar_Char(char value)
         {
             var wrapped = new WrappedValue<char>(value);

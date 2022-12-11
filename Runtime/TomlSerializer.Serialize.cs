@@ -65,32 +65,34 @@ namespace UnderLogic.Serialization.Toml
 
                 if (IsScalarType(fieldType))
                     SerializeScalar(writer, fieldName, value);
-                else if (value is IEnumerable<bool> boolArray)
+                else if (TryCastEnumerable<bool>(value, out var boolArray))
                     SerializeScalarArray(writer, fieldName, boolArray);
-                else if (value is IEnumerable<char> charArray)
+                else if (TryCastEnumerable<char>(value, out var charArray))
                     SerializeScalarArray(writer, fieldName, charArray);
-                else if (value is IEnumerable<sbyte> int8Array)
+                else if (TryCastEnumerable<sbyte>(value, out var int8Array))
                     SerializeScalarArray(writer, fieldName, int8Array);
-                else if (value is IEnumerable<short> int16Array)
+                else if (TryCastEnumerable<short>(value, out var int16Array))
                     SerializeScalarArray(writer, fieldName, int16Array);
-                else if (value is IEnumerable<int> int32Array)
+                else if (TryCastEnumerable<int>(value, out var int32Array))
                     SerializeScalarArray(writer, fieldName, int32Array);
-                else if (value is IEnumerable<long> int64Array)
+                else if (TryCastEnumerable<long>(value, out var int64Array))
                     SerializeScalarArray(writer, fieldName, int64Array);
-                else if (value is IEnumerable<byte> uint8Array)
+                else if (TryCastEnumerable<byte>(value, out var uint8Array))
                     SerializeScalarArray(writer, fieldName, uint8Array);
-                else if (value is IEnumerable<ushort> uint16Array)
+                else if (TryCastEnumerable<ushort>(value, out var uint16Array))
                     SerializeScalarArray(writer, fieldName, uint16Array);
-                else if (value is IEnumerable<uint> uint32Array)
+                else if (TryCastEnumerable<uint>(value, out var uint32Array))
                     SerializeScalarArray(writer, fieldName, uint32Array);
-                else if (value is IEnumerable<ulong> uint64Array)
+                else if (TryCastEnumerable<ulong>(value, out var uint64Array))
                     SerializeScalarArray(writer, fieldName, uint64Array);
-                else if (value is IEnumerable<float> floatArray)
+                else if (TryCastEnumerable<float>(value, out var floatArray))
                     SerializeScalarArray(writer, fieldName, floatArray);
-                else if (value is IEnumerable<float> doubleArray)
+                else if (TryCastEnumerable<double>(value, out var doubleArray))
                     SerializeScalarArray(writer, fieldName, doubleArray);
-                else if (value is IEnumerable<string> stringArray)
+                else if (TryCastEnumerable<string>(value, out var stringArray))
                     SerializeScalarArray(writer, fieldName, stringArray);
+                else if (TryCastEnumerable<DateTime>(value, out var dateTimeArray))
+                    SerializeScalarArray(writer, fieldName, dateTimeArray);
                 else
                 {
                     throw new ArgumentException(
@@ -133,7 +135,7 @@ namespace UnderLogic.Serialization.Toml
                 case DateTime dt:
                     return $"{dt:yyyy-MM-ddTHH:mm:ss.fffZ}";
             }
-
+            
             if (type.IsPrimitive)
                 return $"{value}";
 
