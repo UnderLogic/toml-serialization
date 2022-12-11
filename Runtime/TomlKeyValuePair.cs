@@ -24,5 +24,7 @@ namespace UnderLogic.Serialization.Toml
         }
         
         public string ToTomlString() => $"{Key} = {Value.ToTomlString()}";
+        
+        public override string ToString() => $"[{GetType().Name}] {ToTomlString()}";
     }
 }

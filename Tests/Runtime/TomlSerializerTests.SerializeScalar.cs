@@ -26,7 +26,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrapped = new WrappedValue<char>(value);
             var tomlString = TomlSerializer.Serialize(wrapped);
             
-            Assert.AreEqual($"value = '{value}'", tomlString.Trim());
+            Assert.AreEqual($"value = \"{value}\"", tomlString.Trim());
         }
         
         [TestCase(sbyte.MinValue)]
@@ -98,17 +98,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             
             Assert.AreEqual($"value = {value}", tomlString.Trim());
         }
-        
-        [TestCase(ulong.MinValue)]
-        [TestCase(ulong.MaxValue)]
-        public void Serialize_Scalar_UInt64(ulong value)
-        {
-            var wrapped = new WrappedValue<ulong>(value);
-            var tomlString = TomlSerializer.Serialize(wrapped);
-            
-            Assert.AreEqual($"value = {value}", tomlString.Trim());
-        }
-        
+
         [TestCase(float.MinValue)]
         [TestCase(float.MaxValue)]
         public void Serialize_Scalar_Float(float value)
@@ -116,7 +106,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrapped = new WrappedValue<float>(value);
             var tomlString = TomlSerializer.Serialize(wrapped);
             
-            Assert.AreEqual($"value = {value}", tomlString.Trim());
+            Assert.AreEqual($"value = {(double)value}", tomlString.Trim());
         }
         
         [TestCase(double.MinValue)]
@@ -128,29 +118,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             
             Assert.AreEqual($"value = {value}", tomlString.Trim());
         }
-        
-        [Test]
-        public void Serialize_Scalar_Decimal_Min()
-        {
-            var value = decimal.MinValue;
-            
-            var wrapped = new WrappedValue<decimal>(value);
-            var tomlString = TomlSerializer.Serialize(wrapped);
-            
-            Assert.AreEqual($"value = {value}", tomlString.Trim());
-        }
-        
-        [Test]
-        public void Serialize_Scalar_Decimal_Max()
-        {
-            var value = decimal.MaxValue;
-            
-            var wrapped = new WrappedValue<decimal>(value);
-            var tomlString = TomlSerializer.Serialize(wrapped);
-            
-            Assert.AreEqual($"value = {value}", tomlString.Trim());
-        }
-        
+
         [TestCase("hello")]
         [TestCase("world")]
         public void Serialize_Scalar_String(string value)
@@ -168,7 +136,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrapped = new WrappedValue<DateTime>(now);
             var tomlString = TomlSerializer.Serialize(wrapped);
             
-            var isoDate = $"{now:yyyy-MM-ddTHH:mm:ss.fffZ}";
+            var isoDate = $"{now:yyyy-MM-dd HH:mm:ss.fffZ}";
             Assert.AreEqual($"value = {isoDate}", tomlString.Trim());
         }
     }

@@ -28,7 +28,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedCollection);
 
             var arrayString = string.Join(ArrayDelimiter,
-                wrappedCollection.Select(value => $"'{value}'"));
+                wrappedCollection.Select(value => $"\"{value}\""));
 
             Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
         }
@@ -116,19 +116,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
         }
-        
-        [TestCase(new[] { ulong.MinValue, ulong.MaxValue })]
-        public void Serialize_ScalarArray_UInt64(IEnumerable<ulong> collection)
-        {
-            var wrappedCollection = new WrappedEnumerable<ulong>(collection);
-            var tomlString = TomlSerializer.Serialize(wrappedCollection);
 
-            var arrayString = string.Join(ArrayDelimiter,
-                wrappedCollection.Select(value => $"{value}"));
-
-            Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
-        }
-        
         [TestCase(new[] { float.MinValue, float.MaxValue })]
         public void Serialize_ScalarArray_Float(IEnumerable<float> collection)
         {
@@ -136,7 +124,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedCollection);
 
             var arrayString = string.Join(ArrayDelimiter,
-                wrappedCollection.Select(value => $"{value}"));
+                wrappedCollection.Select(value => $"{(double)value}"));
 
             Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
         }
@@ -145,20 +133,6 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_ScalarArray_Double(IEnumerable<double> collection)
         {
             var wrappedCollection = new WrappedEnumerable<double>(collection);
-            var tomlString = TomlSerializer.Serialize(wrappedCollection);
-
-            var arrayString = string.Join(ArrayDelimiter,
-                wrappedCollection.Select(value => $"{value}"));
-
-            Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
-        }
-
-        [Test]
-        public void Serialize_ScalarArray_Decimal()
-        {
-            var collection = new[] { decimal.MinValue, decimal.MinusOne, decimal.One, decimal.MaxValue };
-
-            var wrappedCollection = new WrappedEnumerable<decimal>(collection);
             var tomlString = TomlSerializer.Serialize(wrappedCollection);
 
             var arrayString = string.Join(ArrayDelimiter,
@@ -191,7 +165,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedCollection);
 
             var arrayString = string.Join(ArrayDelimiter,
-                wrappedCollection.Select(value => $"{value:yyyy-MM-ddTHH:mm:ss.fffZ}"));
+                wrappedCollection.Select(value => $"{value:yyyy-MM-dd HH:mm:ss.fffZ}"));
 
             Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
         }

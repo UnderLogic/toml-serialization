@@ -54,7 +54,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             sb.AppendLine($"y = {y}");
             sb.AppendLine($"z = {z}");
             sb.AppendLine($"enabled = {enabled.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"createdAt = {createdAt:yyyy-MM-ddTHH:mm:ss.fffZ}");
+            sb.AppendLine($"createdAt = {createdAt:yyyy-MM-dd HH:mm:ss.fffZ}");
             
             return sb.ToString();
         }

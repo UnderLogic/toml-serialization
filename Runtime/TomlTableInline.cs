@@ -7,7 +7,7 @@ namespace UnderLogic.Serialization.Toml
     [Serializable]
     internal class TomlTableInline : TomlValue
     {
-        private IDictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
+        private readonly IDictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
 
         public TomlTableInline() { }
 
