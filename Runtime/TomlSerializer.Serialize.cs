@@ -49,15 +49,10 @@ namespace UnderLogic.Serialization.Toml
 
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
 
-            var isFirstField = true;
-            
             foreach (var field in fields)
             {
                 if (Attribute.IsDefined(field, typeof(NonSerializedAttribute)))
                     continue;
-
-                if (!isFirstField)
-                    writer.WriteLine();
 
                 var fieldName = field.Name;
                 var fieldType = field.FieldType;
@@ -98,8 +93,6 @@ namespace UnderLogic.Serialization.Toml
                     throw new ArgumentException(
                         $"Type {fieldType.Name} is not serializable for field '{fieldName}'");
                 }
-
-                isFirstField = false;
             }
         }
 
@@ -139,7 +132,7 @@ namespace UnderLogic.Serialization.Toml
             if (type.IsPrimitive)
                 return $"{value}";
 
-            throw new ArgumentException($"Type {type.Name} is not stringifiable", nameof(value));
+            throw new ArgumentException($"Type {type.Name} cannot be converted to a string", nameof(value));
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -163,6 +164,20 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var arrayString = string.Join(ArrayDelimiter,
                 wrappedCollection.Select(value => $"\"{value}\""));
+
+            Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
+        }
+        
+        [Test]
+        public void Serialize_ScalarArray_DateTime()
+        {
+            var collection = new[] { DateTime.MinValue, DateTime.Now, DateTime.MaxValue };
+            
+            var wrappedCollection = new WrappedEnumerable<DateTime>(collection);
+            var tomlString = TomlSerializer.Serialize(wrappedCollection);
+
+            var arrayString = string.Join(ArrayDelimiter,
+                wrappedCollection.Select(value => $"{value:yyyy-MM-ddTHH:mm:ss.fffZ}"));
 
             Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
         }
