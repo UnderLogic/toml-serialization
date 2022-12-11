@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
-    public partial class TomlSerializerTests
+    internal partial class TomlSerializerTests
     {
         private const string ArrayDelimiter = ", ";
 
@@ -152,7 +152,21 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
         }
-        
+
+        [Test]
+        public void Serialize_ScalarArray_Decimal()
+        {
+            var collection = new[] { decimal.MinValue, decimal.MinusOne, decimal.One, decimal.MaxValue };
+
+            var wrappedCollection = new WrappedEnumerable<decimal>(collection);
+            var tomlString = TomlSerializer.Serialize(wrappedCollection);
+
+            var arrayString = string.Join(ArrayDelimiter,
+                wrappedCollection.Select(value => $"{value}"));
+
+            Assert.AreEqual($"collection = [{arrayString}]", tomlString.Trim());
+        }
+
         [TestCase("hello")]
         [TestCase("world")]
         public void Serialize_ScalarArray_String(string stringValue)

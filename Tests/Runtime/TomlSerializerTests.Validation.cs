@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
-    public partial class TomlSerializerTests
+    internal partial class TomlSerializerTests
     {
         [Test]
         public void Serialize_String_NullObject_ThrowsException()
@@ -20,7 +20,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_String_NonSerializable_ThrowsException()
         {
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<InvalidOperationException>(() =>
             {
                 var nonSerializable = new { };
                 TomlSerializer.Serialize(nonSerializable);
@@ -54,7 +54,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         {
             var stream = new MemoryStream();
             
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<InvalidOperationException>(() =>
             {
                 var nonSerializable = new { };
                 TomlSerializer.Serialize(stream, nonSerializable);
@@ -89,7 +89,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var sb = new StringBuilder();
             var writer = new StringWriter(sb, CultureInfo.InvariantCulture);
             
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<InvalidOperationException>(() =>
             {
                 var nonSerializable = new { };
                 TomlSerializer.Serialize(writer, nonSerializable);

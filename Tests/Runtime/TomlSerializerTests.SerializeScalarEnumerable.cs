@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
-    public partial class TomlSerializerTests
+    internal partial class TomlSerializerTests
     {
         [Test]
         public void Serialize_ScalarEnumerable_Bool()
@@ -162,7 +162,21 @@ namespace UnderLogic.Serialization.Toml.Tests
             
             Assert.AreEqual($"collection = [{enumerableString}]", tomlString.Trim());
         }
-        
+
+        [Test]
+        public void Serialize_ScalarEnumerable_Decimal()
+        {
+            var collection = new List<decimal>(new[]
+                { decimal.MinValue, decimal.MinusOne, decimal.One, decimal.MaxValue });
+            var wrappedEnumerable = new WrappedEnumerable<decimal>(collection);
+
+            var tomlString = TomlSerializer.Serialize(wrappedEnumerable);
+            var enumerableString = string.Join(ArrayDelimiter,
+                wrappedEnumerable.Select(value => $"{value}"));
+
+            Assert.AreEqual($"collection = [{enumerableString}]", tomlString.Trim());
+        }
+
         [Test]
         public void Serialize_ScalarEnumerable_String()
         {

@@ -3,13 +3,7 @@ using System;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public class WrappedValue : WrappedValue<object>
-    {
-        public WrappedValue(object value) : base(value) {}
-    }
-    
-    [Serializable]
-    public class WrappedValue<T>
+    internal class WrappedValue<T>
     {
         public T value;
 

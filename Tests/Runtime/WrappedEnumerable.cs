@@ -5,13 +5,7 @@ using System.Collections.Generic;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public class WrappedEnumerable : WrappedEnumerable<object>
-    {
-        public WrappedEnumerable(IEnumerable<object> values) : base(values) { }
-    }
-    
-    [Serializable]
-    public class WrappedEnumerable<T> : IEnumerable<T>
+    internal class WrappedEnumerable<T> : IEnumerable<T>
     {
         public IEnumerable<T> collection;
 

@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
-    public partial class TomlSerializerTests
+    internal partial class TomlSerializerTests
     {
         [TestCase(true)]
         [TestCase(false)]
@@ -124,6 +124,28 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_Scalar_Double(double value)
         {
             var wrapped = new WrappedValue<double>(value);
+            var tomlString = TomlSerializer.Serialize(wrapped);
+            
+            Assert.AreEqual($"value = {value}", tomlString.Trim());
+        }
+        
+        [Test]
+        public void Serialize_Scalar_Decimal_Min()
+        {
+            var value = decimal.MinValue;
+            
+            var wrapped = new WrappedValue<decimal>(value);
+            var tomlString = TomlSerializer.Serialize(wrapped);
+            
+            Assert.AreEqual($"value = {value}", tomlString.Trim());
+        }
+        
+        [Test]
+        public void Serialize_Scalar_Decimal_Max()
+        {
+            var value = decimal.MaxValue;
+            
+            var wrapped = new WrappedValue<decimal>(value);
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             Assert.AreEqual($"value = {value}", tomlString.Trim());
