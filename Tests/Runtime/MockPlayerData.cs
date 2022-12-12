@@ -46,5 +46,30 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             return sb.ToString();
         }
+        
+        public string ToTomlStringTableInline(string key)
+        {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Key cannot be empty or whitespace", nameof(key));
+
+            var sb = new StringBuilder();
+
+            sb.Append($"{key} = {{ ");
+            sb.Append($"displayName = \"{DisplayName}\"");
+            sb.Append(", ");
+            sb.Append($"level = {Level}");
+            sb.Append(", ");
+            sb.Append($"experience = {Experience}");
+            sb.Append(", ");
+            sb.Append($"gold = {Gold}");
+            sb.Append(", ");
+            sb.Append($"lastLogin = {LastLogin:yyyy-MM-dd HH:mm:ss.fffZ}");
+            sb.AppendLine(" }");
+
+            return sb.ToString();
+        }
     }
 }

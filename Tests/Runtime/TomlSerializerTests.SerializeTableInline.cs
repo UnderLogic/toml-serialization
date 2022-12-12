@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace UnderLogic.Serialization.Toml.Tests
@@ -199,6 +200,57 @@ namespace UnderLogic.Serialization.Toml.Tests
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => $"{value:yyyy-MM-dd HH:mm:ss.fffZ}");
             Assert.AreEqual(expectedTomlString, tomlString);
+        }
+        
+        [Test]
+        public void Serialize_Table_Inline_Enum()
+        {
+            var dict = new WrappedDictionary<MockEnum>();
+            dict.Add("north", MockEnum.North);
+            dict.Add("south", MockEnum.South);
+            dict.Add("east", MockEnum.East);
+            dict.Add("west", MockEnum.West);
+
+            var tomlString = TomlSerializer.Serialize(dict);
+            
+            var expectedTomlString =
+                dict.ToTomlStringInline("dictionary", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString);
+        }
+        
+        [Test]
+        public void Serialize_Table_Inline_Enum_Flags()
+        {
+            var dict = new WrappedDictionary<MockStateFlags>();
+            dict.Add("none", MockStateFlags.None);
+            dict.Add("pending", MockStateFlags.Pending);
+            dict.Add("pending_inprogress", MockStateFlags.Pending | MockStateFlags.InProgress);
+            dict.Add("all", MockStateFlags.All);
+            
+            var tomlString = TomlSerializer.Serialize(dict);
+            
+            var expectedTomlString =
+                dict.ToTomlStringInline("dictionary", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString);
+        }
+        
+        [Test]
+        public void Serialize_Table_Inline_Mixed()
+        {
+            var mixedDictionary = new Dictionary<string, object>();
+            var mockPlayerData = new MockPlayerData("Test", 99, 42, 1000);
+            
+            mixedDictionary.Add("displayName", mockPlayerData.DisplayName);
+            mixedDictionary.Add("level", mockPlayerData.Level);
+            mixedDictionary.Add("experience", mockPlayerData.Experience);
+            mixedDictionary.Add("gold", mockPlayerData.Gold);
+            mixedDictionary.Add("lastLogin", mockPlayerData.LastLogin);
+            
+            var wrappedData = new WrappedValue<Dictionary<string, object>>(mixedDictionary);
+            var tomlString = TomlSerializer.Serialize(wrappedData);
+            
+            var expectedToml = mockPlayerData.ToTomlStringTableInline("value");
+            Assert.AreEqual(expectedToml, tomlString);
         }
     }
 }

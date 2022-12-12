@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -66,20 +67,32 @@ namespace UnderLogic.Serialization.Toml
                 var key = field.Name.Trim('_');
                 var value = field.GetValue(obj);
 
-                if (value is null)
-                    table.AddTomlValue(key, TomlNull.Value);
-                else if (TrySerializeValue(value, out var tomlScalar))
-                    table.AddTomlValue(key, tomlScalar);
-                else if (TrySerializeArray(value, out var tomlArray))
-                    table.AddTomlValue(key, tomlArray);
-                else if (TrySerializeTableArray(value, key, out var tomlTableArray))
-                    table.AddTomlValue(key, tomlTableArray);
-                else if (TrySerializeTableInline(value, key, out var tomlTableInline))
-                    table.AddTomlValue(key, tomlTableInline);
-                else if (TrySerializeTable(value, key, out var tomlTable))
-                    table.AddTomlValue(key, tomlTable);
-                else
-                    throw new InvalidOperationException($"Type '{type.Name}' is not serializable");
+                SerializeKeyValue(table, value, key);
+            }
+        }
+
+        private static void SerializeKeyValue(ITomlTable table, object value, string key)
+        {
+            if (value is null)
+            {
+                table.AddTomlValue(key, TomlNull.Value);
+                return;
+            }
+            
+            if (TrySerializeValue(value, out var tomlScalar))
+                table.AddTomlValue(key, tomlScalar);
+            else if (TrySerializeArray(value, out var tomlArray))
+                table.AddTomlValue(key, tomlArray);
+            else if (TrySerializeTableArray(value, key, out var tomlTableArray))
+                table.AddTomlValue(key, tomlTableArray);
+            else if (TrySerializeTableInline(value, out var tomlTableInline))
+                table.AddTomlValue(key, tomlTableInline);
+            else if (TrySerializeTable(value, key, out var tomlTable))
+                table.AddTomlValue(key, tomlTable);
+            else
+            {
+                var type = value.GetType();
+                throw new InvalidOperationException($"Type '{type.Name}' is not serializable");
             }
         }
 
@@ -89,9 +102,13 @@ namespace UnderLogic.Serialization.Toml
             
             // Null Value
             if (value == null)
+            {
                 tomlValue = TomlNull.Value;
+                return false;
+            }
+
             // Boolean Values
-            else if (value is bool boolValue)
+            if (value is bool boolValue)
                 tomlValue = new TomlBoolean(boolValue);
             // Character & String Values
             else if (value is char charValue)
@@ -122,6 +139,9 @@ namespace UnderLogic.Serialization.Toml
             // DateTime Values
             else if (value is DateTime dateTimeValue)
                 tomlValue = new TomlDateTime(dateTimeValue);
+            // Enum Values
+            else if (value.GetType().IsEnum)
+                tomlValue = new TomlString(value.ToString());
             else
                 return false;
 
@@ -134,9 +154,13 @@ namespace UnderLogic.Serialization.Toml
 
             // Null
             if (value is null)
+            {
                 tomlArray = TomlNull.Value;
+                return true;
+            }
+            
             // Bool Arrays
-            else if (value is IEnumerable<bool> boolCollection)
+            if (value is IEnumerable<bool> boolCollection)
                 tomlArray = TomlArray.FromEnumerable(boolCollection);
             else if (value is IEnumerable<char> charCollection)
                 tomlArray = TomlArray.FromEnumerable(charCollection);
@@ -165,6 +189,9 @@ namespace UnderLogic.Serialization.Toml
             // Date Time Arrays
             else if (value is IEnumerable<DateTime> dateTimeCollection)
                 tomlArray = TomlArray.FromEnumerable(dateTimeCollection);
+            // Enum Arrays
+            else if (TryStringifyEnumValues(value, out var enumStringValues))
+                tomlArray = TomlArray.FromEnumerable(enumStringValues);
             else
                 return false;
 
@@ -192,7 +219,7 @@ namespace UnderLogic.Serialization.Toml
             return true;
         }
 
-        private static bool TrySerializeTableInline(object value, string key, out TomlValue tomlTable)
+        private static bool TrySerializeTableInline(object value, out TomlValue tomlTable)
         {
             tomlTable = null;
 
@@ -202,8 +229,6 @@ namespace UnderLogic.Serialization.Toml
                 tomlTable = TomlNull.Value;
                 return true;
             }
-
-            var type = value.GetType();
 
             // Bool Dictionaries
             if (TryCastDictionary<bool>(value, out var boolDictionary))
@@ -237,32 +262,40 @@ namespace UnderLogic.Serialization.Toml
             // DateTime Dictionaries
             else if (TryCastDictionary<DateTime>(value, out var dateTimeDictionary))
                 tomlTable = TomlTableInline.FromDictionary(dateTimeDictionary);
-            // Object?
-            else
+            // Enum Dictionaries
+            else if (TryStringifyEnumDictionary(value, out var enumValueDictionary))
+                tomlTable = TomlTableInline.FromDictionary(enumValueDictionary);
+            // Mixed Dictionaries
+            else if (value is IDictionary<string, object> dictionary)
             {
-                // var table = new TomlTableInline();
-                // SerializeObject(table, value);
-                //
-                // tomlTable = table;
+                var table = new TomlTableInline();
+                foreach (var keyValuePair in dictionary)
+                    SerializeKeyValue(table, keyValuePair.Value, keyValuePair.Key);
+
+                tomlTable = table;
             }
+            else return false;
+            
             return tomlTable != null;
         }
-        
+
         private static bool TrySerializeTable(object value, string key, out TomlTable tomlTable)
         {
             tomlTable = null;
 
+            if (value == null)
+                return false;
+
             var type = value.GetType();
-            
-            // Is a class or struct
-            if (!type.IsEnum && (type.IsClass || type.IsValueType))
-            {
-                var table = new TomlTable(key);
-                SerializeObject(table, value);
-                
-                tomlTable = table;
-            }
-            
+
+            // Only allow classes and structs to be serialized as tables
+            if (type.IsEnum || type.IsArray || !(type.IsClass || type.IsValueType))
+                return false;
+
+            var table = new TomlTable(key);
+            SerializeObject(table, value);
+
+            tomlTable = table;
             return tomlTable != null;
         }
 

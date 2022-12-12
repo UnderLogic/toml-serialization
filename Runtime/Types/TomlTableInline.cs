@@ -20,7 +20,7 @@ namespace UnderLogic.Serialization.Toml.Types
             foreach (var pair in keyValuePairs)
                 _table.Add(pair.Key, pair.Value);
         }
-        
+
         public void AddTomlValue(string key, TomlValue value)
         {
             if (key == null)
@@ -52,41 +52,41 @@ namespace UnderLogic.Serialization.Toml.Types
         // include char and string types
         // should convert the dictionary to a TomlTableInline
         public static TomlTableInline FromDictionary(IDictionary<string, bool> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlBoolean(pair.Value))));
-        
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlBoolean(pair.Value))));
+
         public static TomlTableInline FromDictionary(IDictionary<string, char> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlString(pair.Value.ToString()))));
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlString(pair.Value.ToString()))));
 
         public static TomlTableInline FromDictionary(IDictionary<string, string> dict) =>
             new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlString(pair.Value))));
-        
+
         public static TomlTableInline FromDictionary(IDictionary<string, sbyte> dict) =>
             new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
-        
+
         public static TomlTableInline FromDictionary(IDictionary<string, short> dict) =>
             new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
-        
+
         public static TomlTableInline FromDictionary(IDictionary<string, int> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
-        
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
+
         public static TomlTableInline FromDictionary(IDictionary<string, long> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
-        
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
+
         public static TomlTableInline FromDictionary(IDictionary<string, byte> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
-        
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
+
         public static TomlTableInline FromDictionary(IDictionary<string, ushort> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
-        
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
+
         public static TomlTableInline FromDictionary(IDictionary<string, uint> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
-        
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlInteger(pair.Value))));
+
         public static TomlTableInline FromDictionary(IDictionary<string, float> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlFloat(pair.Value))));
-        
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlFloat(pair.Value))));
+
         public static TomlTableInline FromDictionary(IDictionary<string, double> dict) =>
-            new (dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlFloat(pair.Value))));
-        
+            new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlFloat(pair.Value))));
+
         public static TomlTableInline FromDictionary(IDictionary<string, DateTime> dict) =>
             new(dict.Select(pair => new TomlKeyValuePair(pair.Key, new TomlDateTime(pair.Value))));
     }

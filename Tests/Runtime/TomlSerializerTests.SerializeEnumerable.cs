@@ -163,5 +163,32 @@ namespace UnderLogic.Serialization.Toml.Tests
                 wrappedList.ToTomlStringArray("values", value => $"{value:yyyy-MM-dd HH:mm:ss.fffZ}");
             Assert.AreEqual(expectedTomlString, tomlString);
         }
+
+        [Test]
+        public void Serialize_Enumerable_Enum()
+        {
+            var collection = new List<MockEnum>(new[] { MockEnum.North, MockEnum.South, MockEnum.East, MockEnum.West });
+            var wrappedList = new WrappedEnumerable<MockEnum>(collection);
+
+            var tomlString = TomlSerializer.Serialize(wrappedList);
+
+            var expectedTomlString =
+                wrappedList.ToTomlStringArray("values", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString);
+        }
+
+        [Test]
+        public void Serialize_Enumerable_Enum_Flags()
+        {
+            var collection = new List<MockStateFlags>(new[]
+                { MockStateFlags.None, MockStateFlags.Pending | MockStateFlags.InProgress, MockStateFlags.All });
+            var wrappedList = new WrappedEnumerable<MockStateFlags>(collection);
+
+            var tomlString = TomlSerializer.Serialize(wrappedList);
+
+            var expectedTomlString =
+                wrappedList.ToTomlStringArray("values", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString);
+        }
     }
 }
