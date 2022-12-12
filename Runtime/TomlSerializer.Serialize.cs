@@ -49,7 +49,7 @@ namespace UnderLogic.Serialization.Toml
             WriteTomlDocument(writer, rootTable);
         }
 
-        private static void SerializeObject(TomlTable table, object obj)
+        private static void SerializeObject(ITomlTable table, object obj)
         {
             var type = obj.GetType();
 
@@ -191,16 +191,22 @@ namespace UnderLogic.Serialization.Toml
             tomlTableArray = tableArray;
             return true;
         }
-        
+
         private static bool TrySerializeTableInline(object value, string key, out TomlValue tomlTable)
         {
             tomlTable = null;
-            
+
             // Null
             if (value is null)
+            {
                 tomlTable = TomlNull.Value;
+                return true;
+            }
+
+            var type = value.GetType();
+
             // Bool Dictionaries
-            else if (TryCastDictionary<bool>(value, out var boolDictionary))
+            if (TryCastDictionary<bool>(value, out var boolDictionary))
                 tomlTable = TomlTableInline.FromDictionary(boolDictionary);
             // Character & String Dictionaries
             else if (TryCastDictionary<char>(value, out var charDictionary))
@@ -231,12 +237,14 @@ namespace UnderLogic.Serialization.Toml
             // DateTime Dictionaries
             else if (TryCastDictionary<DateTime>(value, out var dateTimeDictionary))
                 tomlTable = TomlTableInline.FromDictionary(dateTimeDictionary);
-            // Object
+            // Object?
             else
             {
-                var table = new TomlTableInline();
+                // var table = new TomlTableInline();
+                // SerializeObject(table, value);
+                //
+                // tomlTable = table;
             }
-                
             return tomlTable != null;
         }
         

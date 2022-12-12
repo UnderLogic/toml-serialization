@@ -23,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Types
         public override string ToTomlString()
         {
             var valueStrings = Values.Select(value => value.ToTomlString());
-            return $"[{string.Join(", ", valueStrings)}]";
+            return $"[ {string.Join(", ", valueStrings)} ]";
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

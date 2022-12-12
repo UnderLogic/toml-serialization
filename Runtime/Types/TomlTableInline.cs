@@ -36,7 +36,7 @@ namespace UnderLogic.Serialization.Toml.Types
         public override string ToTomlString()
         {
             var keyPairStrings = this.Select(pair => pair.ToTomlString());
-            return $"{{{string.Join(", ", keyPairStrings)}}}";
+            return $"{{ {string.Join(", ", keyPairStrings)} }}";
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
