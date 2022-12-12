@@ -52,7 +52,7 @@ namespace UnderLogic.Serialization.Toml.Types
                     sb.AppendLine();
 
                 sb.AppendLine($"[[{Name}]]");
-                foreach (var keyValuePair in table.Values)
+                foreach (var keyValuePair in table)
                     sb.AppendLine(keyValuePair.ToTomlString());
 
                 isFirstItem = false;

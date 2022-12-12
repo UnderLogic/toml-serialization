@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace UnderLogic.Serialization.Toml.Types
 {
     [Serializable]
-    internal sealed class TomlTableInline : TomlValue
+    internal sealed class TomlTableInline : TomlValue, ITomlTable
     {
         private readonly IDictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
 
@@ -34,10 +35,18 @@ namespace UnderLogic.Serialization.Toml.Types
 
         public override string ToTomlString()
         {
-            var keyPairStrings = _table.Select(pair => $"{pair.Key} = {pair.Value.ToTomlString()}");
+            var keyPairStrings = this.Select(pair => pair.ToTomlString());
             return $"{{{string.Join(", ", keyPairStrings)}}}";
         }
-        
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public IEnumerator<TomlKeyValuePair> GetEnumerator()
+        {
+            foreach (var pair in _table)
+                yield return new TomlKeyValuePair(pair.Key, pair.Value);
+        }
+
         // write a FromDictionary method that takes a dictionary of strings to bools, ints, doubles, strings, datetimes
         // also include all integer and float primitive types
         // include char and string types

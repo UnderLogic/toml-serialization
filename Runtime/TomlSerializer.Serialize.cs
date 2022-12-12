@@ -231,8 +231,11 @@ namespace UnderLogic.Serialization.Toml
             // DateTime Dictionaries
             else if (TryCastDictionary<DateTime>(value, out var dateTimeDictionary))
                 tomlTable = TomlTableInline.FromDictionary(dateTimeDictionary);
-            else 
-                return false;
+            // Object
+            else
+            {
+                var table = new TomlTableInline();
+            }
                 
             return tomlTable != null;
         }
@@ -256,7 +259,7 @@ namespace UnderLogic.Serialization.Toml
 
         private static void WriteTable(TextWriter writer, TomlTable table)
         {
-            foreach (var keyValuePair in table.Values)
+            foreach (var keyValuePair in table)
             {
                 if (!table.IsRoot)
                     writer.WriteLine($"[{table.Name}]");
