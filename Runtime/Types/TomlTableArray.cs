@@ -1,16 +1,16 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace UnderLogic.Serialization.Toml.Types
 {
     [Serializable]
-    internal sealed class TomlTableArray : TomlValue
+    internal sealed class TomlTableArray : TomlValue, IEnumerable<TomlTable>
     {
         private readonly List<TomlTable> _tables = new();
 
         public string Name { get; private set; }
-        public IReadOnlyCollection<TomlTable> Tables => _tables;
 
         public TomlTableArray(string name) => Name = name.Trim();
 
@@ -60,5 +60,9 @@ namespace UnderLogic.Serialization.Toml.Types
 
             return sb.ToString();
         }
+
+        public IEnumerator<TomlTable> GetEnumerator() => _tables.GetEnumerator();
+        
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

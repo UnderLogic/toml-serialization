@@ -1,17 +1,11 @@
-using System;
-
 namespace UnderLogic.Serialization.Toml.Types
 {
-    [Serializable]
     internal sealed class TomlBoolean : TomlValue
     {
-        public static readonly TomlBoolean True = new TomlBoolean(true);
-        public static readonly TomlBoolean False = new TomlBoolean(false);
-        
-        public bool Value { get; private set; }
+        private readonly bool _value;
 
-        public TomlBoolean(bool value) => Value = value;
+        public TomlBoolean(bool value) => _value = value;
 
-        public override string ToTomlString() => Value ? "true" : "false";
+        public override string ToTomlString() => _value ? "true" : "false";
     }
 }

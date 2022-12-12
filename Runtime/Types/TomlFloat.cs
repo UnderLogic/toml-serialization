@@ -1,14 +1,11 @@
-using System;
-
 namespace UnderLogic.Serialization.Toml.Types
 {
-    [Serializable]
     internal sealed class TomlFloat : TomlValue
     {
-        public double Value { get; private set; }
+        private readonly double _value;
 
-        public TomlFloat(double value) => Value = value;
+        public TomlFloat(double value) => _value = value;
 
-        public override string ToTomlString() => Value.ToString();
+        public override string ToTomlString() => _value.ToString();
     }
 }

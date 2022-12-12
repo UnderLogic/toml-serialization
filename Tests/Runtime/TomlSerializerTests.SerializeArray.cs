@@ -39,6 +39,27 @@ namespace UnderLogic.Serialization.Toml.Tests
             var expectedTomlString = wrappedArray.ToTomlStringArray("values", value => $"\"{value}\"");
             Assert.AreEqual(expectedTomlString, tomlString);
         }
+        
+        [TestCase(new[] { MockEnum.North, MockEnum.South, MockEnum.East, MockEnum.West })]
+        public void Serialize_Array_Enum(IEnumerable<MockEnum> collection)
+        {
+            var wrappedArray = new WrappedEnumerable<MockEnum>(collection);
+            var tomlString = TomlSerializer.Serialize(wrappedArray);
+
+            var expectedTomlString = wrappedArray.ToTomlStringArray("values", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString);
+        }
+
+        [TestCase(new[]
+            { MockStateFlags.None, MockStateFlags.Pending | MockStateFlags.InProgress, MockStateFlags.All })]
+        public void Serialize_Array_Enum_Flags(IEnumerable<MockStateFlags> collection)
+        {
+            var wrappedArray = new WrappedEnumerable<MockStateFlags>(collection);
+            var tomlString = TomlSerializer.Serialize(wrappedArray);
+
+            var expectedTomlString = wrappedArray.ToTomlStringArray("values", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString);
+        }
 
         [TestCase(new[] { sbyte.MinValue, sbyte.MaxValue })]
         public void Serialize_Array_Int8(IEnumerable<sbyte> collection)
@@ -140,27 +161,6 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 wrappedArray.ToTomlStringArray("values", value => $"{value:yyyy-MM-dd HH:mm:ss.fffZ}");
-            Assert.AreEqual(expectedTomlString, tomlString);
-        }
-
-        [TestCase(new[] { MockEnum.North, MockEnum.South, MockEnum.East, MockEnum.West })]
-        public void Serialize_Array_Enum(IEnumerable<MockEnum> collection)
-        {
-            var wrappedArray = new WrappedEnumerable<MockEnum>(collection);
-            var tomlString = TomlSerializer.Serialize(wrappedArray);
-
-            var expectedTomlString = wrappedArray.ToTomlStringArray("values", value => $"\"{value}\"");
-            Assert.AreEqual(expectedTomlString, tomlString);
-        }
-
-        [TestCase(new[]
-            { MockStateFlags.None, MockStateFlags.Pending | MockStateFlags.InProgress, MockStateFlags.All })]
-        public void Serialize_Array_Enum_Flags(IEnumerable<MockStateFlags> collection)
-        {
-            var wrappedArray = new WrappedEnumerable<MockStateFlags>(collection);
-            var tomlString = TomlSerializer.Serialize(wrappedArray);
-
-            var expectedTomlString = wrappedArray.ToTomlStringArray("values", value => $"\"{value}\"");
             Assert.AreEqual(expectedTomlString, tomlString);
         }
     }

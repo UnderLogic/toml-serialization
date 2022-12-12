@@ -2,27 +2,17 @@ using System;
 
 namespace UnderLogic.Serialization.Toml.Types
 {
-    [Serializable]
     internal sealed class TomlKeyValuePair
     {
-        public string Key { get; private set; }
-        public TomlValue Value { get; private set; }
-        
+        public string Key { get; }
+        public TomlValue Value { get; }
+
         public TomlKeyValuePair(string key, TomlValue value)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-            
-            if(string.IsNullOrWhiteSpace(key))
-                throw new ArgumentException("Key cannot be empty or whitespace", nameof(key));
-
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-
-            Key = key;
-            Value = value;
+            Key = key ?? throw new ArgumentNullException(nameof(key));
+            Value = value ?? throw new ArgumentNullException(nameof(value));
         }
-        
+
         public string ToTomlString() => $"{Key} = {Value.ToTomlString()}";
         
         public override string ToString() => $"[{GetType().Name}] {ToTomlString()}";

@@ -1,16 +1,11 @@
-using System;
-
 namespace UnderLogic.Serialization.Toml.Types
 {
-    [Serializable]
     internal sealed class TomlString : TomlValue
     {
-        public static TomlString Empty = new TomlString(string.Empty);
-        
-        public string Value { get; private set; }
+        private readonly string _value;
 
-        public TomlString(string value) => Value = value;
+        public TomlString(string value) => _value = value;
 
-        public override string ToTomlString() => Value != null ? $"\"{Value}\"" : "null";
+        public override string ToTomlString() => $"\"{_value}\"";
     }
 }

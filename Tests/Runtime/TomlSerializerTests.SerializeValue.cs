@@ -51,6 +51,31 @@ namespace UnderLogic.Serialization.Toml.Tests
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"\"{value}\"");
             Assert.AreEqual(expectedTomlString, tomlString);
         }
+        
+        [TestCase(MockEnum.North)]
+        [TestCase(MockEnum.South)]
+        [TestCase(MockEnum.East)]
+        [TestCase(MockEnum.West)]
+        public void Serialize_Value_Enum(MockEnum testValue)
+        {
+            var wrapped = new WrappedValue<MockEnum>(testValue);
+            var tomlString = TomlSerializer.Serialize(wrapped);
+            
+            var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString);
+        }
+        
+        [TestCase(MockStateFlags.None)]
+        [TestCase(MockStateFlags.Pending | MockStateFlags.InProgress)]
+        [TestCase(MockStateFlags.All)]
+        public void Serialize_Value_Enum_Flags(MockStateFlags testFlags)
+        {
+            var wrapped = new WrappedValue<MockStateFlags>(testFlags);
+            var tomlString = TomlSerializer.Serialize(wrapped);
+            
+            var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString);
+        }
 
         [TestCase(sbyte.MinValue)]
         [TestCase(sbyte.MaxValue)]
@@ -159,31 +184,6 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"{value:yyyy-MM-dd HH:mm:ss.fffZ}");
-            Assert.AreEqual(expectedTomlString, tomlString);
-        }
-        
-        [TestCase(MockEnum.North)]
-        [TestCase(MockEnum.South)]
-        [TestCase(MockEnum.East)]
-        [TestCase(MockEnum.West)]
-        public void Serialize_Value_Enum(MockEnum testValue)
-        {
-            var wrapped = new WrappedValue<MockEnum>(testValue);
-            var tomlString = TomlSerializer.Serialize(wrapped);
-            
-            var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"\"{value}\"");
-            Assert.AreEqual(expectedTomlString, tomlString);
-        }
-        
-        [TestCase(MockStateFlags.None)]
-        [TestCase(MockStateFlags.Pending | MockStateFlags.InProgress)]
-        [TestCase(MockStateFlags.All)]
-        public void Serialize_Value_Enum_Flags(MockStateFlags testFlags)
-        {
-            var wrapped = new WrappedValue<MockStateFlags>(testFlags);
-            var tomlString = TomlSerializer.Serialize(wrapped);
-            
-            var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"\"{value}\"");
             Assert.AreEqual(expectedTomlString, tomlString);
         }
     }

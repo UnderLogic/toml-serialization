@@ -1,14 +1,11 @@
-using System;
-
 namespace UnderLogic.Serialization.Toml.Types
 {
-    [Serializable]
     internal sealed class TomlInteger : TomlValue
     {
-        public long Value { get; private set; }
+        private readonly long _value;
 
-        public TomlInteger(long value) => Value = value;
+        public TomlInteger(long value) => _value = value;
 
-        public override string ToTomlString() => Value.ToString();
+        public override string ToTomlString() => _value.ToString();
     }
 }

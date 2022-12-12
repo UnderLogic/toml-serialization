@@ -2,13 +2,12 @@ using System;
 
 namespace UnderLogic.Serialization.Toml.Types
 {
-    [Serializable]
     internal sealed class TomlDateTime : TomlValue
     {
-        public DateTime Value { get; private set; }
+        private readonly DateTime _value;
+        
+        public TomlDateTime(DateTime value) => _value = value;
 
-        public TomlDateTime(DateTime value) => Value = value;
-
-        public override string ToTomlString() => $"{Value:yyyy-MM-dd HH:mm:ss.fffZ}";
+        public override string ToTomlString() => $"{_value:yyyy-MM-dd HH:mm:ss.fffZ}";
     }
 }

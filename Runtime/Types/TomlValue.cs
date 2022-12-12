@@ -1,6 +1,6 @@
 namespace UnderLogic.Serialization.Toml.Types
 {
-    internal abstract class TomlValue : ITomlValue
+    internal abstract class TomlValue
     {
         public abstract string ToTomlString();
 

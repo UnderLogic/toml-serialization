@@ -43,275 +43,91 @@ namespace UnderLogic.Serialization.Toml
 
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
-            
+
             var rootTable = new TomlTable();
             SerializeObject(rootTable, obj);
-            
-            WriteTomlDocument(writer, rootTable);
+
+            WriteTomlTable(writer, rootTable);
         }
 
         private static void SerializeObject(ITomlTable table, object obj)
         {
-            var type = obj.GetType();
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
 
-            if (!Attribute.IsDefined(type, typeof(SerializableAttribute), false))
-                throw new InvalidOperationException($"Type '{type.Name}' is not serializable");
+            var type = obj.GetType();
+            if (!type.IsSerializable)
+                throw new InvalidOperationException($"Type {type.Name} is not serializable");
 
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             foreach (var field in fields)
             {
-                if (Attribute.IsDefined(field, typeof(NonSerializedAttribute)))
+                if (field.IsNotSerialized)
                     continue;
 
-                var key = field.Name.Trim('_');
-                var value = field.GetValue(obj);
+                var fieldKey = field.Name.Trim('_');
+                var fieldType = field.FieldType;
+                var fieldValue = field.GetValue(obj);
 
-                SerializeKeyValue(table, value, key);
+                var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldKey);
+                
+                if (tomlValue != null)
+                    table.AddTomlValue(fieldKey, tomlValue);
             }
         }
 
-        private static void SerializeKeyValue(ITomlTable table, object value, string key)
+        private static TomlValue ConvertToTomlValue(object obj, Type type, string key)
         {
-            if (value is null)
-            {
-                table.AddTomlValue(key, TomlNull.Value);
-                return;
-            }
+            if (obj == null)
+                return TomlNull.Value;
+
+            if (type == typeof(bool) && obj is bool boolValue)
+                return new TomlBoolean(boolValue);
+            if (type == typeof(char) && obj is char charValue)
+                return new TomlString(charValue.ToString());
+            if (type == typeof(string) && obj is string stringValue)
+                return new TomlString(stringValue);
+            if (type.IsEnum && obj is Enum enumValue)
+                return new TomlString(enumValue.ToString("F"));
+            if (type == typeof(sbyte) && obj is sbyte int8Value)
+                return new TomlInteger(int8Value);
+            if (type == typeof(short) && obj is short int16Value)
+                return new TomlInteger(int16Value);
+            if (type == typeof(int) && obj is int int32Value)
+                return new TomlInteger(int32Value);
+            if (type == typeof(long) && obj is long int64Value)
+                return new TomlInteger(int64Value);
+            if (type == typeof(byte) && obj is byte uint8Value)
+                return new TomlInteger(uint8Value);
+            if (type == typeof(ushort) && obj is ushort uint16Value)
+                return new TomlInteger(uint16Value);
+            if (type == typeof(uint) && obj is uint uint32Value)
+                return new TomlInteger(uint32Value);
+            if (type == typeof(float) && obj is float floatValue)
+                return new TomlFloat(floatValue);
+            if (type == typeof(double) && obj is double doubleValue)
+                return new TomlFloat(doubleValue);
+            if (type == typeof(DateTime) && obj is DateTime dateTimeValue)
+                return new TomlDateTime(dateTimeValue);
             
-            if (TrySerializeValue(value, out var tomlScalar))
-                table.AddTomlValue(key, tomlScalar);
-            else if (TrySerializeArray(value, out var tomlArray))
-                table.AddTomlValue(key, tomlArray);
-            else if (TrySerializeTableArray(value, key, out var tomlTableArray))
-                table.AddTomlValue(key, tomlTableArray);
-            else if (TrySerializeTableInline(value, out var tomlTableInline))
-                table.AddTomlValue(key, tomlTableInline);
-            else if (TrySerializeTable(value, key, out var tomlTable))
-                table.AddTomlValue(key, tomlTable);
-            else
-            {
-                var type = value.GetType();
-                throw new InvalidOperationException($"Type '{type.Name}' is not serializable");
-            }
+            return null;
         }
-
-        private static bool TrySerializeValue(object value, out TomlValue tomlValue)
+        
+        private static void WriteTomlTable(TextWriter writer, TomlTable table)
         {
-            tomlValue = null;
+            if (!table.IsRoot)
+                writer.WriteLine($"[{table.Name}]");
             
-            // Null Value
-            if (value == null)
-            {
-                tomlValue = TomlNull.Value;
-                return false;
-            }
-
-            // Boolean Values
-            if (value is bool boolValue)
-                tomlValue = new TomlBoolean(boolValue);
-            // Character & String Values
-            else if (value is char charValue)
-                tomlValue = new TomlString(charValue.ToString());
-            else if (value is string stringValue)
-                tomlValue = new TomlString(stringValue);
-            // Signed Integer Values
-            else if (value is sbyte int8Value)
-                tomlValue = new TomlInteger(int8Value);
-            else if (value is short int16Value)
-                tomlValue = new TomlInteger(int16Value);
-            else if (value is int int32Value)
-                tomlValue = new TomlInteger(int32Value);
-            else if (value is long int64Value)
-                tomlValue = new TomlInteger(int64Value);
-            // Unsigned Integer Values
-            else if (value is byte uint8Value)
-                tomlValue = new TomlInteger(uint8Value);
-            else if (value is ushort uint16Value)
-                tomlValue = new TomlInteger(uint16Value);
-            else if (value is uint uint32Value)
-                tomlValue = new TomlInteger(uint32Value);
-            // Float Values
-            else if (value is float floatValue)
-                tomlValue = new TomlFloat(floatValue);
-            else if (value is double doubleValue)
-                tomlValue = new TomlFloat(doubleValue);
-            // DateTime Values
-            else if (value is DateTime dateTimeValue)
-                tomlValue = new TomlDateTime(dateTimeValue);
-            // Enum Values
-            else if (value.GetType().IsEnum)
-                tomlValue = new TomlString(value.ToString());
-            else
-                return false;
-
-            return tomlValue != null;
-        }
-
-        private static bool TrySerializeArray(object value, out TomlValue tomlArray)
-        {
-            tomlArray = null;
-
-            // Null
-            if (value is null)
-            {
-                tomlArray = TomlNull.Value;
-                return true;
-            }
-            
-            // Bool Arrays
-            if (value is IEnumerable<bool> boolCollection)
-                tomlArray = TomlArray.FromEnumerable(boolCollection);
-            else if (value is IEnumerable<char> charCollection)
-                tomlArray = TomlArray.FromEnumerable(charCollection);
-            else if (value is IEnumerable<string> stringCollection)
-                tomlArray = TomlArray.FromEnumerable(stringCollection);
-            else if (TryCastEnumerable<sbyte>(value, out var int8Collection))
-                tomlArray = TomlArray.FromEnumerable(int8Collection);
-            else if (TryCastEnumerable<short>(value, out var int16Collection))
-                tomlArray = TomlArray.FromEnumerable(int16Collection);
-            else if (TryCastEnumerable<int>(value, out var int32Collection))
-                tomlArray = TomlArray.FromEnumerable(int32Collection);
-            else if (TryCastEnumerable<long>(value, out var int64Collection))
-                tomlArray = TomlArray.FromEnumerable(int64Collection);
-            // Unsigned Integer Arrays
-            else if (TryCastEnumerable<byte>(value, out var uint8Collection))
-                tomlArray = TomlArray.FromEnumerable(uint8Collection);
-            else if (TryCastEnumerable<ushort>(value, out var uint16Collection))
-                tomlArray = TomlArray.FromEnumerable(uint16Collection);
-            else if (TryCastEnumerable<uint>(value, out var uint32Collection))
-                tomlArray = TomlArray.FromEnumerable(uint32Collection);
-            // Float Arrays
-            else if (TryCastEnumerable<float>(value, out var floatCollection))
-                tomlArray = TomlArray.FromEnumerable(floatCollection);
-            else if (TryCastEnumerable<double>(value, out var doubleCollection))
-                tomlArray = TomlArray.FromEnumerable(doubleCollection);
-            // Date Time Arrays
-            else if (value is IEnumerable<DateTime> dateTimeCollection)
-                tomlArray = TomlArray.FromEnumerable(dateTimeCollection);
-            // Enum Arrays
-            else if (TryStringifyEnumValues(value, out var enumStringValues))
-                tomlArray = TomlArray.FromEnumerable(enumStringValues);
-            else
-                return false;
-
-            return tomlArray != null;
-        }
-
-        private static bool TrySerializeTableArray(object value, string key, out TomlTableArray tomlTableArray)
-        {
-            tomlTableArray = null;
-
-            if (value is not IEnumerable<object> objectCollection)
-                return false;
-            
-            var tableArray = new TomlTableArray(key);
-
-            foreach (var childObj in objectCollection)
-            {
-                var childTable = new TomlTable(key);
-                SerializeObject(childTable, childObj);
-
-                tableArray.AddTable(childTable);
-            }
-
-            tomlTableArray = tableArray;
-            return true;
-        }
-
-        private static bool TrySerializeTableInline(object value, out TomlValue tomlTable)
-        {
-            tomlTable = null;
-
-            // Null
-            if (value is null)
-            {
-                tomlTable = TomlNull.Value;
-                return true;
-            }
-
-            // Bool Dictionaries
-            if (TryCastDictionary<bool>(value, out var boolDictionary))
-                tomlTable = TomlTableInline.FromDictionary(boolDictionary);
-            // Character & String Dictionaries
-            else if (TryCastDictionary<char>(value, out var charDictionary))
-                tomlTable = TomlTableInline.FromDictionary(charDictionary);
-            else if (TryCastDictionary<string>(value, out var stringDictionary))
-                tomlTable = TomlTableInline.FromDictionary(stringDictionary);
-            // Signed Integer Dictionaries
-            else if (TryCastDictionary<sbyte>(value, out var int8Dictionary))
-                tomlTable = TomlTableInline.FromDictionary(int8Dictionary);
-            else if (TryCastDictionary<short>(value, out var int16Dictionary))
-                tomlTable = TomlTableInline.FromDictionary(int16Dictionary);
-            else if (TryCastDictionary<int>(value, out var int32Dictionary))
-                tomlTable = TomlTableInline.FromDictionary(int32Dictionary);
-            else if (TryCastDictionary<long>(value, out var int64Dictionary))
-                tomlTable = TomlTableInline.FromDictionary(int64Dictionary);
-            // Unsigned Integer Dictionaries
-            else if (TryCastDictionary<byte>(value, out var uint8Dictionary))
-                tomlTable = TomlTableInline.FromDictionary(uint8Dictionary);
-            else if (TryCastDictionary<ushort>(value, out var uint16Dictionary))
-                tomlTable = TomlTableInline.FromDictionary(uint16Dictionary);
-            else if (TryCastDictionary<uint>(value, out var uint32Dictionary))
-                tomlTable = TomlTableInline.FromDictionary(uint32Dictionary);
-            // Float Dictionaries
-            else if (TryCastDictionary<float>(value, out var floatDictionary))
-                tomlTable = TomlTableInline.FromDictionary(floatDictionary);
-            else if (TryCastDictionary<double>(value, out var doubleDictionary))
-                tomlTable = TomlTableInline.FromDictionary(doubleDictionary);
-            // DateTime Dictionaries
-            else if (TryCastDictionary<DateTime>(value, out var dateTimeDictionary))
-                tomlTable = TomlTableInline.FromDictionary(dateTimeDictionary);
-            // Enum Dictionaries
-            else if (TryStringifyEnumDictionary(value, out var enumValueDictionary))
-                tomlTable = TomlTableInline.FromDictionary(enumValueDictionary);
-            // Mixed Dictionaries
-            else if (value is IDictionary<string, object> dictionary)
-            {
-                var table = new TomlTableInline();
-                foreach (var keyValuePair in dictionary)
-                    SerializeKeyValue(table, keyValuePair.Value, keyValuePair.Key);
-
-                tomlTable = table;
-            }
-            else return false;
-            
-            return tomlTable != null;
-        }
-
-        private static bool TrySerializeTable(object value, string key, out TomlTable tomlTable)
-        {
-            tomlTable = null;
-
-            if (value == null)
-                return false;
-
-            var type = value.GetType();
-
-            // Only allow classes and structs to be serialized as tables
-            if (type.IsEnum || type.IsArray || !(type.IsClass || type.IsValueType))
-                return false;
-
-            var table = new TomlTable(key);
-            SerializeObject(table, value);
-
-            tomlTable = table;
-            return tomlTable != null;
-        }
-
-        private static void WriteTomlDocument(TextWriter writer, TomlTable table)
-        {
             foreach (var keyValuePair in table)
             {
                 var key = keyValuePair.Key;
                 var value = keyValuePair.Value;
 
-                if (value is TomlNull)
-                    writer.WriteLine($"{key} = null");
-                else if (value is TomlTable innerTable)
-                    writer.Write(innerTable.ToTomlString());
+                if (value is TomlTable childTable)
+                    WriteTomlTable(writer, childTable);
                 else if (value is TomlTableArray tableArray)
-                    writer.Write(tableArray.ToTomlString());
+                    writer.WriteLine(tableArray.ToTomlString());
                 else
                     writer.WriteLine(keyValuePair.ToTomlString());
             }

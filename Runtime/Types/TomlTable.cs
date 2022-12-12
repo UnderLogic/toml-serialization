@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace UnderLogic.Serialization.Toml.Types
@@ -8,8 +9,8 @@ namespace UnderLogic.Serialization.Toml.Types
     [Serializable]
     internal sealed class TomlTable : TomlValue, ITomlTable
     {
-        private readonly IDictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
-        
+        private readonly Dictionary<string, TomlValue> _table = new();
+
         public string Name { get; private set; }
         public TomlTable Parent { get; set; }
 
@@ -34,7 +35,7 @@ namespace UnderLogic.Serialization.Toml.Types
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
 
-            if (value == null && value is not TomlValue)
+            if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
             if (!_table.TryAdd(key, value))
@@ -53,18 +54,15 @@ namespace UnderLogic.Serialization.Toml.Types
 
             foreach (var keyValuePair in this)
                 sb.AppendLine(keyValuePair.ToTomlString());
-            
+
             return sb.ToString();
         }
 
         public override string ToString() => $"[{GetType().Name}] Values = {_table.Count}";
+
+        public IEnumerator<TomlKeyValuePair> GetEnumerator() =>
+            _table.Select(pair => new TomlKeyValuePair(pair.Key, pair.Value)).GetEnumerator();
         
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public IEnumerator<TomlKeyValuePair> GetEnumerator()
-        {
-            foreach (var pair in _table)
-                yield return new TomlKeyValuePair(pair.Key, pair.Value);
-        }
     }
 }
