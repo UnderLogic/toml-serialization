@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using UnderLogic.Serialization.Toml.Runtime.Types;
 using UnderLogic.Serialization.Toml.Types;
 
 namespace UnderLogic.Serialization.Toml
@@ -66,7 +67,9 @@ namespace UnderLogic.Serialization.Toml
                 var key = field.Name.Trim('_');
                 var value = field.GetValue(obj);
 
-                if (TrySerializeValue(value, out var tomlScalar))
+                if (value is null)
+                    table.AddTomlValue(key, TomlNull.Value);
+                else if (TrySerializeValue(value, out var tomlScalar))
                     table.AddTomlValue(key, tomlScalar);
                 else if (TrySerializeArray(value, out var tomlArray))
                     table.AddTomlValue(key, tomlArray);
@@ -87,7 +90,7 @@ namespace UnderLogic.Serialization.Toml
             
             // Null Value
             if (value == null)
-                tomlValue = TomlValue.Null;
+                tomlValue = TomlNull.Value;
             // Boolean Values
             else if (value is bool boolValue)
                 tomlValue = new TomlBoolean(boolValue);
@@ -126,12 +129,15 @@ namespace UnderLogic.Serialization.Toml
             return tomlValue != null;
         }
 
-        private static bool TrySerializeArray(object value, out TomlArray tomlArray)
+        private static bool TrySerializeArray(object value, out TomlValue tomlArray)
         {
             tomlArray = null;
 
+            // Null
+            if (value is null)
+                tomlArray = TomlNull.Value;
             // Bool Arrays
-            if (value is IEnumerable<bool> boolCollection)
+            else if (value is IEnumerable<bool> boolCollection)
                 tomlArray = TomlArray.FromEnumerable(boolCollection);
             else if (value is IEnumerable<char> charCollection)
                 tomlArray = TomlArray.FromEnumerable(charCollection);
@@ -169,7 +175,7 @@ namespace UnderLogic.Serialization.Toml
         private static bool TrySerializeTableArray(object value, string key, out TomlTableArray tomlTableArray)
         {
             tomlTableArray = null;
-            
+
             if (value is not IEnumerable<object> objectCollection)
                 return false;
             
@@ -187,12 +193,15 @@ namespace UnderLogic.Serialization.Toml
             return true;
         }
         
-        private static bool TrySerializeTableInline(object value, string key, out TomlTableInline tomlTable)
+        private static bool TrySerializeTableInline(object value, string key, out TomlValue tomlTable)
         {
             tomlTable = null;
             
+            // Null
+            if (value is null)
+                tomlTable = TomlNull.Value;
             // Bool Dictionaries
-            if (TryCastDictionary<bool>(value, out var boolDictionary))
+            else if (TryCastDictionary<bool>(value, out var boolDictionary))
                 tomlTable = TomlTableInline.FromDictionary(boolDictionary);
             // Character & String Dictionaries
             else if (TryCastDictionary<char>(value, out var charDictionary))
@@ -253,11 +262,15 @@ namespace UnderLogic.Serialization.Toml
                 if (!table.IsRoot)
                     writer.WriteLine($"[{table.Name}]");
 
-                if (keyValuePair.Value is TomlTableArray tableArray)
-                {
+                var key = keyValuePair.Key;
+                var value = keyValuePair.Value;
+
+                if (value is TomlNull)
+                    writer.WriteLine($"{key} = null");
+                else if (value is TomlTableArray tableArray)
                     writer.Write(tableArray.ToTomlString());
-                }
-                else writer.WriteLine(keyValuePair.ToTomlString());
+                else
+                    writer.WriteLine(keyValuePair.ToTomlString());
             }
         }
     }

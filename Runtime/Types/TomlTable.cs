@@ -42,7 +42,7 @@ namespace UnderLogic.Serialization.Toml.Types
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
 
-            if (value == null)
+            if (value == null && value is not TomlValue)
                 throw new ArgumentNullException(nameof(value));
 
             if (!_table.TryAdd(key, value))
