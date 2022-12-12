@@ -29,6 +29,16 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual($"value = \"{value}\"", tomlString.Trim());
         }
         
+        [TestCase("hello")]
+        [TestCase("world")]
+        public void Serialize_Value_String(string value)
+        {
+            var wrapped = new WrappedValue<string>(value);
+            var tomlString = TomlSerializer.Serialize(wrapped);
+            
+            Assert.AreEqual($"value = \"{value}\"", tomlString.Trim());
+        }
+
         [TestCase(sbyte.MinValue)]
         [TestCase(sbyte.MaxValue)]
         public void Serialize_Value_Int8(sbyte value)
@@ -117,16 +127,6 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             Assert.AreEqual($"value = {value}", tomlString.Trim());
-        }
-    
-        [TestCase("hello")]
-        [TestCase("world")]
-        public void Serialize_Value_String(string value)
-        {
-            var wrapped = new WrappedValue<string>(value);
-            var tomlString = TomlSerializer.Serialize(wrapped);
-            
-            Assert.AreEqual($"value = \"{value}\"", tomlString.Trim());
         }
         
         [Test]

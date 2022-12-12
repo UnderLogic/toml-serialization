@@ -207,7 +207,7 @@ namespace UnderLogic.Serialization.Toml
             else if (TryCastDictionary<int>(value, out var int32Dictionary))
                 tomlTable = TomlTableInline.FromDictionary(int32Dictionary);
             else if (TryCastDictionary<long>(value, out var int64Dictionary))
-                tomlTable = TomlTableInline.FromDictionary(int32Dictionary);
+                tomlTable = TomlTableInline.FromDictionary(int64Dictionary);
             // Unsigned Integer Dictionaries
             else if (TryCastDictionary<byte>(value, out var uint8Dictionary))
                 tomlTable = TomlTableInline.FromDictionary(uint8Dictionary);

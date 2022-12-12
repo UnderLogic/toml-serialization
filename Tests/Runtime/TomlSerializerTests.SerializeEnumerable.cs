@@ -32,6 +32,18 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
         
         [Test]
+        public void Serialize_Enumerable_String()
+        {
+            var collection = new List<string>(new[] { "hello", "world" });
+            var wrappedList = new WrappedEnumerable<string>(collection);
+
+            var tomlString = TomlSerializer.Serialize(wrappedList);
+            
+            var expectedTomlString = wrappedList.ToTomlStringArray("values", value => $"\"{value}\"");
+            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+        }
+        
+        [Test]
         public void Serialize_Enumerable_Int8()
         {
             var collection = new List<sbyte>(new[] { sbyte.MinValue, sbyte.MaxValue });
@@ -136,18 +148,6 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
-        }
-
-        [Test]
-        public void Serialize_Enumerable_String()
-        {
-            var collection = new List<string>(new[] { "hello", "world" });
-            var wrappedList = new WrappedEnumerable<string>(collection);
-
-            var tomlString = TomlSerializer.Serialize(wrappedList);
-            
-            var expectedTomlString = wrappedList.ToTomlStringArray("values", value => $"\"{value}\"");
             Assert.AreEqual(expectedTomlString, tomlString.Trim());
         }
 
