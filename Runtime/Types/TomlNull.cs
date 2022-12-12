@@ -1,4 +1,4 @@
-namespace UnderLogic.Serialization.Toml.Runtime.Types
+namespace UnderLogic.Serialization.Toml.Types
 {
     internal sealed class TomlNull : TomlValue
     {
