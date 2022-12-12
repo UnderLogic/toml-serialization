@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace UnderLogic.Serialization.Toml
 {
     [Serializable]
-    internal class TomlTable
+    internal sealed class TomlTable
     {
         private readonly IDictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
         

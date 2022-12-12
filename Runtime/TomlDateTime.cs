@@ -3,7 +3,7 @@ using System;
 namespace UnderLogic.Serialization.Toml
 {
     [Serializable]
-    internal class TomlDateTime : TomlValue
+    internal sealed class TomlDateTime : TomlValue
     {
         public DateTime Value { get; private set; }
 

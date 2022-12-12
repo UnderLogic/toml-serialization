@@ -6,7 +6,7 @@ using System.Linq;
 namespace UnderLogic.Serialization.Toml
 {
     [Serializable]
-    internal class TomlArray : TomlValue, IEnumerable<TomlValue>
+    internal sealed class TomlArray : TomlValue, IEnumerable<TomlValue>
     {
         public IReadOnlyCollection<TomlValue> Values { get; }
 

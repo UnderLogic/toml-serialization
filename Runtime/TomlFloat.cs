@@ -3,7 +3,7 @@ using System;
 namespace UnderLogic.Serialization.Toml
 {
     [Serializable]
-    internal class TomlFloat : TomlValue
+    internal sealed class TomlFloat : TomlValue
     {
         public double Value { get; private set; }
 

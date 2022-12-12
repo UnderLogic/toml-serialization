@@ -5,7 +5,7 @@ using System.Linq;
 namespace UnderLogic.Serialization.Toml
 {
     [Serializable]
-    internal class TomlTableInline : TomlValue
+    internal sealed class TomlTableInline : TomlValue
     {
         private readonly IDictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
 

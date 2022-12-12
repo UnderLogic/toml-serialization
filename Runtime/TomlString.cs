@@ -3,8 +3,10 @@ using System;
 namespace UnderLogic.Serialization.Toml
 {
     [Serializable]
-    internal class TomlString : TomlValue
+    internal sealed class TomlString : TomlValue
     {
+        public static TomlString Empty = new TomlString(string.Empty);
+        
         public string Value { get; private set; }
 
         public TomlString(string value) => Value = value;

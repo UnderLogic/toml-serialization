@@ -129,6 +129,11 @@ namespace UnderLogic.Serialization.Toml
                 // Date Time Arrays
                 else if (value is IEnumerable<DateTime> dateTimeCollection)
                     table.AddTomlValue(key, TomlArray.FromEnumerable(dateTimeCollection));
+                // Object Arrays
+                else if (value is IEnumerable<object> objectCollection)
+                {
+                    throw new NotImplementedException();
+                }
                 else
                 {
                     throw new InvalidOperationException($"Type {type.Name} is not serializable");
