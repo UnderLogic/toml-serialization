@@ -31,42 +31,42 @@ namespace UnderLogic.Serialization.Toml
         public IEnumerator<TomlValue> GetEnumerator() => Values.GetEnumerator();
 
         public static TomlArray FromEnumerable(IEnumerable<bool> collection) =>
-            new TomlArray(collection.Select(value => new TomlBoolean(value)));
+            new (collection.Select(value => new TomlBoolean(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<char> collection) =>
-            new TomlArray(collection.Select(value => new TomlString(value.ToString())));
+            new (collection.Select(value => new TomlString(value.ToString())));
         
         public static TomlArray FromEnumerable(IEnumerable<string> collection) => 
-            new TomlArray(collection.Select(value => new TomlString(value)));
+            new (collection.Select(value => new TomlString(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<sbyte> collection) =>
-            new TomlArray(collection.Select(value => new TomlInteger(value)));
+            new (collection.Select(value => new TomlInteger(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<short> collection) =>
-            new TomlArray(collection.Select(value => new TomlInteger(value)));
+            new (collection.Select(value => new TomlInteger(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<int> collection) =>
-            new TomlArray(collection.Select(value => new TomlInteger(value)));
+            new (collection.Select(value => new TomlInteger(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<long> collection) =>
-            new TomlArray(collection.Select(value => new TomlInteger(value)));
+            new (collection.Select(value => new TomlInteger(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<byte> collection) =>
-            new TomlArray(collection.Select(value => new TomlInteger(value)));
+            new (collection.Select(value => new TomlInteger(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<ushort> collection) =>
-            new TomlArray(collection.Select(value => new TomlInteger(value)));
+            new (collection.Select(value => new TomlInteger(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<uint> collection) =>
-            new TomlArray(collection.Select(value => new TomlInteger(value)));
+            new (collection.Select(value => new TomlInteger(value)));
 
         public static TomlArray FromEnumerable(IEnumerable<float> collection) =>
-            new TomlArray(collection.Select(value => new TomlFloat(value)));
+            new (collection.Select(value => new TomlFloat(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<double> collection) =>
-            new TomlArray(collection.Select(value => new TomlFloat(value)));
+            new (collection.Select(value => new TomlFloat(value)));
         
         public static TomlArray FromEnumerable(IEnumerable<DateTime> collection) =>
-            new TomlArray(collection.Select(value => new TomlDateTime(value)));
+            new (collection.Select(value => new TomlDateTime(value)));
     }
 }

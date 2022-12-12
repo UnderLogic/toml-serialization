@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace UnderLogic.Serialization.Toml
 {
     [Serializable]
-    internal sealed class TomlTable
+    internal sealed class TomlTable : TomlValue
     {
         private readonly IDictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
         
         public string Name { get; private set; }
-        public TomlTable Parent { get; private set; }
+        public TomlTable Parent { get; set; }
 
         public bool IsRoot => Parent == null;
 
@@ -22,13 +23,15 @@ namespace UnderLogic.Serialization.Toml
             }
         }
 
-        public TomlTable(string name = "", TomlTable parent = null)
+        public TomlTable() => Name = string.Empty;
+
+        public TomlTable(string name, TomlTable parent = null)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
 
-            if (parent != null && string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name), "Child table must have a name");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name), "Table must have a name");
 
             Name = name.Trim();
             Parent = parent;
@@ -44,8 +47,24 @@ namespace UnderLogic.Serialization.Toml
 
             if (!_table.TryAdd(key, value))
                 throw new InvalidOperationException($"Key {key} already exists in table");
+
+            if (value is TomlTable childTable)
+                childTable.Parent = this;
         }
-        
+
+        public override string ToTomlString()
+        {
+            var sb = new StringBuilder();
+
+            if (!IsRoot)
+                sb.AppendLine($"[{Name}]");
+
+            foreach (var keyValuePair in Values)
+                sb.AppendLine(keyValuePair.ToTomlString());
+            
+            return sb.ToString();
+        }
+
         public override string ToString() => $"[{GetType().Name}] Values = {_table.Count}";
     }
 }
