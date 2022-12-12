@@ -23,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 $"{pair.Key} = {toString?.Invoke(pair.Value) ?? pair.Value.ToString()}");
             var inlineString = string.Join(", ", pairStrings);
             
-            return $"{key} = {{{inlineString}}}";
+            return $"{key} = {{{inlineString}}}\n";
         }
     }
 }

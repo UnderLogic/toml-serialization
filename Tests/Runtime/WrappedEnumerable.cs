@@ -31,7 +31,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var valueStrings = Values.Select(value => toString?.Invoke(value) ?? value.ToString());
             var arrayString = string.Join(", ", valueStrings);
 
-            return $"{key} = [{arrayString}]";
+            return $"{key} = [{arrayString}]\n";
         }
         
         public string ToTomlStringTableArray(string key, Func<T, string> toString = null)

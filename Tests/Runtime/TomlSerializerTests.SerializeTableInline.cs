@@ -16,7 +16,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString().ToLowerInvariant());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -33,7 +33,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => $"\"{value}\"");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -50,7 +50,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -84,7 +84,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -101,7 +101,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -117,7 +117,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -133,7 +133,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -149,7 +149,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -166,7 +166,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => ((double)value).ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -183,7 +183,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -198,7 +198,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 dict.ToTomlStringInline("dictionary", value => $"{value:yyyy-MM-dd HH:mm:ss.fffZ}");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
     }
 }

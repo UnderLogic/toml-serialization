@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedNull);
 
             var expectedTomlString = wrappedNull.ToTomlStringKeyValuePair("value", value => "null");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [TestCase(true)]
@@ -24,7 +24,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 wrapped.ToTomlStringKeyValuePair("value", value => value.ToString().ToLowerInvariant());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [TestCase('A')]
@@ -38,7 +38,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"\"{value}\"");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [TestCase("hello")]
@@ -49,7 +49,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"\"{value}\"");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [TestCase(sbyte.MinValue)]
@@ -60,7 +60,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
 
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [TestCase(short.MinValue)]
@@ -71,7 +71,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [TestCase(int.MinValue)]
@@ -82,7 +82,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [TestCase(long.MinValue)]
@@ -93,7 +93,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [TestCase(byte.MinValue)]
@@ -104,7 +104,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [TestCase(ushort.MinValue)]
@@ -115,7 +115,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [TestCase(uint.MinValue)]
@@ -126,7 +126,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [TestCase(float.MinValue)]
@@ -137,7 +137,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
 
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => ((double)value).ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [TestCase(double.MinValue)]
@@ -148,7 +148,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -159,7 +159,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrapped);
             
             var expectedTomlString = wrapped.ToTomlStringKeyValuePair("value", value => $"{value:yyyy-MM-dd HH:mm:ss.fffZ}");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
     }
 }

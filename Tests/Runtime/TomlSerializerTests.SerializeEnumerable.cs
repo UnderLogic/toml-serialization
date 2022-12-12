@@ -16,7 +16,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 wrappedList.ToTomlStringArray("values", value => value.ToString().ToLowerInvariant());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [Test]
@@ -28,7 +28,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => $"\"{value}\"");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -40,7 +40,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => $"\"{value}\"");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -52,7 +52,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -64,7 +64,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -76,7 +76,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -88,7 +88,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -100,7 +100,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -112,7 +112,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
         
         [Test]
@@ -124,7 +124,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
 
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => ((double)value).ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [Test]
@@ -148,7 +148,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var tomlString = TomlSerializer.Serialize(wrappedList);
             
             var expectedTomlString = wrappedList.ToTomlStringArray("values", value => value.ToString());
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
 
         [Test]
@@ -161,7 +161,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var expectedTomlString =
                 wrappedList.ToTomlStringArray("values", value => $"{value:yyyy-MM-dd HH:mm:ss.fffZ}");
-            Assert.AreEqual(expectedTomlString, tomlString.Trim());
+            Assert.AreEqual(expectedTomlString, tomlString);
         }
     }
 }

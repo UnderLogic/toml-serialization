@@ -46,21 +46,21 @@ namespace UnderLogic.Serialization.Toml
             var rootTable = new TomlTable();
             SerializeObject(rootTable, obj);
             
-            WriteTable(writer, rootTable);
+            WriteTomlDocument(writer, rootTable);
         }
 
         private static void SerializeObject(TomlTable table, object obj)
         {
             var type = obj.GetType();
 
-            if (!type.IsSerializable)
-                throw new InvalidOperationException("$Type {type.Name} is not serializable");
+            if (!Attribute.IsDefined(type, typeof(SerializableAttribute), false))
+                throw new InvalidOperationException($"Type '{type.Name}' is not serializable");
 
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             foreach (var field in fields)
             {
-                if (field.IsNotSerialized)
+                if (Attribute.IsDefined(field, typeof(NonSerializedAttribute)))
                     continue;
 
                 var key = field.Name.Trim('_');
@@ -76,10 +76,10 @@ namespace UnderLogic.Serialization.Toml
                     table.AddTomlValue(key, tomlTableArray);
                 else if (TrySerializeTableInline(value, key, out var tomlTableInline))
                     table.AddTomlValue(key, tomlTableInline);
-                else if (TrySerializeTableStandard(value, key, out var tomlTable))
+                else if (TrySerializeTable(value, key, out var tomlTable))
                     table.AddTomlValue(key, tomlTable);
                 else
-                    throw new InvalidOperationException($"Type {type.Name} is not serializable");
+                    throw new InvalidOperationException($"Type '{type.Name}' is not serializable");
             }
         }
 
@@ -240,35 +240,35 @@ namespace UnderLogic.Serialization.Toml
             return tomlTable != null;
         }
         
-        private static bool TrySerializeTableStandard(object value, string key, out TomlTable tomlTable)
+        private static bool TrySerializeTable(object value, string key, out TomlTable tomlTable)
         {
             tomlTable = null;
-            
-            if (value is not IDictionary<string, object> objectDictionary)
-                return false;
-            
-            var table = new TomlTable(key);
-            foreach (var keyPairValue in objectDictionary)
-            {
-                var childTable = new TomlTable(keyPairValue.Key);
-            }
 
-            tomlTable = table;
-            return true;
+            var type = value.GetType();
+            
+            // Is a class or struct
+            if (!type.IsEnum && (type.IsClass || type.IsValueType))
+            {
+                var table = new TomlTable(key);
+                SerializeObject(table, value);
+                
+                tomlTable = table;
+            }
+            
+            return tomlTable != null;
         }
 
-        private static void WriteTable(TextWriter writer, TomlTable table)
+        private static void WriteTomlDocument(TextWriter writer, TomlTable table)
         {
             foreach (var keyValuePair in table)
             {
-                if (!table.IsRoot)
-                    writer.WriteLine($"[{table.Name}]");
-
                 var key = keyValuePair.Key;
                 var value = keyValuePair.Value;
 
                 if (value is TomlNull)
                     writer.WriteLine($"{key} = null");
+                else if (value is TomlTable innerTable)
+                    writer.Write(innerTable.ToTomlString());
                 else if (value is TomlTableArray tableArray)
                     writer.Write(tableArray.ToTomlString());
                 else
