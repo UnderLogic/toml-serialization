@@ -1,6 +1,6 @@
 using System;
 
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
     [Serializable]
     internal sealed class TomlInteger : TomlValue

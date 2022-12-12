@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
     [Serializable]
     internal sealed class TomlArray : TomlValue, IEnumerable<TomlValue>

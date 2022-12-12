@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using UnderLogic.Serialization.Toml.Types;
 
 namespace UnderLogic.Serialization.Toml
 {
@@ -62,7 +63,7 @@ namespace UnderLogic.Serialization.Toml
                 if (field.IsNotSerialized)
                     continue;
 
-                var key = field.Name;
+                var key = field.Name.Trim('_');
                 var value = field.GetValue(obj);
 
                 if (TrySerializeValue(value, out var tomlScalar))
@@ -73,6 +74,8 @@ namespace UnderLogic.Serialization.Toml
                     table.AddTomlValue(key, tomlTableArray);
                 else if (TrySerializeTableInline(value, key, out var tomlTableInline))
                     table.AddTomlValue(key, tomlTableInline);
+                else if (TrySerializeTableStandard(value, key, out var tomlTable))
+                    table.AddTomlValue(key, tomlTable);
                 else
                     throw new InvalidOperationException($"Type {type.Name} is not serializable");
             }
@@ -114,6 +117,7 @@ namespace UnderLogic.Serialization.Toml
                 tomlValue = new TomlFloat(floatValue);
             else if (value is double doubleValue)
                 tomlValue = new TomlFloat(doubleValue);
+            // DateTime Values
             else if (value is DateTime dateTimeValue)
                 tomlValue = new TomlDateTime(dateTimeValue);
             else
@@ -223,6 +227,23 @@ namespace UnderLogic.Serialization.Toml
                 return false;
                 
             return tomlTable != null;
+        }
+        
+        private static bool TrySerializeTableStandard(object value, string key, out TomlTable tomlTable)
+        {
+            tomlTable = null;
+            
+            if (value is not IDictionary<string, object> objectDictionary)
+                return false;
+            
+            var table = new TomlTable(key);
+            foreach (var keyPairValue in objectDictionary)
+            {
+                var childTable = new TomlTable(keyPairValue.Key);
+            }
+
+            tomlTable = table;
+            return true;
         }
 
         private static void WriteTable(TextWriter writer, TomlTable table)
