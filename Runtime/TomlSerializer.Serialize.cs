@@ -117,21 +117,27 @@ namespace UnderLogic.Serialization.Toml
 
             if (obj is IDictionary dictionary)
             {
-                var tomlTable = ConvertToTomlTable(dictionary, type, key, flags);
+                var tomlTable = ConvertToTomlTable(dictionary, key, flags);
                 if (tomlTable != null)
                     return tomlTable as TomlValue;
             }
             else if (obj is IEnumerable enumerable)
             {
-                var tomlArray = ConvertToTomlArray(enumerable, type, key, flags);
+                var tomlArray = ConvertToTomlArray(enumerable, key, flags);
                 if (tomlArray != null)
                     return tomlArray;
+            }
+            else if (Type.GetTypeCode(type) == TypeCode.Object)
+            {
+                var tomlTable = ConvertToTomlTable(obj, key, flags);
+                if (tomlTable != null)
+                    return tomlTable as TomlValue;
             }
 
             return null;
         }
 
-        private static TomlValue ConvertToTomlArray(IEnumerable values, Type type, string key,
+        private static TomlValue ConvertToTomlArray(IEnumerable values, string key,
             TomlSerializeFlags flags = TomlSerializeFlags.None)
         {
             var collection = values.OfType<object>().ToList();
@@ -155,7 +161,7 @@ namespace UnderLogic.Serialization.Toml
             return new TomlArray(tomlValues);
         }
 
-        private static ITomlTable ConvertToTomlTable(IDictionary dictionary, Type type, string key,
+        private static ITomlTable ConvertToTomlTable(IDictionary dictionary, string key,
             TomlSerializeFlags flags = TomlSerializeFlags.None)
         {
             var tomlTable = new TomlTableInline();
@@ -173,6 +179,15 @@ namespace UnderLogic.Serialization.Toml
 
                 tomlTable.Add(innerKeyString, tomlValue);
             }
+
+            return tomlTable;
+        }
+
+        private static ITomlTable ConvertToTomlTable(object obj, string key,
+            TomlSerializeFlags flags = TomlSerializeFlags.None)
+        {
+            var tomlTable = new TomlTable(key);
+            SerializeObject(tomlTable, obj);
 
             return tomlTable;
         }
