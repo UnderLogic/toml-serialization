@@ -8,10 +8,10 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_ClassArray_ShouldSerializeTableArray()
         {
-            var alice = new MockPerson("Alice", 21, new DateTime(2022, 10, 1));
-            var bob = new MockPerson("Bob", 42, new DateTime(2022, 10, 1));
+            var alice = new MockUser("Alice", 21, new DateTime(2022, 10, 1));
+            var bob = new MockUser("Bob", 42, new DateTime(2022, 10, 1));
 
-            var wrappedArray = WrappedArray<MockPerson>.FromValues(alice, bob);
+            var wrappedArray = WrappedArray<MockUser>.FromValues(alice, bob);
             var toml = TomlSerializer.Serialize(wrappedArray);
 
             var expectedAlice = string.Join("\n", new[]

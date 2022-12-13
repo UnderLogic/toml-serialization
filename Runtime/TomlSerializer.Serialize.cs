@@ -194,17 +194,30 @@ namespace UnderLogic.Serialization.Toml
         {
             if (!table.IsRoot)
                 writer.WriteLine($"[{table.Name}]");
+
+            var isFirstItem = true;
             
             foreach (var keyValuePair in table)
             {
                 var value = keyValuePair.Value;
 
                 if (value is TomlTable childTable)
+                {
+                    if (!isFirstItem)
+                        writer.WriteLine();
+                    
                     WriteTomlTable(writer, childTable);
+                }
                 else if (value is TomlTableArray tableArray)
+                {
+                    if (!isFirstItem)
+                        writer.WriteLine();
+                    
                     writer.Write(tableArray.ToTomlString());
-                else
-                    writer.WriteLine(keyValuePair.ToTomlString());
+                }
+                else writer.WriteLine(keyValuePair.ToTomlString());
+
+                isFirstItem = false;
             }
         }
     }
