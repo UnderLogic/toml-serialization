@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -80,8 +79,7 @@ namespace UnderLogic.Serialization.Toml
             }
         }
 
-        private static TomlValue ConvertToTomlValue(object obj, Type type, string key,
-            TomlSerializeFlags flags = TomlSerializeFlags.None)
+        private static TomlValue ConvertToTomlValue(object obj, Type type, string key)
         {
             if (obj == null)
                 return TomlNull.Value;
@@ -117,19 +115,19 @@ namespace UnderLogic.Serialization.Toml
 
             if (obj is IDictionary dictionary)
             {
-                var tomlTable = ConvertToTomlTable(dictionary, key, flags);
+                var tomlTable = ConvertToTomlTable(dictionary, key);
                 if (tomlTable != null)
                     return tomlTable as TomlValue;
             }
             else if (obj is IEnumerable enumerable)
             {
-                var tomlArray = ConvertToTomlArray(enumerable, key, flags);
+                var tomlArray = ConvertToTomlArray(enumerable, key);
                 if (tomlArray != null)
                     return tomlArray;
             }
             else if (Type.GetTypeCode(type) == TypeCode.Object)
             {
-                var tomlTable = ConvertToTomlTable(obj, key, flags);
+                var tomlTable = ConvertToTomlTable(obj, key);
                 if (tomlTable != null)
                     return tomlTable as TomlValue;
             }
@@ -137,8 +135,7 @@ namespace UnderLogic.Serialization.Toml
             return null;
         }
 
-        private static TomlValue ConvertToTomlArray(IEnumerable values, string key,
-            TomlSerializeFlags flags = TomlSerializeFlags.None)
+        private static TomlValue ConvertToTomlArray(IEnumerable values, string key)
         {
             var collection = values.OfType<object>().ToList();
 
@@ -156,13 +153,12 @@ namespace UnderLogic.Serialization.Toml
             }
 
             var tomlValues = collection.Select(value =>
-                ConvertToTomlValue(value, value?.GetType(), key, TomlSerializeFlags.ForceInline));
+                ConvertToTomlValue(value, value?.GetType(), key));
 
             return new TomlArray(tomlValues);
         }
 
-        private static ITomlTable ConvertToTomlTable(IDictionary dictionary, string key,
-            TomlSerializeFlags flags = TomlSerializeFlags.None)
+        private static ITomlTable ConvertToTomlTable(IDictionary dictionary, string key)
         {
             var tomlTable = new TomlTableInline();
             foreach (var innerKey in dictionary.Keys)
@@ -171,8 +167,7 @@ namespace UnderLogic.Serialization.Toml
                 var value = dictionary[innerKey];
                 var valueType = value?.GetType();
 
-                var tomlValue = ConvertToTomlValue(value, value?.GetType(), innerKeyString,
-                    flags | TomlSerializeFlags.ForceInline);
+                var tomlValue = ConvertToTomlValue(value, value?.GetType(), innerKeyString);
                 
                 if (tomlValue == null)
                     throw new InvalidOperationException($"Type {valueType.Name} is not serializable");
@@ -183,8 +178,7 @@ namespace UnderLogic.Serialization.Toml
             return tomlTable;
         }
 
-        private static ITomlTable ConvertToTomlTable(object obj, string key,
-            TomlSerializeFlags flags = TomlSerializeFlags.None)
+        private static ITomlTable ConvertToTomlTable(object obj, string key)
         {
             var tomlTable = new TomlTable(key);
             SerializeObject(tomlTable, obj);

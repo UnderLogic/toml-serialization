@@ -8,92 +8,68 @@ namespace UnderLogic.Serialization.Toml.Tests
 {
     internal partial class TomlSerializerTests
     {
+
         [Test]
-        public void Serialize_String_NullObject_ThrowsException()
+        public void SerializeToString_NullObject_ThrowsException()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                TomlSerializer.Serialize(null);
-            });
+            Assert.Throws<ArgumentNullException>(() => { TomlSerializer.Serialize(null); });
         }
-        
+
         [Test]
-        public void Serialize_String_NonSerializable_ThrowsException()
+        public void SerializeToString_NonSerializable_ThrowsException()
         {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var nonSerializable = new { };
-                TomlSerializer.Serialize(nonSerializable);
-            });
+            var nonSerializable = new { };
+            Assert.Throws<InvalidOperationException>(() => { TomlSerializer.Serialize(nonSerializable); });
         }
-        
+
         [Test]
-        public void Serialize_Stream_NullStream_ThrowsException()
+        public void SerializeToStream_NullStream_ThrowsException()
         {
             Stream stream = null;
-            
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                TomlSerializer.Serialize(stream, new{});
-            });
+            Assert.Throws<ArgumentNullException>(() => { TomlSerializer.Serialize(stream, new { }); });
         }
-        
+
         [Test]
-        public void Serialize_Stream_NullObject_ThrowsException()
+        public void SerializeToStream_NullObject_ThrowsException()
         {
             var stream = new MemoryStream();
-            
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                TomlSerializer.Serialize(stream, null);
-            });
+
+            Assert.Throws<ArgumentNullException>(() => { TomlSerializer.Serialize(stream, null); });
         }
-        
+
         [Test]
-        public void Serialize_Stream_NonSerializable_ThrowsException()
+        public void SerializeToStream_NonSerializable_ThrowsException()
         {
             var stream = new MemoryStream();
-            
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var nonSerializable = new { };
-                TomlSerializer.Serialize(stream, nonSerializable);
-            });
+            var nonSerializable = new { };
+
+            Assert.Throws<InvalidOperationException>(() => { TomlSerializer.Serialize(stream, nonSerializable); });
         }
-        
+
         [Test]
-        public void Serialize_Writer_NullWriter_ThrowsException()
+        public void SerializeToWriter_NullWriter_ThrowsException()
         {
             TextWriter writer = null;
-            
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                TomlSerializer.Serialize(writer, null);
-            });
+
+            Assert.Throws<ArgumentNullException>(() => { TomlSerializer.Serialize(writer, null); });
         }
-        
+
         [Test]
-        public void Serialize_Writer_NullObject_ThrowsException()
+        public void SerializeToWriter_NullObject_ThrowsException()
         {
             TextWriter writer = null;
-            
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                TomlSerializer.Serialize(writer, null);
-            });
+
+            Assert.Throws<ArgumentNullException>(() => { TomlSerializer.Serialize(writer, null); });
         }
-        
+
         [Test]
-        public void Serialize_Writer_NonSerializable_ThrowsException()
+        public void SerializeToWriter_NonSerializable_ThrowsException()
         {
             var sb = new StringBuilder();
             var writer = new StringWriter(sb, CultureInfo.InvariantCulture);
-            
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var nonSerializable = new { };
-                TomlSerializer.Serialize(writer, nonSerializable);
-            });
+            var nonSerializable = new { };
+
+            Assert.Throws<InvalidOperationException>(() => { TomlSerializer.Serialize(writer, nonSerializable); });
         }
     }
 }
