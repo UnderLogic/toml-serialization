@@ -202,7 +202,7 @@ namespace UnderLogic.Serialization.Toml
                 if (value is TomlTable childTable)
                     WriteTomlTable(writer, childTable);
                 else if (value is TomlTableArray tableArray)
-                    writer.WriteLine(tableArray.ToTomlString());
+                    writer.Write(tableArray.ToTomlString());
                 else
                     writer.WriteLine(keyValuePair.ToTomlString());
             }

@@ -210,7 +210,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_MixedArray_ShouldSerializeInline()
         {
-            var dataObject = new MockData("Under Logic", 1, new DateTime(2022, 10, 1));
+            var dataObject = new MockPerson("Under Logic", 1, new DateTime(2022, 10, 1));
 
             var wrappedArray =
                 WrappedArray<object>.FromValues(true, 42, new[] { 3.14, 1.412 }, dataObject, MockEnum.West);

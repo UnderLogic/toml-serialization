@@ -3,7 +3,7 @@ using System;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public class MockData
+    public class MockPerson
     {
         private string _name;
         private int _age;
@@ -13,7 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         public int Age => _age;
         public DateTime DateOfBirth => _dateOfBirth;
 
-        public MockData(string name, int age, DateTime dateOfBirth)
+        public MockPerson(string name, int age, DateTime dateOfBirth)
         {
             _name = name;
             _age = age;

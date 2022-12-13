@@ -315,7 +315,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_MixedDict_ShouldSerializeInline()
         {
-            var dataObject = new MockData("John Doe", 42, new DateTime(2022, 10, 1));
+            var dataObject = new MockPerson("John Doe", 42, new DateTime(2022, 10, 1));
 
             var dict = new WrappedDictionary<object>
             {
@@ -335,18 +335,35 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [Test]
-        public void Serialize_CustomClass_ShouldSerializeNamedTable()
+        public void Serialize_ClassType_ShouldSerializeNamedTable()
         {
-            var dataObject = new MockData("John Doe", 42, new DateTime(2022, 10, 1));
-            var wrappedData = new WrappedValue<MockData>(dataObject);
+            var dataObject = new MockPerson("John Doe", 42, new DateTime(2022, 10, 1));
+            var wrappedData = new WrappedValue<MockPerson>(dataObject);
             var toml = TomlSerializer.Serialize(wrappedData);
-
 
             var keyValuePairLines = new[]
             {
-                "name = \"John Doe\"",
-                "age = 42",
-                "dateOfBirth = 2022-10-01 00:00:00.000Z"
+                $"name = \"{dataObject.Name}\"",
+                $"age = {dataObject.Age}",
+                $"dateOfBirth = {dataObject.DateOfBirth:yyyy-MM-dd HH:mm:ss.fffZ}"
+            };
+            var tableString = string.Join("\n", keyValuePairLines);
+
+            Assert.AreEqual($"[value]\n{tableString}\n", toml);
+        }
+
+        [Test]
+        public void Serialize_StructType_ShouldSerializeNamedTable()
+        {
+            var coord = new MockCoord(24, 42, 10);
+            var wrappedData = new WrappedValue<MockCoord>(coord);
+            var toml = TomlSerializer.Serialize(wrappedData);
+
+            var keyValuePairLines = new[]
+            {
+                $"x = {(double)coord.X}",
+                $"y = {(double)coord.Y}",
+                $"z = {(double)coord.Z}"
             };
             var tableString = string.Join("\n", keyValuePairLines);
 
