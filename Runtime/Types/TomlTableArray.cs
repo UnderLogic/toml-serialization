@@ -31,7 +31,7 @@ namespace UnderLogic.Serialization.Toml.Types
                 _tables.Add(table);
         }
 
-        public void AddTable(TomlTable table)
+        public void Add(TomlTable table)
         {
             if (table == null)
                 throw new ArgumentNullException(nameof(table));

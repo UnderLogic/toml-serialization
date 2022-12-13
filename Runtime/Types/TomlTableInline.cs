@@ -21,7 +21,7 @@ namespace UnderLogic.Serialization.Toml.Types
                 _table.Add(pair.Key, pair.Value);
         }
 
-        public void AddTomlValue(string key, TomlValue value)
+        public void Add(string key, TomlValue value)
         {
             if (key == null)
                 throw new ArgumentNullException(nameof(key));

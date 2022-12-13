@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnderLogic.Serialization.Toml.Types;
@@ -71,13 +72,16 @@ namespace UnderLogic.Serialization.Toml
                 var fieldValue = field.GetValue(obj);
 
                 var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldKey);
-                
-                if (tomlValue != null)
-                    table.AddTomlValue(fieldKey, tomlValue);
+
+                if (tomlValue == null)
+                    throw new InvalidOperationException($"Type {type.Name} is not serializable");
+
+                table.Add(fieldKey, tomlValue);
             }
         }
 
-        private static TomlValue ConvertToTomlValue(object obj, Type type, string key)
+        private static TomlValue ConvertToTomlValue(object obj, Type type, string key,
+            TomlSerializeFlags flags = TomlSerializeFlags.None)
         {
             if (obj == null)
                 return TomlNull.Value;
@@ -110,10 +114,69 @@ namespace UnderLogic.Serialization.Toml
                 return new TomlFloat(doubleValue);
             if (type == typeof(DateTime) && obj is DateTime dateTimeValue)
                 return new TomlDateTime(dateTimeValue);
-            
+
+            if (obj is IDictionary dictionary)
+            {
+                var tomlTable = ConvertToTomlTable(dictionary, type, key, flags);
+                if (tomlTable != null)
+                    return tomlTable as TomlValue;
+            }
+            else if (obj is IEnumerable enumerable)
+            {
+                var tomlArray = ConvertToTomlArray(enumerable, type, key, flags);
+                if (tomlArray != null)
+                    return tomlArray;
+            }
+
             return null;
         }
-        
+
+        private static TomlValue ConvertToTomlArray(IEnumerable values, Type type, string key,
+            TomlSerializeFlags flags = TomlSerializeFlags.None)
+        {
+            var collection = values.OfType<object>().ToList();
+
+            if (collection.All(value => Type.GetTypeCode(value.GetType()) == TypeCode.Object))
+            {
+                var tomlTableArray = new TomlTableArray(key);
+                foreach (var value in collection)
+                {
+                    var tomlTable = new TomlTable();
+                    SerializeObject(tomlTable, value);
+                    tomlTableArray.Add(tomlTable);
+                }
+
+                return tomlTableArray;
+            }
+
+            var tomlValues = collection.Select(value =>
+                ConvertToTomlValue(value, value?.GetType(), key, TomlSerializeFlags.ForceInline));
+
+            return new TomlArray(tomlValues);
+        }
+
+        private static ITomlTable ConvertToTomlTable(IDictionary dictionary, Type type, string key,
+            TomlSerializeFlags flags = TomlSerializeFlags.None)
+        {
+            var tomlTable = new TomlTableInline();
+            foreach (var innerKey in dictionary.Keys)
+            {
+                var innerKeyString = innerKey.ToString();
+                var value = dictionary[innerKey];
+                var valueType = value?.GetType();
+
+                var tomlValue = ConvertToTomlValue(value, value?.GetType(), innerKeyString,
+                    flags | TomlSerializeFlags.ForceInline);
+                
+                if (tomlValue == null)
+                    throw new InvalidOperationException($"Type {valueType.Name} is not serializable");
+
+                tomlTable.Add(innerKeyString, tomlValue);
+            }
+
+            return tomlTable;
+        }
+
         private static void WriteTomlTable(TextWriter writer, TomlTable table)
         {
             if (!table.IsRoot)

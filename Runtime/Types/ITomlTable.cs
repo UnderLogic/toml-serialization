@@ -4,6 +4,6 @@ namespace UnderLogic.Serialization.Toml.Types
 {
     internal interface ITomlTable : IEnumerable<TomlKeyValuePair>
     {
-        void AddTomlValue(string key, TomlValue value);
+        void Add(string key, TomlValue value);
     }
 }
