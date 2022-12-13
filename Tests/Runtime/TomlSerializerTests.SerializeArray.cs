@@ -7,15 +7,6 @@ namespace UnderLogic.Serialization.Toml.Tests
     internal partial class TomlSerializerTests
     {
         [Test]
-        public void Serialize_EmptyArray_ShouldSerializeEmpty()
-        {
-            var wrappedArray = WrappedArray<string>.Empty();
-            var toml = TomlSerializer.Serialize(wrappedArray);
-
-            Assert.AreEqual("array = [ ]\n", toml);
-        }
-
-        [Test]
         public void Serialize_NullArray_ShouldSerializeNull()
         {
             var wrappedArray = WrappedArray<string>.Null();
@@ -23,7 +14,16 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual("array = null\n", toml);
         }
+        
+        [Test]
+        public void Serialize_EmptyArray_ShouldSerializeEmpty()
+        {
+            var wrappedArray = WrappedArray<string>.Empty();
+            var toml = TomlSerializer.Serialize(wrappedArray);
 
+            Assert.AreEqual("array = []\n", toml);
+        }
+        
         [Test]
         public void Serialize_BoolArray_ShouldSerializeLowerCase()
         {
@@ -205,6 +205,20 @@ namespace UnderLogic.Serialization.Toml.Tests
             var arrayString = string.Join(", ", valueStrings);
 
             Assert.AreEqual($"array = [ {arrayString} ]\n", toml);
+        }
+
+        [Test]
+        public void Serialize_MixedArray_ShouldSerializeInline()
+        {
+            var dataObject = new MockData("Under Logic", 1, new DateTime(2022, 10, 1));
+
+            var wrappedArray =
+                WrappedArray<object>.FromValues(true, 42, new[] { 3.14, 1.412 }, dataObject, MockEnum.West);
+            var toml = TomlSerializer.Serialize(wrappedArray);
+
+            Assert.AreEqual(
+                "array = [ true, 42, [ 3.14, 1.412 ], { name = \"Under Logic\", age = 1, dateOfBirth = 2022-10-01 00:00:00.000Z }, \"West\" ]\n",
+                toml);
         }
     }
 }

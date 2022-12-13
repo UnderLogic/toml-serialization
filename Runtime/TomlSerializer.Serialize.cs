@@ -115,7 +115,7 @@ namespace UnderLogic.Serialization.Toml
 
             if (obj is IDictionary dictionary)
             {
-                var tomlTable = ConvertToTomlTable(dictionary, key);
+                var tomlTable = ConvertToTomlTableInline(dictionary);
                 if (tomlTable != null)
                     return tomlTable as TomlValue;
             }
@@ -139,6 +139,9 @@ namespace UnderLogic.Serialization.Toml
         {
             var collection = values.OfType<object>().ToList();
 
+            if (collection.Count < 1)
+                return TomlArray.Empty;
+            
             if (collection.All(value => Type.GetTypeCode(value.GetType()) == TypeCode.Object))
             {
                 var tomlTableArray = new TomlTableArray(key);
@@ -158,7 +161,7 @@ namespace UnderLogic.Serialization.Toml
             return new TomlArray(tomlValues);
         }
 
-        private static ITomlTable ConvertToTomlTable(IDictionary dictionary, string key)
+        private static ITomlTable ConvertToTomlTableInline(IDictionary dictionary)
         {
             var tomlTable = new TomlTableInline();
             foreach (var innerKey in dictionary.Keys)
@@ -170,7 +173,7 @@ namespace UnderLogic.Serialization.Toml
                 var tomlValue = ConvertToTomlValue(value, value?.GetType(), innerKeyString);
                 
                 if (tomlValue == null)
-                    throw new InvalidOperationException($"Type {valueType.Name} is not serializable");
+                    throw new InvalidOperationException($"Type {valueType?.Name} is not serializable");
 
                 tomlTable.Add(innerKeyString, tomlValue);
             }

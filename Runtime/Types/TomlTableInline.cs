@@ -38,10 +38,21 @@ namespace UnderLogic.Serialization.Toml.Types
             var keyPairStrings = this.Select(pair => pair.ToTomlString());
             return $"{{ {string.Join(", ", keyPairStrings)} }}";
         }
-        
+
+        public TomlTable ToNamedTable(string name, TomlTable parent = null)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Table name cannot be empty", nameof(name));
+
+            return new TomlTable(name, parent, this);
+        }
+
         public IEnumerator<TomlKeyValuePair> GetEnumerator() =>
             _table.Select(pair => new TomlKeyValuePair(pair.Key, pair.Value)).GetEnumerator();
-        
+
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

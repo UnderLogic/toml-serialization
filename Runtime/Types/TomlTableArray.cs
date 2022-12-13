@@ -20,11 +20,11 @@ namespace UnderLogic.Serialization.Toml.Types
                 throw new ArgumentNullException(nameof(name));
 
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Table array must have a name", nameof(name));
-            
+                throw new ArgumentException("Table array name cannot be empty", nameof(name));
+
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
-            
+
             Name = name.Trim();
 
             foreach (var table in values)
@@ -62,7 +62,7 @@ namespace UnderLogic.Serialization.Toml.Types
         }
 
         public IEnumerator<TomlTable> GetEnumerator() => _tables.GetEnumerator();
-        
+
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
