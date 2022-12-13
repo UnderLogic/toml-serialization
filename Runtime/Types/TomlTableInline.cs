@@ -29,12 +29,19 @@ namespace UnderLogic.Serialization.Toml.Types
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
+            // Inline tables can only contain other inline tables
+            if (value is TomlTable table)
+                value = table.ToInlineTable();
+            
             if (!_table.TryAdd(key, value))
                 throw new InvalidOperationException($"Key {key} already exists in table");
         }
 
         public override string ToTomlString()
         {
+            if (_table.Count < 1)
+                return "{}";
+            
             var keyPairStrings = this.Select(pair => pair.ToTomlString());
             return $"{{ {string.Join(", ", keyPairStrings)} }}";
         }

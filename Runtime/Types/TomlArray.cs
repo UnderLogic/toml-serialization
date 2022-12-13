@@ -20,7 +20,7 @@ namespace UnderLogic.Serialization.Toml.Types
 
             foreach (var value in values)
             {
-                // Arrays only support inline tables
+                // Arrays can only contain inline tables
                 if (value is TomlTable table)
                     _values.Add(table.ToInlineTable());
                 else

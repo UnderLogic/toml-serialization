@@ -128,8 +128,9 @@ namespace UnderLogic.Serialization.Toml
             else if (Type.GetTypeCode(type) == TypeCode.Object)
             {
                 var tomlTable = ConvertToTomlTable(obj, key);
+                
                 if (tomlTable != null)
-                    return tomlTable as TomlValue;
+                    return tomlTable  as TomlValue;
             }
 
             return null;
@@ -196,7 +197,6 @@ namespace UnderLogic.Serialization.Toml
             
             foreach (var keyValuePair in table)
             {
-                var key = keyValuePair.Key;
                 var value = keyValuePair.Value;
 
                 if (value is TomlTable childTable)
