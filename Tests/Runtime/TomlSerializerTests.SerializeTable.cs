@@ -333,5 +333,24 @@ namespace UnderLogic.Serialization.Toml.Tests
                 "dictionary = { task_name = \"Test Task\", task_id = 1, metadata = [ 3.14, 1.412 ], status = \"Completed\", assignee = { name = \"John Doe\", age = 42, dateOfBirth = 2022-10-01 00:00:00.000Z }, created_date = 2022-10-01 00:00:00.000Z }\n",
                 toml);
         }
+
+        [Test]
+        public void Serialize_CustomClass_ShouldSerializeNamedTable()
+        {
+            var dataObject = new MockData("John Doe", 42, new DateTime(2022, 10, 1));
+            var wrappedData = new WrappedValue<MockData>(dataObject);
+            var toml = TomlSerializer.Serialize(wrappedData);
+
+
+            var keyValuePairLines = new[]
+            {
+                "name = \"John Doe\"",
+                "age = 42",
+                "dateOfBirth = 2022-10-01 00:00:00.000Z"
+            };
+            var tableString = string.Join("\n", keyValuePairLines);
+
+            Assert.AreEqual($"[value]\n{tableString}\n", toml);
+        }
     }
 }
