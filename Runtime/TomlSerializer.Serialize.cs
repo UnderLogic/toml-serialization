@@ -50,7 +50,7 @@ namespace UnderLogic.Serialization.Toml
             WriteTomlTable(writer, rootTable);
         }
 
-        private static void SerializeObject(ITomlTable table, object obj)
+        private static void SerializeObject(TomlTable table, object obj)
         {
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
@@ -117,7 +117,7 @@ namespace UnderLogic.Serialization.Toml
             {
                 var tomlTable = ConvertToTomlTableInline(dictionary);
                 if (tomlTable != null)
-                    return tomlTable as TomlValue;
+                    return tomlTable;
             }
             else if (obj is IEnumerable enumerable)
             {
@@ -127,10 +127,10 @@ namespace UnderLogic.Serialization.Toml
             }
             else if (Type.GetTypeCode(type) == TypeCode.Object)
             {
-                var tomlTable = ConvertToTomlTable(obj, key);
+                var tomlTable = ConvertToTomlTable(obj);
                 
                 if (tomlTable != null)
-                    return tomlTable  as TomlValue;
+                    return tomlTable;
             }
 
             return null;
@@ -162,9 +162,9 @@ namespace UnderLogic.Serialization.Toml
             return new TomlArray(tomlValues);
         }
 
-        private static ITomlTable ConvertToTomlTableInline(IDictionary dictionary)
+        private static TomlTable ConvertToTomlTableInline(IDictionary dictionary)
         {
-            var tomlTable = new TomlTableInline();
+            var tomlTable = new TomlTable { IsInline = true };
             foreach (var innerKey in dictionary.Keys)
             {
                 var innerKeyString = innerKey.ToString();
@@ -182,18 +182,18 @@ namespace UnderLogic.Serialization.Toml
             return tomlTable;
         }
 
-        private static ITomlTable ConvertToTomlTable(object obj, string key)
+        private static TomlTable ConvertToTomlTable(object obj)
         {
-            var tomlTable = new TomlTable(key);
+            var tomlTable = new TomlTable();
             SerializeObject(tomlTable, obj);
 
             return tomlTable;
         }
 
-        private static void WriteTomlTable(TextWriter writer, TomlTable table)
+        private static void WriteTomlTable(TextWriter writer, TomlTable table, string tableName = "")
         {
-            if (!table.IsRoot)
-                writer.WriteLine($"[{table.Name}]");
+            if (!string.IsNullOrWhiteSpace(tableName))
+                writer.WriteLine($"[{tableName}]");
 
             var isFirstItem = true;
             
@@ -203,10 +203,22 @@ namespace UnderLogic.Serialization.Toml
 
                 if (value is TomlTable childTable)
                 {
-                    if (!isFirstItem)
-                        writer.WriteLine();
-                    
-                    WriteTomlTable(writer, childTable);
+                    if (childTable.IsInline)
+                    {
+                        var inlineString = $"{keyValuePair.Key} = {childTable.ToTomlString()}";
+                        writer.WriteLine(inlineString);
+                    }
+                    else
+                    {
+                        if (!isFirstItem)
+                            writer.WriteLine();
+                        
+                        var childTableName = string.IsNullOrWhiteSpace(tableName)
+                            ? keyValuePair.Key
+                            : $"{tableName}.{keyValuePair.Key}";
+
+                        WriteTomlTable(writer, childTable, childTableName);
+                    }
                 }
                 else if (value is TomlTableArray tableArray)
                 {

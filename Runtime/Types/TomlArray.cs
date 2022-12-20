@@ -22,9 +22,11 @@ namespace UnderLogic.Serialization.Toml.Types
             {
                 // Arrays can only contain inline tables
                 if (value is TomlTable table)
-                    _values.Add(table.ToInlineTable());
-                else
-                    _values.Add(value);
+                {
+                    table.IsInline = true;
+                    _values.Add(table);
+                }
+                else _values.Add(value);
             }
         }
 

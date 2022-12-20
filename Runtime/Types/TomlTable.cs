@@ -2,33 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace UnderLogic.Serialization.Toml.Types
 {
     [Serializable]
-    internal sealed class TomlTable : TomlValue, ITomlTable
+    internal sealed class TomlTable : TomlValue,  IEnumerable<TomlKeyValuePair>
     {
         private readonly Dictionary<string, TomlValue> _table = new();
 
-        public string Name { get; private set; }
-        public TomlTable Parent { get; set; }
+        public bool IsInline { get; set; }
 
-        public bool IsRoot => Parent == null;
+        public TomlTable() { }
 
-        public TomlTable() => Name = string.Empty;
-
-        public TomlTable(string name, TomlTable parent = null, IEnumerable<TomlKeyValuePair> keyValuePairs = null)
+        public TomlTable(IEnumerable<TomlKeyValuePair> keyValuePairs = null)
         {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
-
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name), "Table name cannot be empty");
-
-            Name = name.Trim();
-            Parent = parent;
-
             if (keyValuePairs == null)
                 return;
 
@@ -46,25 +33,18 @@ namespace UnderLogic.Serialization.Toml.Types
 
             if (!_table.TryAdd(key, value))
                 throw new InvalidOperationException($"Key {key} already exists in table");
-
-            if (value is TomlTable childTable)
-                childTable.Parent = this;
         }
 
         public override string ToTomlString()
         {
-            var sb = new StringBuilder();
+            if (_table.Count < 1)
+                return "{}";
+            
+            var keyPairStrings = this.Select(kvp => kvp.ToTomlString());
+            var inlineString = string.Join(", ", keyPairStrings);
 
-            if (!IsRoot)
-                sb.AppendLine($"[{Name}]");
-
-            foreach (var keyValuePair in this)
-                sb.AppendLine(keyValuePair.ToTomlString());
-
-            return sb.ToString();
+            return $"{{ {inlineString} }}";
         }
-
-        public TomlTableInline ToInlineTable() => new(this);
 
         public override string ToString() => $"[{GetType().Name}] Values = {_table.Count}";
 
