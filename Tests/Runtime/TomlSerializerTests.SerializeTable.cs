@@ -64,7 +64,17 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_NestedClass_ShouldSerializeTableArray()
         {
             var nestedClassObject = new MockNestedClass
-                { };
+            {
+                Id = 42,
+                Name = "Test Player",
+                Level = 99,
+                Health = 1000,
+                MaxHealth = 2000,
+                Mana = 500,
+                MaxMana = 750,
+                Gold = 1234567890,
+                Experience = 1000000,
+            };
 
             var nestedItem = new MockNestedItem
             {
