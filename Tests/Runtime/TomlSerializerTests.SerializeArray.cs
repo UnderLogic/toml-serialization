@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual("array = null\n", toml);
         }
-        
+
         [Test]
         public void Serialize_EmptyArray_ShouldSerializeEmpty()
         {
@@ -23,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual("array = []\n", toml);
         }
-        
+
         [Test]
         public void Serialize_BoolArray_ShouldSerializeLowerCase()
         {
@@ -98,7 +98,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"array = [ {arrayString} ]\n", toml);
         }
-        
+
         [Test]
         public void Serialize_Int16Array_ShouldSerializeLiteral()
         {
@@ -110,7 +110,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"array = [ {arrayString} ]\n", toml);
         }
-        
+
         [Test]
         public void Serialize_Int32Array_ShouldSerializeLiteral()
         {
@@ -122,7 +122,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"array = [ {arrayString} ]\n", toml);
         }
-        
+
         [Test]
         public void Serialize_Int64Array_ShouldSerializeLiteral()
         {
@@ -134,7 +134,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"array = [ {arrayString} ]\n", toml);
         }
-        
+
         [Test]
         public void Serialize_UInt8Array_ShouldSerializeLiteral()
         {
@@ -146,7 +146,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"array = [ {arrayString} ]\n", toml);
         }
-        
+
         [Test]
         public void Serialize_UInt16Array_ShouldSerializeLiteral()
         {
@@ -210,14 +210,31 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_MixedArray_ShouldSerializeInline()
         {
-            var dataObject = new MockUser("Under Logic", 1, new DateTime(2022, 10, 1));
+            var classObject = new MockSimpleClass
+            {
+                Id = 99,
+                Name = "Hidden Item",
+                Weight = 0.5f,
+                Hidden = true,
+                CreatedAt = new DateTime(2022, 10, 1)
+            };
+
+            var structObject = new MockSimpleStruct()
+            {
+                Index = 31,
+                X = 0.5f,
+                Y = 1.5f,
+                Z = 5f
+            };
 
             var wrappedArray =
-                WrappedArray<object>.FromValues(true, 42, new[] { 3.14, 1.412 }, dataObject, MockEnum.West);
+                WrappedArray<object>.FromValues(true, 42, new[] { 3.14, 1.412 }, classObject, structObject,
+                    MockEnum.West);
+
             var toml = TomlSerializer.Serialize(wrappedArray);
 
             Assert.AreEqual(
-                "array = [ true, 42, [ 3.14, 1.412 ], { name = \"Under Logic\", age = 1, dateOfBirth = 2022-10-01 00:00:00.000Z }, \"West\" ]\n",
+                "array = [ true, 42, [ 3.14, 1.412 ], { id = 99, name = \"Hidden Item\", weight = 0.5, hidden = true, createdAt = 2022-10-01 00:00:00.000Z }, { index = 31, x = 0.5, y = 1.5, z = 5 }, \"West\" ]\n",
                 toml);
         }
     }

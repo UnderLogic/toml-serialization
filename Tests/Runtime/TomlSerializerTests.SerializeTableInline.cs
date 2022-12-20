@@ -315,22 +315,38 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_MixedDict_ShouldSerializeInline()
         {
-            var dataObject = new MockUser("John Doe", 42, new DateTime(2022, 10, 1));
+            var classObject = new MockSimpleClass
+            {
+                Id = 99,
+                Name = "Cool Reward",
+                Weight = 1.25f,
+                Hidden = false,
+                CreatedAt = new DateTime(2022, 10, 1)
+            };
+
+            var structObject = new MockSimpleStruct
+            {
+                Index = 10,
+                X = 2f,
+                Y = 4f,
+                Z = 6f
+            };
 
             var dict = new WrappedDictionary<object>
             {
-                { "task_name", "Test Task" },
-                { "task_id", 1 },
-                { "metadata", new[] { 3.14, 1.412 } },
+                { "questName", "Test Quest" },
+                { "questId", 1 },
+                { "levelRange", new[] { 10, 15 } },
                 { "status", MockFlags.Completed },
-                { "assignee", dataObject },
-                { "created_date", new DateTime(2022, 10, 1) }
+                { "reward", classObject },
+                { "location", structObject },
+                { "startedAt", new DateTime(2022, 10, 1) }
             };
 
             var toml = TomlSerializer.Serialize(dict);
 
             Assert.AreEqual(
-                "dictionary = { task_name = \"Test Task\", task_id = 1, metadata = [ 3.14, 1.412 ], status = \"Completed\", assignee = { name = \"John Doe\", age = 42, dateOfBirth = 2022-10-01 00:00:00.000Z }, created_date = 2022-10-01 00:00:00.000Z }\n",
+                "dictionary = { questName = \"Test Quest\", questId = 1, levelRange = [ 10, 15 ], status = \"Completed\", reward = { id = 99, name = \"Cool Reward\", weight = 1.25, hidden = false, createdAt = 2022-10-01 00:00:00.000Z }, location = { index = 10, x = 2, y = 4, z = 6 }, startedAt = 2022-10-01 00:00:00.000Z }\n",
                 toml);
         }
     }

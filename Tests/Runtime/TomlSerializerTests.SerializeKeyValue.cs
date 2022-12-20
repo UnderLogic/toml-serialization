@@ -10,7 +10,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         {
             var wrappedValue = new WrappedValue<string>(null);
             var toml = TomlSerializer.Serialize(wrappedValue);
-            
+
             Assert.AreEqual("value = null\n", toml);
         }
 
@@ -23,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = {boolValue.ToString().ToLowerInvariant()}\n", toml);
         }
-        
+
         [TestCase('A')]
         [TestCase('0')]
         [TestCase('_')]
@@ -34,7 +34,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = \"{charValue}\"\n", toml);
         }
-        
+
         [TestCase("The quick brown fox jumps over the lazy dog.")]
         public void Serialize_StringKeyValue_ShouldSerializeQuoted(string stringValue)
         {
@@ -43,7 +43,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = \"{stringValue}\"\n", toml);
         }
-        
+
         [TestCase(MockEnum.None)]
         [TestCase(MockEnum.North)]
         [TestCase(MockEnum.South)]
@@ -56,7 +56,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = \"{enumValue:F}\"\n", toml);
         }
-        
+
         [TestCase(MockFlags.None)]
         [TestCase(MockFlags.Available | MockFlags.InProgress)]
         [TestCase(MockFlags.All)]
@@ -67,7 +67,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = \"{flagsValue:F}\"\n", toml);
         }
-        
+
         [TestCase(sbyte.MinValue)]
         [TestCase(-1)]
         [TestCase(0)]
@@ -80,7 +80,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = {int8Value}\n", toml);
         }
-        
+
         [TestCase(short.MinValue)]
         [TestCase(-1)]
         [TestCase(0)]
@@ -93,7 +93,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = {int16Value}\n", toml);
         }
-        
+
         [TestCase(int.MinValue)]
         [TestCase(-1)]
         [TestCase(0)]
@@ -106,7 +106,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = {int32Value}\n", toml);
         }
-        
+
         [TestCase(long.MinValue)]
         [TestCase(-1L)]
         [TestCase(0L)]
@@ -119,7 +119,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = {int64Value}\n", toml);
         }
-        
+
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(byte.MaxValue)]
@@ -130,7 +130,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = {uint8Value}\n", toml);
         }
-        
+
         [TestCase((ushort)0)]
         [TestCase((ushort)1)]
         [TestCase(ushort.MaxValue)]
@@ -141,7 +141,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = {uint16Value}\n", toml);
         }
-        
+
         [TestCase(0u)]
         [TestCase(1u)]
         [TestCase(uint.MaxValue)]
@@ -159,7 +159,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var now = DateTime.UtcNow;
             var wrappedValue = new WrappedValue<DateTime>(now);
             var toml = TomlSerializer.Serialize(wrappedValue);
-            
+
             Assert.AreEqual($"value = {now:yyyy-MM-dd HH:mm:ss.fffZ}\n", toml);
         }
     }
