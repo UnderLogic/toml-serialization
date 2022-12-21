@@ -79,8 +79,8 @@ namespace UnderLogic.Serialization.Toml
 
         private string GetOutputPath(string filename) =>
             usePersistentDataPath
-                ? Path.Combine(Application.persistentDataPath, OutputDirectory, filename)
-                : Path.Combine(OutputDirectory, filename);
+                ? Path.Combine(Application.persistentDataPath, OutputDirectory ?? "", filename)
+                : Path.Combine(Application.dataPath, OutputDirectory ?? "", filename);
 
         private void SafeMakeDirectory(string directoryPath)
         {

@@ -7,7 +7,6 @@
 
 - [Installation](installation.md)
 - [Getting Started](getting-started.md)
-- [Serialization Rules](serialization-rules.md)
 
 # Serialization
 
@@ -24,3 +23,4 @@
 
 - [Serialization](serialization.md)
   - [TomlSerializer](serialization/toml-serializer.md)
+  - [TomlExporter](serialization/toml-exporter.md)
