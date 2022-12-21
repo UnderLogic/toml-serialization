@@ -1,16 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
-namespace UnderLogic.Serialization.Toml.Types
+namespace UnderLogic.Serialization.Toml
 {
-    [Serializable]
-    internal sealed class TomlTableArray : TomlValue, IEnumerable<TomlTable>
+    public sealed class TomlTableArray : TomlValue, IReadOnlyList<TomlTable>
     {
         private readonly List<TomlTable> _tables = new();
 
         public string Name { get; private set; }
+        
+        public int Count => _tables.Count;
+        
+        public TomlTable this[int index] => _tables[index];
 
         public TomlTableArray(string name) => Name = name.Trim();
 
@@ -38,27 +40,6 @@ namespace UnderLogic.Serialization.Toml.Types
 
             if (!_tables.Contains(table))
                 _tables.Add(table);
-        }
-
-        public override string ToTomlString()
-        {
-            var sb = new StringBuilder();
-
-            var isFirstItem = true;
-
-            foreach (var table in _tables)
-            {
-                if (!isFirstItem)
-                    sb.AppendLine();
-
-                sb.AppendLine($"[[{Name}]]");
-                foreach (var keyValuePair in table)
-                    sb.AppendLine(keyValuePair.ToTomlString());
-
-                isFirstItem = false;
-            }
-
-            return sb.ToString();
         }
 
         public IEnumerator<TomlTable> GetEnumerator() => _tables.GetEnumerator();

@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnderLogic.Serialization.Toml.Types;
 
 namespace UnderLogic.Serialization.Toml
 {
@@ -23,7 +22,7 @@ namespace UnderLogic.Serialization.Toml
             return sb.ToString();
         }
 
-        public static void Serialize(Stream stream, object obj, Encoding encoding = null)
+        public static void Serialize(Stream stream, object obj, bool leaveOpen = true)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
@@ -31,9 +30,8 @@ namespace UnderLogic.Serialization.Toml
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
 
-            var tomlString = Serialize(obj);
-            var bytes = (encoding ?? Encoding.UTF8).GetBytes(tomlString);
-            stream.Write(bytes);
+            using (var writer = new StreamWriter(stream, Encoding.UTF8, 1024, leaveOpen))
+                Serialize(writer, obj);
         }
 
         public static void Serialize(TextWriter writer, object obj)
@@ -46,8 +44,9 @@ namespace UnderLogic.Serialization.Toml
 
             var rootTable = new TomlTable();
             SerializeObject(rootTable, obj);
-
-            WriteTomlTable(writer, rootTable);
+            
+            using (var tomlWriter = new TomlWriter(writer))
+                tomlWriter.WriteDocument(rootTable);
         }
 
         private static void SerializeObject(TomlTable table, object obj)
@@ -188,49 +187,6 @@ namespace UnderLogic.Serialization.Toml
             SerializeObject(tomlTable, obj);
 
             return tomlTable;
-        }
-
-        private static void WriteTomlTable(TextWriter writer, TomlTable table, string tableName = "")
-        {
-            if (!string.IsNullOrWhiteSpace(tableName))
-                writer.WriteLine($"[{tableName}]");
-
-            var isFirstItem = true;
-            
-            foreach (var keyValuePair in table)
-            {
-                var value = keyValuePair.Value;
-
-                if (value is TomlTable childTable)
-                {
-                    if (childTable.IsInline)
-                    {
-                        var inlineString = $"{keyValuePair.Key} = {childTable.ToTomlString()}";
-                        writer.WriteLine(inlineString);
-                    }
-                    else
-                    {
-                        if (!isFirstItem)
-                            writer.WriteLine();
-                        
-                        var childTableName = string.IsNullOrWhiteSpace(tableName)
-                            ? keyValuePair.Key
-                            : $"{tableName}.{keyValuePair.Key}";
-
-                        WriteTomlTable(writer, childTable, childTableName);
-                    }
-                }
-                else if (value is TomlTableArray tableArray)
-                {
-                    if (!isFirstItem)
-                        writer.WriteLine();
-                    
-                    writer.Write(tableArray.ToTomlString());
-                }
-                else writer.WriteLine(keyValuePair.ToTomlString());
-
-                isFirstItem = false;
-            }
         }
     }
 }

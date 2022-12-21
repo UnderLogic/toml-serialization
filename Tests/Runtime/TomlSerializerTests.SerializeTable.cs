@@ -76,7 +76,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 Experience = 1000000,
             };
 
-            var nestedItem = new MockNestedItem
+            var nestedApple = new MockNestedItem
             {
                 Id = 1,
                 Key = "item_apple",
@@ -87,8 +87,22 @@ namespace UnderLogic.Serialization.Toml.Tests
                 MaxQuantity = 10
             };
             
-            nestedItem.AddModifier("health", 10);
-            nestedClassObject.AddItem(nestedItem);
+            var nestedSword = new MockNestedItem
+            {
+                Id = 2,
+                Key = "item_sword",
+                DisplayName = "Sword (Unidentified)",
+                Weight = 1.5f,
+                Identified = false,
+                Quantity = 1,
+                MaxQuantity = 1
+            };
+            
+            nestedApple.AddModifier("health", 10);
+            nestedSword.AddModifier("strength", 1);
+            
+            nestedClassObject.AddItem(nestedApple);
+            nestedClassObject.AddItem(nestedSword);
             
             var toml = TomlSerializer.Serialize(nestedClassObject);
             
@@ -118,7 +132,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 $"maxQuantity = {item.MaxQuantity}",
                 $"modifiers = {{ {string.Join(", ", item.Modifiers.Select(modifier => $"{modifier.Key} = {modifier.Value}"))} }}",
             }));
-            var nestedItemsString = string.Join("\n", nestedItemLines);
+            var nestedItemsString = string.Join("\n\n", nestedItemLines);
             
             Assert.AreEqual($"{tableString}\n\n{nestedItemsString}\n", toml);
         }

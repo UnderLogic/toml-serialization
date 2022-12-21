@@ -1,17 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace UnderLogic.Serialization.Toml.Types
+namespace UnderLogic.Serialization.Toml
 {
-    internal sealed class TomlArray : TomlValue, IEnumerable<TomlValue>
+    public sealed class TomlArray : TomlValue, IReadOnlyList<TomlValue>
     {
         private readonly List<TomlValue> _values = new();
 
         public static TomlArray Empty => new();
         
         private TomlArray() { }
+
+        public int Count => _values.Count;
+        
+        public TomlValue this[int index] => _values[index];
         
         public TomlArray(IEnumerable<TomlValue> values)
         {
@@ -30,15 +33,6 @@ namespace UnderLogic.Serialization.Toml.Types
             }
         }
 
-        public override string ToTomlString()
-        {
-            if (_values.Count < 1)
-                return "[]";
-            
-            var valueStrings = this.Select(value => value.ToTomlString());
-            return $"[ {string.Join(", ", valueStrings)} ]";
-        }
-        
         public IEnumerator<TomlValue> GetEnumerator() => _values.GetEnumerator();
         
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
