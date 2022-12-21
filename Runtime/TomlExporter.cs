@@ -7,7 +7,7 @@ namespace UnderLogic.Serialization.Toml
 {
     public class TomlExporter : MonoBehaviour
     {
-        [SerializeField] private ScriptableObject targetObject;
+        [SerializeField] private ScriptableObject sourceObject;
 
         [Header("Output")]
         [SerializeField] private bool usePersistentDataPath = true;
@@ -19,10 +19,10 @@ namespace UnderLogic.Serialization.Toml
         public UnityEvent onExport;
         public UnityEvent<Exception> onError;
 
-        public ScriptableObject TargetObject
+        public ScriptableObject SourceObject
         {
-            get => targetObject;
-            set => targetObject = value;
+            get => sourceObject;
+            set => sourceObject = value;
         }
 
         public bool UsePersistentDataPath
@@ -53,9 +53,9 @@ namespace UnderLogic.Serialization.Toml
 
         public void ExportAs(string filename)
         {
-            if (targetObject == null)
+            if (sourceObject == null)
             {
-                Debug.LogWarning("No target object set, unable to export", this);
+                Debug.LogWarning("No source object set, unable to export TOML", this);
                 return;
             }
 
@@ -66,7 +66,7 @@ namespace UnderLogic.Serialization.Toml
                     SafeMakeDirectory(Path.GetDirectoryName(outputPath));
 
                 using (var stream = File.OpenWrite(outputPath))
-                    TomlSerializer.Serialize(stream, targetObject);
+                    TomlSerializer.Serialize(stream, sourceObject);
 
                 onExport?.Invoke();
             }
