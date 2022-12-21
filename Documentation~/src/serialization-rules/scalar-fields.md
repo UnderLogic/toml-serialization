@@ -61,7 +61,7 @@ Integer fields are mapped to a [TOML integer](https://toml.io/en/v1.0.0#integer)
 
 ### Example
 
-```
+```toml
 positive = 42
 negative = -42
 ```
