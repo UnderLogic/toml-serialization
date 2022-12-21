@@ -30,7 +30,7 @@ Component that provides methods for exporting `ScriptableObject` data to TOML fi
 ## Public Methods
 
 - `Export()` - Exports the source object to a TOML file with the default file name.
-- `Export(string)` - Exports the source object to a TOML file with the specified file name.
+- `ExportAs(string)` - Exports the source object to a TOML file with the specified file name.
 
 ## Output Directory
 
