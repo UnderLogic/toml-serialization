@@ -27,7 +27,7 @@ $ mdbook serve ./Documentation~ --open
 
 ## Samples
 
-The package library includes several sample scenes that demonstrate how to use each type of variable component.
+The package library includes several sample scenes that demonstrate how to serialize and deserialize data.
 It is highly recommended that you import the samples so you can see the library in action and experiment with it.
 
 ## Contributing
