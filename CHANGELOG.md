@@ -9,8 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `TomlExporter` component for exporting TOML files from Unity scenes
+- Documentation for `TomlExporter` component
 - Exporter sample scene
 - Serializer sample scene
+
+### Fixed
+
+- `TomlSerializer` not putting a new line space between tables
 
 ## [0.1.0] - 2022-12-20
 
