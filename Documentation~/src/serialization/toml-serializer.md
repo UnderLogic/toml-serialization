@@ -18,3 +18,40 @@ For more information on how objects are serialized to TOML, see the [Serializati
 
 **NOTE:** The `Serialize(object, Stream, bool?)` method does not close the stream after writing to it.
 To close the stream after writing to it, set the optional `leaveOpen` parameter to `false`.
+
+### Example
+
+```csharp
+[Serializable]
+public class PlayerCharacter
+{
+    private string _name;
+    private int _level;
+    private int _health;
+    private int _maxHealth;
+    private int _gold;
+}
+
+// Somewhere else in your code...
+
+public void SavePlayerCharacter(PlayerCharacter playerCharacter)
+{
+    var directory = UnityEngine.Application.persistentDataPath;
+    var saveFile = Path.Combine(directory, "save.toml");
+    
+    using (var stream = File.OpenWrite(saveFile))
+    {
+        TomlSerializer.Serialize(playerCharacter, stream);
+    }
+}
+```
+
+After running the above code, the `save.toml` file will contain the following:
+
+```toml
+name = "Player 1"
+level = 7
+health = 160
+maxHealth = 200
+gold = 1250
+```

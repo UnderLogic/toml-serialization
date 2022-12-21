@@ -4,11 +4,11 @@
 
 By default, all public **and** non-public instance fields of an object are serialized, unless they are marked with the `NonSerialized` attribute.
 
-This does not include properties, only member fields.
+This does **not** include properties, only member fields.
 
-This is because properties are not guaranteed to be backed by a field, and the backing field may not be accessible
+This is because properties are not guaranteed to be backed by a field, and the backing field may not be accessible.
 
-## Example
+### Example
 
 ```csharp
 [Serializable]
@@ -38,3 +38,5 @@ gold = 1250
 ```
 
 **NOTE:** The underscore (`_`) at the beginning of the field name is removed when serializing.
+
+See [Field Naming](field-naming.md) for more information.
