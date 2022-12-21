@@ -1,6 +1,6 @@
 {
   "name": "com.underlogic.toml-serialization",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "TOML Serialization",
   "description": "Serialization library for TOML files",
   "unity": "2019.1",
@@ -27,8 +27,8 @@
     "description": "Contains sample scene demonstrating the use of the TOML serializer to save files",
     "path": "Samples~/Serializer"
   }, {
-    "displayName": "Using the TOML Deserializer",
-    "description": "Contains sample scene demonstrating the use of the TOML deserializer to load files",
-    "path": "Samples~/Deserializer"
+    "displayName": "Using the TOML Exporter",
+    "description": "Contains sample scene demonstrating the use of the TOML exporter component to save files",
+    "path": "Samples~/Exporter"
   }]
 }

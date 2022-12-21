@@ -221,6 +221,9 @@ namespace UnderLogic.Serialization.Toml
                         }
                         else
                         {
+                            if (!isFirstItem)
+                                _writer.WriteLine();
+                            
                             WriteTableExpanded(childTableKey, childTable);
                         }
                     }
