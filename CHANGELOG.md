@@ -4,9 +4,13 @@ All notable changes to this library will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2022-12-20
 
 ### Added
 
 - `TomlSerializer` class for serializing objects to TOML format
 - Unit tests for `TomlSerializer` class
+- Documentation for `TomlSerializer` class
+- Documentation for serialization rules
+- Documentation for supported types
+
