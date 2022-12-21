@@ -1,6 +1,6 @@
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
-    public sealed class TomlFloat : TomlValue
+    internal sealed class TomlFloat : TomlValue
     {
         public double Value { get; }
 

@@ -1,8 +1,8 @@
 using System;
 
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
-    public sealed class TomlKeyValuePair
+    internal sealed class TomlKeyValuePair
     {
         public string Key { get; }
         public TomlValue Value { get; }

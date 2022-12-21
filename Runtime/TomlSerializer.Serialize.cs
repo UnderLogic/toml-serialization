@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnderLogic.Serialization.Toml.Types;
 
 namespace UnderLogic.Serialization.Toml
 {
@@ -144,7 +145,7 @@ namespace UnderLogic.Serialization.Toml
             
             if (collection.All(value => Type.GetTypeCode(value.GetType()) == TypeCode.Object))
             {
-                var tomlTableArray = new TomlTableArray(key);
+                var tomlTableArray = new TomlTableArray();
                 foreach (var value in collection)
                 {
                     var tomlTable = new TomlTable();

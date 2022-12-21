@@ -1,8 +1,8 @@
 using System;
 
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
-    public sealed class TomlDateTime : TomlValue
+    internal sealed class TomlDateTime : TomlValue
     {
         public DateTime Value { get; }
         

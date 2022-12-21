@@ -1,6 +1,6 @@
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
-    public sealed class TomlBoolean : TomlValue
+    internal sealed class TomlBoolean : TomlValue
     {
         public bool Value { get; }
 

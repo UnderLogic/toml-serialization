@@ -1,6 +1,6 @@
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
-    public sealed class TomlNull : TomlValue
+    internal sealed class TomlNull : TomlValue
     {
         public static readonly TomlNull Value = new();
         

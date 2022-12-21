@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
-    public sealed class TomlArray : TomlValue, IReadOnlyList<TomlValue>
+    internal sealed class TomlArray : TomlValue, IReadOnlyList<TomlValue>
     {
         private readonly List<TomlValue> _values = new();
 

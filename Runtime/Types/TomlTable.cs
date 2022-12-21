@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
-    public sealed class TomlTable : TomlValue,  IEnumerable<TomlKeyValuePair>
+    internal sealed class TomlTable : TomlValue,  IEnumerable<TomlKeyValuePair>
     {
         private readonly Dictionary<string, TomlValue> _table = new();
 

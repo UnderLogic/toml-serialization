@@ -2,10 +2,11 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using UnderLogic.Serialization.Toml.Types;
 
 namespace UnderLogic.Serialization.Toml
 {
-    public class TomlWriter : IDisposable
+    internal class TomlWriter : IDisposable
     {
         private const string DateFormat = "yyyy-MM-dd HH:mm:ss.fffZ";
         

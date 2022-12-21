@@ -1,6 +1,6 @@
-namespace UnderLogic.Serialization.Toml
+namespace UnderLogic.Serialization.Toml.Types
 {
-    public sealed class TomlInteger : TomlValue
+    internal sealed class TomlInteger : TomlValue
     {
         public long Value { get; }
 
