@@ -18,9 +18,12 @@
   - [Object Fields](serialization-rules/object-fields.md)
   - [Array Fields](serialization-rules/array-fields.md)
   - [Dictionary Fields](serialization-rules/dictionary-fields.md)
+- [Deserialization Rules](deserialization-rules.md)
 
 # Library Reference
 
 - [Serialization](serialization.md)
   - [TomlSerializer](serialization/toml-serializer.md)
   - [TomlExporter](serialization/toml-exporter.md)
+- [Deserialization](deserialization.md)
+  - [TomlSerializer](deserialization/toml-serializer.md)
