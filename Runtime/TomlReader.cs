@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -144,14 +145,15 @@ namespace UnderLogic.Serialization.Toml
             tomlValue = new TomlInteger(int64Value);
             return true;
         }
-        
+
         private static bool TryParseDateTimeValue(string text, out TomlDateTime tomlValue)
         {
             tomlValue = null;
 
-            if (!DateTime.TryParse(text, out var dateTimeValue))
+            if (!DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind,
+                    out var dateTimeValue))
                 return false;
-            
+
             tomlValue = new TomlDateTime(dateTimeValue);
             return true;
         }

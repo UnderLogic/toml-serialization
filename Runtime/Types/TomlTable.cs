@@ -35,6 +35,8 @@ namespace UnderLogic.Serialization.Toml.Types
                 throw new InvalidOperationException($"Key {key} already exists in table");
         }
 
+        public bool TryGetValue(string key, out TomlValue value) => _table.TryGetValue(key, out value);
+
         public IEnumerator<TomlKeyValuePair> GetEnumerator() =>
             _table.Select(pair => new TomlKeyValuePair(pair.Key, pair.Value)).GetEnumerator();
 

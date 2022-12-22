@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using NUnit.Framework;
 
 namespace UnderLogic.Serialization.Toml.Tests
@@ -75,7 +76,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(MockFlags.All)]
         public void Deserialize_EnumKeyValue_ShouldSetValue(MockFlags flagsValue)
         {
-            var existingValue = new WrappedValue<MockEnum>(MockEnum.None);
+            var existingValue = new WrappedValue<MockFlags>(MockFlags.None);
 
             var toml = $"value = \"{flagsValue:F}\"\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
@@ -135,7 +136,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(long.MaxValue)]
         public void Deserialize_Int64KeyValue_ShouldSetValue(long int64Value)
         {
-            var existingValue = new WrappedValue<int>(42);
+            var existingValue = new WrappedValue<long>(42);
 
             var toml = $"value = {int64Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
@@ -161,7 +162,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(ushort.MaxValue)]
         public void Deserialize_UInt16KeyValue_ShouldSetValue(ushort uint16Value)
         {
-            var existingValue = new WrappedValue<short>(42);
+            var existingValue = new WrappedValue<ushort>(42);
 
             var toml = $"value = {uint16Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
@@ -175,7 +176,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(uint.MaxValue)]
         public void Deserialize_UInt32KeyValue_ShouldSetValue(uint uint32Value)
         {
-            var existingValue = new WrappedValue<int>(42);
+            var existingValue = new WrappedValue<uint>(42);
 
             var toml = $"value = {uint32Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
@@ -183,15 +184,25 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(existingValue.Value, uint32Value);
         }
 
-        [Test]
-        public void Deserialize_DateTimeKeyValue_ShouldSetValue()
+        [TestCase("1979-05-27T07:32:00Z")]
+        [TestCase("1979-05-27T00:32:00-07:00")]
+        [TestCase("1979-05-27T00:32:00.999999-07:00")]
+        [TestCase("1979-05-27 07:32:00Z")]
+        [TestCase("1979-05-27 00:32:00-07:00")]
+        [TestCase("1979-05-27 00:32:00.999999-07:00")]
+        [TestCase("1979-05-27T07:32:00")]
+        [TestCase("1979-05-27 07:32:00")]
+        [TestCase("1979-05-27")]
+        [TestCase("07:32:00")]
+        [TestCase("00:32:00.999")]
+        public void Deserialize_DateTimeKeyValue_ShouldSetValue(string dateString)
         {
             var existingValue = new WrappedValue<DateTime>(DateTime.MinValue);
-
-            var toml = $"value = 1979-05-27 07:32:01.999Z\n";
+            
+            var toml = $"value = {dateString}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            var expectedDate = new DateTime(1979, 5, 27, 7, 32, 1, 999, DateTimeKind.Utc);
+            var expectedDate = DateTime.Parse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
             Assert.AreEqual(existingValue.Value, expectedDate);
         }
     }
