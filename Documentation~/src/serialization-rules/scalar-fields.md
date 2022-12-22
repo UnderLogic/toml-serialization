@@ -40,7 +40,11 @@ String fields are mapped to a [TOML string](https://toml.io/en/v1.0.0#string) va
 
 ```toml
 message = "Hello, world!"
+quoted = "This is a \"quoted\" string."
+path = "C:\\Users\\username\\Documents"
 ```
+
+**NOTE:** The TOML specification requires that double quotes and backslashes be escaped with a backslash.
 
 ## Enum
 
@@ -89,5 +93,5 @@ By default, the date and time are serialized in UTC and using the ISO 8601 forma
 ### Example
 
 ```toml
-timestamp = 2020-01-01 00:00:00Z
+timestamp = 2020-01-01 00:00:00.000Z
 ```

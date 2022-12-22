@@ -11,7 +11,6 @@ namespace UnderLogic.Serialization.Toml
         private const string DateFormat = "yyyy-MM-dd HH:mm:ss.fffZ";
         
         private readonly TextWriter _writer;
-     
         private bool _isDisposed;
         
         public TomlWriter(Stream stream, bool leaveOpen = true)
@@ -55,9 +54,10 @@ namespace UnderLogic.Serialization.Toml
                 return;
             }
 
-            _writer.Write($"\"{value}\"");
+            var escapedString = value.Replace("\"", "\\\"").Replace("\"", "\\\"");
+            _writer.Write($"\"{escapedString}\"");
         }
-        
+
         public void WriteEnumValue<T>(T value) where T : Enum
         {
             CheckIfDisposed();

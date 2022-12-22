@@ -15,7 +15,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void Serialize_BoolKeyValue_ShouldSerializeLowerCase(bool boolValue)
         {
             var wrappedValue = new WrappedValue<bool>(boolValue);
@@ -26,7 +26,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
         [TestCase('A')]
         [TestCase('0')]
-        [TestCase('_')]
+        [TestCase('$')]
         public void Serialize_CharKeyValue_ShouldSerializeQuoted(char charValue)
         {
             var wrappedValue = new WrappedValue<char>(charValue);
@@ -35,6 +35,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual($"value = \"{charValue}\"\n", toml);
         }
 
+        [TestCase("Hello World!")]
         [TestCase("The quick brown fox jumps over the lazy dog.")]
         public void Serialize_StringKeyValue_ShouldSerializeQuoted(string stringValue)
         {
@@ -42,6 +43,18 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(wrappedValue);
 
             Assert.AreEqual($"value = \"{stringValue}\"\n", toml);
+        }
+        
+        [TestCase("I'm a string with a \"quote\" in it.")]
+        [TestCase("C:\\Windows\\System32")]
+        [TestCase("This is a quoted path: \"C:\\Windows\\System32\"")]
+        public void Serialize_StringKeyValue_ShouldSerializeEscaped(string stringValue)
+        {
+            var wrappedValue = new WrappedValue<string>(stringValue);
+            var toml = TomlSerializer.Serialize(wrappedValue);
+
+            var escapedValue = stringValue.Replace("\"", "\\\"").Replace("\"", "\\\"");
+            Assert.AreEqual($"value = \"{escapedValue}\"\n", toml);
         }
 
         [TestCase(MockEnum.None)]

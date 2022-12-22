@@ -15,57 +15,57 @@ namespace UnderLogic.Serialization.Toml.Tests
         private int _maxMana = 25;
         private int _gold;
         private int _experience;
-        
-        private readonly List<MockNestedItem> _inventory = new();
-        
+
+        private List<MockNestedItem> _inventory = new();
+
         public int Id
         {
             get => _id;
             set => _id = value;
         }
-        
+
         public string Name
         {
             get => _name;
             set => _name = value;
         }
-        
+
         public int Level
         {
             get => _level;
             set => _level = value;
         }
-        
+
         public int Health
         {
             get => _health;
             set => _health = value;
         }
-        
+
         public int MaxHealth
         {
             get => _maxHealth;
             set => _maxHealth = value;
         }
-        
+
         public int Mana
         {
             get => _mana;
             set => _mana = value;
         }
-        
+
         public int MaxMana
         {
             get => _maxMana;
             set => _maxMana = value;
         }
-        
+
         public int Gold
         {
             get => _gold;
             set => _gold = value;
         }
-        
+
         public int Experience
         {
             get => _experience;
@@ -78,7 +78,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         {
             if (_inventory.Contains(item))
                 return;
-            
+
             _inventory.Add(item);
         }
     }

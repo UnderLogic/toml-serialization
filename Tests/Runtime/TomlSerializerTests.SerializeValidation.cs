@@ -8,7 +8,6 @@ namespace UnderLogic.Serialization.Toml.Tests
 {
     internal partial class TomlSerializerTests
     {
-
         [Test]
         public void SerializeToString_NullObject_ThrowsException()
         {
@@ -65,11 +64,19 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void SerializeToWriter_NonSerializable_ThrowsException()
         {
-            var sb = new StringBuilder();
-            var writer = new StringWriter(sb, CultureInfo.InvariantCulture);
+            var writer = new StringWriter(new StringBuilder());
             var nonSerializable = new { };
 
             Assert.Throws<InvalidOperationException>(() => { TomlSerializer.Serialize(writer, nonSerializable); });
+        }
+
+        [Test]
+        public void Serialize_DuplicateFieldName_ThrowsException()
+        {
+            var writer = new StringWriter(new StringBuilder());
+            var invalid = new MockInvalidClass();
+            
+            Assert.Throws<InvalidOperationException>(() => { TomlSerializer.Serialize(writer, invalid); });
         }
     }
 }

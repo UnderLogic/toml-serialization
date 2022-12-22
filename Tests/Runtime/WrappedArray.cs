@@ -6,9 +6,16 @@ using System.Linq;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public class WrappedArray<T> : IEnumerable<T>
+    public class WrappedArray<T> : IReadOnlyList<T>
     {
-        private readonly T[] _array;
+        private T[] _array;
+
+        public bool IsNull => _array == null;
+        public bool IsEmpty => _array != null && _array.Length == 0;
+
+        public int Count => _array?.Length ?? -1;
+        
+        public T this[int index] => _array[index];
 
         private WrappedArray() => _array = Array.Empty<T>();
         
