@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             const string toml = "value = null\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, null);
+            Assert.IsNull(existingValue.Value, "Value should be null");
         }
 
         [TestCase(true)]
@@ -26,7 +26,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {boolValue.ToString().ToLowerInvariant()}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, boolValue);
+            Assert.AreEqual(boolValue, existingValue.Value);
         }
 
         [TestCase('A')]
@@ -39,7 +39,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = \"{charValue}\"\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, charValue);
+            Assert.AreEqual(charValue, existingValue.Value);
         }
 
         [TestCase("Hello World!")]
@@ -51,7 +51,21 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = \"{stringValue}\"\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, stringValue);
+            Assert.AreEqual(stringValue, existingValue.Value);
+        }
+
+        [TestCase("I'm a string with a \"quote\" in it.")]
+        [TestCase("C:\\Windows\\System32")]
+        [TestCase("This is a quoted path: \"C:\\Windows\\System32\"")]
+        public void Deserialize_StringKeyValue_ShouldUnescapeValue(string stringValue)
+        {
+            var escapedValue = stringValue.Replace("\"", "\\\"").Replace("\\", "\\\\");
+            var existingValue = new WrappedValue<string>("???");
+
+            var toml = $"value = \"{escapedValue}\"\n";
+            TomlSerializer.DeserializeInto(toml, existingValue);
+
+            Assert.AreEqual(stringValue, existingValue.Value);
         }
 
         [TestCase(MockEnum.North)]
@@ -65,7 +79,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = \"{enumValue:F}\"\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, enumValue);
+            Assert.AreEqual(enumValue, existingValue.Value);
         }
 
         [TestCase(MockFlags.Available)]
@@ -81,7 +95,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = \"{flagsValue:F}\"\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, flagsValue);
+            Assert.AreEqual(flagsValue, existingValue.Value);
         }
 
         [TestCase(sbyte.MinValue)]
@@ -96,7 +110,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {int8Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, int8Value);
+            Assert.AreEqual(int8Value, existingValue.Value);
         }
 
         [TestCase(short.MinValue)]
@@ -111,7 +125,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {int16Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, int16Value);
+            Assert.AreEqual(int16Value, existingValue.Value);
         }
 
         [TestCase(int.MinValue)]
@@ -126,7 +140,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {int32Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, int32Value);
+            Assert.AreEqual(int32Value, existingValue.Value);
         }
 
         [TestCase(long.MinValue)]
@@ -141,7 +155,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {int64Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, int64Value);
+            Assert.AreEqual(int64Value, existingValue.Value);
         }
 
         [TestCase(0)]
@@ -154,7 +168,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {uint8Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, uint8Value);
+            Assert.AreEqual(uint8Value, existingValue.Value);
         }
 
         [TestCase((ushort)0)]
@@ -167,7 +181,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {uint16Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, uint16Value);
+            Assert.AreEqual(uint16Value, existingValue.Value);
         }
 
 
@@ -181,7 +195,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {uint32Value}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
-            Assert.AreEqual(existingValue.Value, uint32Value);
+            Assert.AreEqual(uint32Value, existingValue.Value);
         }
 
         [TestCase("1979-05-27T07:32:00Z")]
@@ -198,12 +212,12 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_DateTimeKeyValue_ShouldSetValue(string dateString)
         {
             var existingValue = new WrappedValue<DateTime>(DateTime.MinValue);
-            
+
             var toml = $"value = {dateString}\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
 
             var expectedDate = DateTime.Parse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-            Assert.AreEqual(existingValue.Value, expectedDate);
+            Assert.AreEqual(expectedDate, existingValue.Value);
         }
     }
 }

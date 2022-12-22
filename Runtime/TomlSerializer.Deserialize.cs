@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -103,84 +105,138 @@ namespace UnderLogic.Serialization.Toml
 
                 if (tomlValue is TomlArray tomlArray)
                 {
-                    DeserializeArrayField(tomlArray, field, obj);
+                    if (fieldType.IsArray)
+                        DeserializeArrayField(tomlArray, field, obj);
+                    else if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
+                        DeserializeListField(tomlArray, field, obj);
                 }
                 else
                 {
-                    DeserializeScalarField(tomlValue, field, obj);
+                    if (TryDeserializeScalarValue(tomlValue, fieldType, out var scalarValue))
+                        field.SetValue(obj, scalarValue);
                 }
             }
         }
 
-        private static void DeserializeScalarField(TomlValue tomlValue, FieldInfo field, object obj)
+        private static void DeserializeArrayField(TomlArray tomlArray, FieldInfo field, object obj)
         {
             var fieldType = field.FieldType;
 
-            if (fieldType == typeof(bool) && tomlValue is TomlBoolean boolValue)
+            var elementType = fieldType.GetElementType();
+            var array = Array.CreateInstance(elementType, tomlArray.Count);
+
+            for (var index = 0; index < tomlArray.Count; index++)
             {
-                field.SetValue(obj, boolValue.Value);
+                var tomlValue = tomlArray[index];
+                if (TryDeserializeScalarValue(tomlValue, elementType, out var scalarValue))
+                    array.SetValue(scalarValue, index);
             }
-            else if (fieldType == typeof(char) && tomlValue is TomlString charValue)
+
+            field.SetValue(obj, array);
+        }
+
+        private static void DeserializeListField(TomlArray tomlArray, FieldInfo field, object obj)
+        {
+            var fieldType = field.FieldType;
+
+            var elementType = fieldType.GetGenericArguments()[0];
+            var list = (IList)Activator.CreateInstance(fieldType);
+
+            foreach (var tomlValue in tomlArray)
+            {
+                if (TryDeserializeScalarValue(tomlValue, elementType, out var scalarValue))
+                    list.Add(scalarValue);
+            }
+
+            field.SetValue(obj, list);
+        }
+        
+        private static bool TryDeserializeScalarValue(TomlValue tomlValue, Type scalarType, out object scalarValue)
+        {
+            scalarValue = null;
+            
+            if (scalarType == typeof(bool) && tomlValue is TomlBoolean boolValue)
+            {
+                scalarValue = boolValue.Value;
+                return true;
+            }
+            if (scalarType == typeof(char) && tomlValue is TomlString charValue)
             {
                 if (string.IsNullOrEmpty(charValue.Value))
                     throw new InvalidOperationException("Cannot deserialize empty string to char");
 
-                field.SetValue(obj, charValue.Value[0]);
+                scalarValue = charValue.Value[0];
+                return true;
             }
-            else if (fieldType == typeof(string))
+            if (scalarType == typeof(string))
             {
                 if (tomlValue is TomlNull)
-                    field.SetValue(obj, null);
+                    scalarValue = null;
                 else if (tomlValue is TomlString stringValue)
-                    field.SetValue(obj, stringValue.Value);
-            }
-            else if (fieldType.IsEnum && tomlValue is TomlString enumValue)
-            {
-                if (Enum.TryParse(fieldType, enumValue.Value, out var enumResult))
-                    field.SetValue(obj, enumResult);
-            }
-            else if (fieldType == typeof(sbyte) && tomlValue is TomlInteger int8Value)
-            {
-                field.SetValue(obj, (sbyte)int8Value.Value);
-            }
-            else if (fieldType == typeof(short) && tomlValue is TomlInteger int16Value)
-            {
-                field.SetValue(obj, (short)int16Value.Value);
-            }
-            else if (fieldType == typeof(int) && tomlValue is TomlInteger int32Value)
-            {
-                field.SetValue(obj, (int)int32Value.Value);
-            }
-            else if (fieldType == typeof(long) && tomlValue is TomlInteger int64Value)
-            {
-                field.SetValue(obj, int64Value.Value);
-            }
-            else if (fieldType == typeof(byte) && tomlValue is TomlInteger uint8Value)
-            {
-                field.SetValue(obj, (byte)uint8Value.Value);
-            }
-            else if (fieldType == typeof(ushort) && tomlValue is TomlInteger uint16Value)
-            {
-                field.SetValue(obj, (ushort)uint16Value.Value);
-            }
-            else if (fieldType == typeof(uint) && tomlValue is TomlInteger uint32Value)
-            {
-                field.SetValue(obj, (uint)uint32Value.Value);
-            }
-            else if (fieldType == typeof(float) && tomlValue is TomlFloat floatValue)
-            {
-                field.SetValue(obj, (float)floatValue.Value);
-            }
-            else if (fieldType == typeof(double) && tomlValue is TomlInteger doubleValue)
-            {
-                field.SetValue(obj, doubleValue.Value);
-            }
-            else if (fieldType == typeof(DateTime) && tomlValue is TomlDateTime dateTimeValue)
-            {
-                field.SetValue(obj, dateTimeValue.Value);
-            }
-        }
+                    scalarValue = stringValue.Value;
 
-        private static void DeserializeArrayField(TomlArray tomlArray, FieldInfo field, object obj) { }
+                return true;
+            }
+            if (scalarType.IsEnum && tomlValue is TomlString enumValue)
+            {
+                if (Enum.TryParse(scalarType, enumValue.Value, out var enumResult))
+                {
+                    scalarValue = enumResult;
+                    return true;
+                }
+            }
+            if (scalarType == typeof(sbyte) && tomlValue is TomlInteger int8Value)
+            {
+                scalarValue = (sbyte)int8Value.Value;
+                return true;
+            }
+            if (scalarType == typeof(short) && tomlValue is TomlInteger int16Value)
+            {
+                scalarValue = (short)int16Value.Value;
+                return true;
+            }
+            if (scalarType == typeof(int) && tomlValue is TomlInteger int32Value)
+            {
+                scalarValue = (int)int32Value.Value;
+                return true;
+            }
+            if (scalarType == typeof(long) && tomlValue is TomlInteger int64Value)
+            {
+                scalarValue = int64Value.Value;
+                return true;
+            }
+            if (scalarType == typeof(byte) && tomlValue is TomlInteger uint8Value)
+            {
+                scalarValue = (byte)uint8Value.Value;
+                return true;
+            }
+            if (scalarType == typeof(ushort) && tomlValue is TomlInteger uint16Value)
+            {
+                scalarValue = (ushort)uint16Value.Value;
+                return true;
+            }
+            if (scalarType == typeof(uint) && tomlValue is TomlInteger uint32Value)
+            {
+                scalarValue = (uint)uint32Value.Value;
+                return true;
+            } 
+            if (scalarType == typeof(float) && tomlValue is TomlFloat floatValue)
+            {
+                scalarValue = (float)floatValue.Value;
+                return true;
+            }
+            if (scalarType == typeof(double) && tomlValue is TomlInteger doubleValue)
+            {
+                scalarValue = doubleValue.Value;
+                return true;
+            }
+            if (scalarType == typeof(DateTime) && tomlValue is TomlDateTime dateTimeValue)
+            {
+                scalarValue = dateTimeValue.Value;
+                return true;
+            }
+
+            return false;
+        }
     }
 }

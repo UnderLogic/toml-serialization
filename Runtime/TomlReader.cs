@@ -107,17 +107,18 @@ namespace UnderLogic.Serialization.Toml
         private static bool TryParseStringValue(string text, out TomlString tomlValue)
         {
             tomlValue = null;
-            
+
             var wrappedInDoubleQuotes = text.StartsWith('"') && text.EndsWith('"');
             var wrappedInSingleQuotes = text.StartsWith("'") && text.EndsWith("'");
-            
+
             if (!wrappedInDoubleQuotes && !wrappedInSingleQuotes)
                 return false;
-            
-            tomlValue = new TomlString(text.Substring(1, text.Length - 2));
+
+            var unescapedText = text.Substring(1, text.Length - 2).Replace("\\\\", "\\").Replace("\\\"", "\"");
+            tomlValue = new TomlString(unescapedText);
             return true;
         }
-        
+
         private static bool TryParseFloatValue(string text, out TomlFloat tomlValue)
         {
             tomlValue = null;

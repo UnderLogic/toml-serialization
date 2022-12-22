@@ -47,7 +47,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         
         [TestCase("I'm a string with a \"quote\" in it.")]
         [TestCase("C:\\Windows\\System32")]
-        [TestCase("Name\tJos\u00E9\nLocation\tSF.")]
+        [TestCase("This is a quoted path: \"C:\\Windows\\System32\"")]
         public void Serialize_StringKeyValue_ShouldSerializeEscaped(string stringValue)
         {
             var wrappedValue = new WrappedValue<string>(stringValue);
