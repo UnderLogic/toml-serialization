@@ -130,6 +130,8 @@ namespace UnderLogic.Serialization.Toml
                 var tomlValue = tomlArray[index];
                 if (TryDeserializeScalarValue(tomlValue, elementType, out var scalarValue))
                     array.SetValue(scalarValue, index);
+                else if (TryDeserializeArrayValue(tomlArray, elementType, out var arrayValue))
+                    array.SetValue(arrayValue, index);
             }
 
             field.SetValue(obj, array);
@@ -149,6 +151,25 @@ namespace UnderLogic.Serialization.Toml
             }
 
             field.SetValue(obj, list);
+        }
+
+        private static bool TryDeserializeArrayValue(TomlArray tomlArray, Type elementType, out object arrayValue)
+        {
+            arrayValue = null;
+
+            var array = Array.CreateInstance(elementType, tomlArray.Count);
+            
+            for (var index = 0; index < tomlArray.Count; index++)
+            {
+                var tomlValue = tomlArray[index];
+                if (TryDeserializeScalarValue(tomlValue, elementType, out var scalarValue))
+                    array.SetValue(scalarValue, index);
+                else
+                    return false;
+            }
+
+            arrayValue = array;
+            return true;
         }
         
         private static bool TryDeserializeScalarValue(TomlValue tomlValue, Type type, out object scalarValue)

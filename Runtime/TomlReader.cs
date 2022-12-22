@@ -117,8 +117,7 @@ namespace UnderLogic.Serialization.Toml
             {
                 if (TryParseScalarValue(eachValue, out var scalarValue))
                     parsedValues.Add(scalarValue);
-                
-                if (TryParseArrayValue(eachValue, out var childArrayValue))
+                else if (TryParseArrayValue(eachValue, out var childArrayValue))
                     parsedValues.Add(childArrayValue);
             }
 
@@ -196,11 +195,13 @@ namespace UnderLogic.Serialization.Toml
         {
             var currentString = new StringBuilder();
             var inQuotes = false;
+            var inArray = false;
+            var inTable = false;
             var escaped = false;
 
             foreach (var eachChar in text)
             {
-                if (eachChar == separator && !inQuotes)
+                if (eachChar == separator && !inQuotes && !inArray && !inTable)
                 {
                     yield return currentString.ToString();
                     currentString.Clear();
@@ -209,6 +210,18 @@ namespace UnderLogic.Serialization.Toml
 
                 if (eachChar == '"' && !escaped)
                     inQuotes = !inQuotes;
+
+                if (eachChar == '[' && !escaped)
+                    inArray = true;
+                
+                if (eachChar == ']' && !escaped)
+                    inArray = false;
+                
+                if (eachChar == '{' && !escaped)
+                    inTable = true;
+                
+                if (eachChar == '}' && !escaped)
+                    inTable = false;
 
                 if (eachChar == '\\' && !escaped)
                 {
