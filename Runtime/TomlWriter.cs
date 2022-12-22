@@ -54,9 +54,10 @@ namespace UnderLogic.Serialization.Toml
                 return;
             }
 
-            _writer.Write($"\"{value}\"");
+            var escapedString = value.Replace("\"", "\\\"").Replace("\"", "\\\"");
+            _writer.Write($"\"{escapedString}\"");
         }
-        
+
         public void WriteEnumValue<T>(T value) where T : Enum
         {
             CheckIfDisposed();

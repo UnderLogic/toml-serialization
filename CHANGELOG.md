@@ -12,7 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unit tests for `Deserialize` methods
 - Documentation for deserialization rules
 - Documentation for `Deserialize` methods
-- Deserializer sample scene
+
+### Fixed
+
+- Escape double quotes and backslashes in serialized strings
 
 ## [0.2.0] - 2022-12-21
 
