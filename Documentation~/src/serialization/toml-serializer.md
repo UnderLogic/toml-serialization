@@ -12,6 +12,8 @@ For more information on what can be serialized, see the [Supported Types](../sup
 
 For more information on how objects are serialized to TOML, see the [Serialization Rules](../serialization-rules.md) page.
 
+Please note the [Limitations](serialization-rules/limitations.md) of the serialization process.
+
 ## Public Methods
 
 - `Serialize(object) : string` - Returns a string containing the TOML representation of the serialized object.

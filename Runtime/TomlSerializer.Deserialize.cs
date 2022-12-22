@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using UnderLogic.Serialization.Toml.Types;
 
 namespace UnderLogic.Serialization.Toml
 {
@@ -66,6 +67,17 @@ namespace UnderLogic.Serialization.Toml
             
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
+
+            using (var tomlReader = new TomlReader(reader))
+            {
+                var rootTable = tomlReader.ReadDocument();
+                DeserializeObject(rootTable, obj);
+            }
+        }
+
+        private static void DeserializeObject(TomlTable table, object obj)
+        {
+            
         }
     }
 }

@@ -11,7 +11,6 @@ namespace UnderLogic.Serialization.Toml
         private const string DateFormat = "yyyy-MM-dd HH:mm:ss.fffZ";
         
         private readonly TextWriter _writer;
-     
         private bool _isDisposed;
         
         public TomlWriter(Stream stream, bool leaveOpen = true)

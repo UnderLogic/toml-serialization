@@ -15,7 +15,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void Serialize_BoolKeyValue_ShouldSerializeLowerCase(bool boolValue)
         {
             var wrappedValue = new WrappedValue<bool>(boolValue);
@@ -26,7 +26,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
         [TestCase('A')]
         [TestCase('0')]
-        [TestCase('_')]
+        [TestCase('$')]
         public void Serialize_CharKeyValue_ShouldSerializeQuoted(char charValue)
         {
             var wrappedValue = new WrappedValue<char>(charValue);
@@ -35,6 +35,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual($"value = \"{charValue}\"\n", toml);
         }
 
+        [TestCase("Hello World!")]
         [TestCase("The quick brown fox jumps over the lazy dog.")]
         public void Serialize_StringKeyValue_ShouldSerializeQuoted(string stringValue)
         {
