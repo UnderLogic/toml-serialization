@@ -42,7 +42,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_CharArray_ShouldSetElements()
         {
             var wrappedArray = WrappedArray<char>.Empty();
-            const string toml = "array = [ \\\"A\\\", \\\"0\\\", \\\"!\\\" ]\n";
+            const string toml = "array = [ \"A\", \"0\", \"!\" ]\n";
 
             TomlSerializer.DeserializeInto(toml, wrappedArray);
             Assert.IsFalse(wrappedArray.IsEmpty, "Array should not be empty");
@@ -56,7 +56,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_StringArray_ShouldSetElements()
         {
             var wrappedArray = WrappedArray<string>.Empty();
-            const string toml = "array = [ \\\"Hello\\\", \\\"World!\\\" ]\n";
+            const string toml = "array = [ \"Hello\", \"World!\" ]\n";
 
             TomlSerializer.DeserializeInto(toml, wrappedArray);
             Assert.IsFalse(wrappedArray.IsEmpty, "Array should not be empty");
@@ -69,7 +69,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_EnumArray_ShouldSetElements()
         {
             var wrappedArray = WrappedArray<MockEnum>.Empty();
-            const string toml = "array = [ \\\"North\\\", \\\"South\\\", \\\"East\\\", \\\"West\\\" ]\n";
+            const string toml = "array = [ \"North\", \"South\", \"East\", \"West\" ]\n";
 
             TomlSerializer.DeserializeInto(toml, wrappedArray);
             Assert.IsFalse(wrappedArray.IsEmpty, "Array should not be empty");
@@ -85,7 +85,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         {
             var wrappedArray = WrappedArray<MockFlags>.Empty();
             const string toml =
-                "array = [ \\\"Available\\\", \\\"InProgress\\\", \\\"Completed,Cancelled\\\", \\\"All\\\" ]\n";
+                "array = [ \"Available\", \"InProgress\", \"Completed,Cancelled\", \"All\" ]\n";
 
             TomlSerializer.DeserializeInto(toml, wrappedArray);
             Assert.IsFalse(wrappedArray.IsEmpty, "Array should not be empty");
@@ -211,13 +211,13 @@ namespace UnderLogic.Serialization.Toml.Tests
             TomlSerializer.DeserializeInto(toml, wrappedArray);
             Assert.IsFalse(wrappedArray.IsEmpty, "Array should not be empty");
 
-            Assert.AreEqual(-3.14, wrappedArray[0]);
-            Assert.AreEqual(-1, wrappedArray[1]);
-            Assert.AreEqual(-0.5, wrappedArray[2]);
-            Assert.AreEqual(0, wrappedArray[3]);
-            Assert.AreEqual(0.5, wrappedArray[4]);
-            Assert.AreEqual(1, wrappedArray[5]);
-            Assert.AreEqual(3.14, wrappedArray[6]);
+            Assert.AreEqual(-3.14f, wrappedArray[0]);
+            Assert.AreEqual(-1f, wrappedArray[1]);
+            Assert.AreEqual(-0.5f, wrappedArray[2]);
+            Assert.AreEqual(0f, wrappedArray[3]);
+            Assert.AreEqual(0.5f, wrappedArray[4]);
+            Assert.AreEqual(1f, wrappedArray[5]);
+            Assert.AreEqual(3.14f, wrappedArray[6]);
         }
 
         [Test]

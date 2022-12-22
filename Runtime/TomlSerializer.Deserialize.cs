@@ -151,86 +151,103 @@ namespace UnderLogic.Serialization.Toml
             field.SetValue(obj, list);
         }
         
-        private static bool TryDeserializeScalarValue(TomlValue tomlValue, Type scalarType, out object scalarValue)
+        private static bool TryDeserializeScalarValue(TomlValue tomlValue, Type type, out object scalarValue)
         {
             scalarValue = null;
-            
-            if (scalarType == typeof(bool) && tomlValue is TomlBoolean boolValue)
+
+            if (tomlValue is TomlNull)
+                return true;
+
+            if (tomlValue is TomlBoolean boolValue)
             {
                 scalarValue = boolValue.Value;
                 return true;
             }
-            if (scalarType == typeof(char) && tomlValue is TomlString charValue)
-            {
-                if (string.IsNullOrEmpty(charValue.Value))
-                    throw new InvalidOperationException("Cannot deserialize empty string to char");
 
-                scalarValue = charValue.Value[0];
-                return true;
-            }
-            if (scalarType == typeof(string))
+            if (tomlValue is TomlString stringValue)
             {
-                if (tomlValue is TomlNull)
-                    scalarValue = null;
-                else if (tomlValue is TomlString stringValue)
-                    scalarValue = stringValue.Value;
-
-                return true;
-            }
-            if (scalarType.IsEnum && tomlValue is TomlString enumValue)
-            {
-                if (Enum.TryParse(scalarType, enumValue.Value, out var enumResult))
+                if (type == typeof(char))
                 {
-                    scalarValue = enumResult;
+                    if (string.IsNullOrEmpty(stringValue.Value))
+                        throw new InvalidOperationException("Cannot deserialize empty string to char");
+
+                    scalarValue = stringValue.Value[0];
+                    return true;
+                }
+
+                if (type == typeof(string) || type == typeof(object))
+                {
+                    scalarValue = stringValue.Value;
+                    return true;
+                }
+
+                if (type.IsEnum)
+                {
+                    if (Enum.TryParse(type, stringValue.Value, false, out var enumValue))
+                    {
+                        scalarValue = enumValue;
+                        return true;
+                    }
+                }
+            }
+
+            if (tomlValue is TomlInteger integerValue)
+            {
+                if (type == typeof(sbyte))
+                {
+                    scalarValue = (sbyte)integerValue.Value;
+                    return true;
+                }
+                if (type == typeof(short))
+                {
+                    scalarValue = (short)integerValue.Value;
+                    return true;
+                }
+                if (type == typeof(int))
+                {
+                    scalarValue = (int)integerValue.Value;
+                    return true;
+                }
+                if (type == typeof(long) || type == typeof(object))
+                {
+                    scalarValue = integerValue.Value;
+                    return true;
+                }
+
+                if (type == typeof(byte))
+                {
+                    scalarValue = (byte)integerValue.Value;
+                    return true;
+                }
+                if (type == typeof(ushort))
+                {
+                    scalarValue = (ushort)integerValue.Value;
+                    return true;
+                }
+
+                if (type == typeof(uint))
+                {
+                    scalarValue = (uint)integerValue.Value;
                     return true;
                 }
             }
-            if (scalarType == typeof(sbyte) && tomlValue is TomlInteger int8Value)
+
+            if (tomlValue is TomlFloat floatValue)
             {
-                scalarValue = (sbyte)int8Value.Value;
-                return true;
+                if (type == typeof(float))
+                {
+                    scalarValue = (float)floatValue.Value;
+                    return true;
+                }
+
+                if (type == typeof(double) || type == typeof(object))
+                {
+                    scalarValue = floatValue.Value;
+                    return true;
+                }
             }
-            if (scalarType == typeof(short) && tomlValue is TomlInteger int16Value)
-            {
-                scalarValue = (short)int16Value.Value;
-                return true;
-            }
-            if (scalarType == typeof(int) && tomlValue is TomlInteger int32Value)
-            {
-                scalarValue = (int)int32Value.Value;
-                return true;
-            }
-            if (scalarType == typeof(long) && tomlValue is TomlInteger int64Value)
-            {
-                scalarValue = int64Value.Value;
-                return true;
-            }
-            if (scalarType == typeof(byte) && tomlValue is TomlInteger uint8Value)
-            {
-                scalarValue = (byte)uint8Value.Value;
-                return true;
-            }
-            if (scalarType == typeof(ushort) && tomlValue is TomlInteger uint16Value)
-            {
-                scalarValue = (ushort)uint16Value.Value;
-                return true;
-            }
-            if (scalarType == typeof(uint) && tomlValue is TomlInteger uint32Value)
-            {
-                scalarValue = (uint)uint32Value.Value;
-                return true;
-            } 
-            if (scalarType == typeof(float) && tomlValue is TomlFloat floatValue)
-            {
-                scalarValue = (float)floatValue.Value;
-                return true;
-            }
-            if (scalarType == typeof(double) && tomlValue is TomlInteger doubleValue)
-            {
-                scalarValue = doubleValue.Value;
-                return true;
-            }
-            if (scalarType == typeof(DateTime) && tomlValue is TomlDateTime dateTimeValue)
+            
+            if (tomlValue is TomlDateTime dateTimeValue)
             {
                 scalarValue = dateTimeValue.Value;
                 return true;

@@ -11,7 +11,8 @@ namespace UnderLogic.Serialization.Toml
     internal class TomlReader : IDisposable
     {
         private static readonly Regex KeyValueRegex = new (@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Compiled);
-
+        private static readonly Regex ArrayRegex = new (@"^\s*\[\s*(.*)\s*\]", RegexOptions.Compiled);
+        
         private readonly TextReader _reader;
         private bool _isDisposed;
 
@@ -63,6 +64,12 @@ namespace UnderLogic.Serialization.Toml
                         currentTable.Add(key, scalarValue);
                         continue;
                     }
+                    
+                    if (TryParseArrayValue(valueString, out var arrayValue))
+                    {
+                        currentTable.Add(key, arrayValue);
+                        continue;
+                    }
                 }
             }
 
@@ -73,24 +80,50 @@ namespace UnderLogic.Serialization.Toml
         {
             tomlValue = null;
 
-            if (text == "null")
+            if (text == null || text == "null")
             {
                 tomlValue = TomlNull.Value;
                 return true;
             }
+            
+            var trimmedText = text.Trim();
 
-            if (TryParseBooleanValue(text, out var boolValue))
+            if (TryParseBooleanValue(trimmedText, out var boolValue))
                 tomlValue = boolValue;
-            else if (TryParseStringValue(text, out var stringValue))
+            else if (TryParseStringValue(trimmedText, out var stringValue))
                 tomlValue = stringValue;
-            else if (TryParseFloatValue(text, out var floatValue))
+            else if (TryParseFloatValue(trimmedText, out var floatValue))
                 tomlValue = floatValue;
-            else if (TryParseIntegerValue(text, out var integerValue))
+            else if (TryParseIntegerValue(trimmedText, out var integerValue))
                 tomlValue = integerValue;
-            else if (TryParseDateTimeValue(text, out var dateTimeValue))
+            else if (TryParseDateTimeValue(trimmedText, out var dateTimeValue))
                 tomlValue = dateTimeValue;
 
             return tomlValue != null;
+        }
+
+        private static bool TryParseArrayValue(string text, out TomlArray tomlArray)
+        {
+            tomlArray = null;
+            
+            var arrayMatch = ArrayRegex.Match(text);
+            if (!arrayMatch.Success)
+                return false;
+
+            var arrayValues = SplitString(arrayMatch.Groups[1].Value, ',');
+            var parsedValues = new List<TomlValue>();
+            
+            foreach (var eachValue in arrayValues)
+            {
+                if (TryParseScalarValue(eachValue, out var scalarValue))
+                    parsedValues.Add(scalarValue);
+                
+                if (TryParseArrayValue(eachValue, out var childArrayValue))
+                    parsedValues.Add(childArrayValue);
+            }
+
+            tomlArray = new TomlArray(parsedValues);
+            return true;
         }
 
         private static bool TryParseBooleanValue(string text, out TomlBoolean tomlValue)
@@ -157,6 +190,37 @@ namespace UnderLogic.Serialization.Toml
 
             tomlValue = new TomlDateTime(dateTimeValue);
             return true;
+        }
+
+        private static IEnumerable<string> SplitString(string text, char separator)
+        {
+            var currentString = new StringBuilder();
+            var inQuotes = false;
+            var escaped = false;
+
+            foreach (var eachChar in text)
+            {
+                if (eachChar == separator && !inQuotes)
+                {
+                    yield return currentString.ToString();
+                    currentString.Clear();
+                    continue;
+                }
+
+                if (eachChar == '"' && !escaped)
+                    inQuotes = !inQuotes;
+
+                if (eachChar == '\\' && !escaped)
+                {
+                    escaped = true;
+                    continue;
+                }
+
+                currentString.Append(eachChar);
+                escaped = false;
+            }
+
+            yield return currentString.ToString();
         }
 
         public void Close()
