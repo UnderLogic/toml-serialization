@@ -12,7 +12,7 @@ For more information on what can be serialized, see the [Supported Types](../sup
 
 For more information on how objects are serialized to TOML, see the [Serialization Rules](../serialization-rules.md) page.
 
-Please note the [Limitations](serialization-rules/limitations.md) of the serialization process.
+Please note the [Limitations](../limitations.md) of the serialization process.
 
 ## Public Methods
 
