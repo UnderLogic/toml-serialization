@@ -42,8 +42,6 @@ namespace UnderLogic.Serialization.Toml
             var rootTable = new TomlTable();
 
             var currentTable = rootTable;
-
-            var tableStack = new Stack<TomlTable>();
             
             string line = null;
             while ((line = _reader.ReadLine()) != null)

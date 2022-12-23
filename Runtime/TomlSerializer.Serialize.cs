@@ -11,6 +11,7 @@ namespace UnderLogic.Serialization.Toml
 {
     public static partial class TomlSerializer
     {
+        #region Serialize Public Methods
         public static string Serialize(object obj)
         {
             if (obj == null)
@@ -49,6 +50,7 @@ namespace UnderLogic.Serialization.Toml
             using (var tomlWriter = new TomlWriter(writer))
                 tomlWriter.WriteDocument(rootTable);
         }
+        #endregion
 
         private static void SerializeObject(TomlTable table, object obj)
         {
@@ -127,7 +129,7 @@ namespace UnderLogic.Serialization.Toml
             }
             else if (Type.GetTypeCode(type) == TypeCode.Object)
             {
-                var tomlTable = ConvertToTomlTable(obj);
+                var tomlTable = ConvertToTomlTableExpanded(obj);
                 
                 if (tomlTable != null)
                     return tomlTable;
@@ -182,7 +184,7 @@ namespace UnderLogic.Serialization.Toml
             return tomlTable;
         }
 
-        private static TomlTable ConvertToTomlTable(object obj)
+        private static TomlTable ConvertToTomlTableExpanded(object obj)
         {
             var tomlTable = new TomlTable();
             SerializeObject(tomlTable, obj);
