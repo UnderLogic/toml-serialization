@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnderLogic.Serialization.Toml.Types;
@@ -110,7 +112,7 @@ namespace UnderLogic.Serialization.Toml
                 {
                     if (fieldType.IsArray)
                         DeserializeArrayField(tomlArray, field, obj);
-                    else if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(IList<>))
+                    else if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
                         DeserializeListField(tomlArray, field, obj);
                 }
                 else DeserializeScalarField(tomlValue, field, obj);
@@ -143,7 +145,7 @@ namespace UnderLogic.Serialization.Toml
             var fieldType = field.FieldType;
             var elementType = fieldType.GetGenericArguments()[0];
 
-            if (!TomlConvert.TryIntoList(tomlArray, elementType, out var listResult))
+            if (TomlConvert.TryIntoList(tomlArray, elementType, out var listResult))
                 field.SetValue(obj, listResult);
             else
                 throw new InvalidOperationException($"Unable to deserialize list into {field.Name}");

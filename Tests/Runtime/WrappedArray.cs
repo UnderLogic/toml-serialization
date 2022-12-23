@@ -6,7 +6,7 @@ using System.Linq;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public class WrappedArray<T> : IReadOnlyList<T>
+    internal sealed class WrappedArray<T> : IReadOnlyList<T>
     {
         private T[] _array;
 
