@@ -27,6 +27,31 @@ For key-value pairs, the key will never be serialized using dot notation.
 The library does not attempt to escape the key names in any way.
 This is usually not a problem, as C# field names usually are alphanumeric.
 
+## Multiline Strings
+
+The library does not support multiline strings using the `"""` or `'''` syntax.
+This is something that may be added in a future version of the library.
+
+It does support strings that contain escaped quotes (`\"` or `\'`) characters.
+
+## Interfaces
+
+This library does not support two-way serialization of fields that represent interfaces.
+This is because the library does not know which concrete type to use when deserializing the data.
+
+Since fields can be made private you should not need to serialize interfaces.
+Instead your backing fields should be of the concrete type, and the interface should be a property that can be accessed publicly.
+
+## Abstract & Derived Classes
+
+This library does not support two-way serialization of abstract or base classes.
+This is because the library does not know which concrete type to use when deserializing the data.
+
+When deserializing a base class, the library will only serialize the fields that are defined in the base class.
+This can cause issues if the concrete type has additional fields that are not defined in the base class.
+
+You should always use specific concrete types when serializing and deserializing data.
+
 ## Deeply Nested Objects
 
 When serializing deeply nested objects, the library may incorrectly serialize the object or inline some of the fields.
@@ -36,7 +61,6 @@ While this is not a problem for most use cases, it is something to be aware of i
 ## Multidimensional Arrays
 
 This library does not currently support multidimensional or jagged arrays, but it may be added in a future version.
-As a workaround you can use a custom type that represents a complex array and implement `IEnumerable`, `ICollection` or `IList` interfaces.
 
 ## Unsigned 64-bit Integers
 
@@ -44,6 +68,7 @@ These are not supported by the TOML specification, so they are not supported by 
 Unsigned 32-bit integers are supported, however.
 
 You can use signed 64-bit integers instead, as they are supported by the TOML specification.
+All integer values are stored as signed 64-bit integers in the TOML document.
 
 ## Floating Point Precision
 

@@ -2,8 +2,10 @@
 
 ## Overview
 
-A scalar field is a field that is not an object, array, or dictionary.
+A scalar field is a field that is not a complex object or collection.
 It represents a single value, such as a `string`, `int`, or `DateTime`.
+
+It can also represent a boxed `object` value that contains a scalar value.
 
 ## Mapping
 
@@ -95,3 +97,9 @@ By default, the date and time are serialized in UTC and using the ISO 8601 forma
 ```toml
 timestamp = 2020-01-01 00:00:00.000Z
 ```
+
+## Object
+
+Boxed `object` fields are mapped to their underlying type and serialized based on the type of the boxed value.
+
+This is useful when used in conjunction with arrays, lists, and dictionaries for mixed collections.

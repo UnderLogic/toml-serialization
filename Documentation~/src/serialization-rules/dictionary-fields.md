@@ -2,10 +2,8 @@
 
 ## Overview
 
-A dictionary field is a field that is an `IDictionary<string, TValue>`, where `TValue` is a supported type.
-`TValue` can be a scalar, object, array or dictionary type.
-
-Custom objects that implement `IDictionary<string, TValue>` are also supported.
+A dictionary field is a field that is a `Dictionary<string, TValue>`, where `TValue` is a supported type.
+`TValue` can be a scalar, object, array, list, or dictionary type.
 
 ## Mapping
 
@@ -39,7 +37,7 @@ updatedAt = 2020-01-01 00:00:00Z
 
 ### Array Example
 
-If the dictionary contains array types, it is serialized as a [TOML table array](https://toml.io/en/v1.0.0#array-of-tables).
+If the dictionary contains array or list types, it is serialized as a [TOML table array](https://toml.io/en/v1.0.0#array-of-tables).
 
 ```toml
 [[results]]

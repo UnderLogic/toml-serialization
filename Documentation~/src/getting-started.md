@@ -21,8 +21,8 @@ This could be player progress, game state, or any other data that needs to be sa
 
 ### Level Data
 
-Where you need to serialize and deserialize level data.
-This could be level settings, variations, or any other data that needs to be saved and loaded.
+Where you need to serialize and deserialize level or template data.
+This could be level settings, monster variations, or any other data that needs to be saved and loaded.
 
 ### Human Readable & Editable
 

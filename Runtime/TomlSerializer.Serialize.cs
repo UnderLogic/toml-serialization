@@ -121,7 +121,7 @@ namespace UnderLogic.Serialization.Toml
                 if (tomlTable != null)
                     return tomlTable;
             }
-            else if (obj is IEnumerable enumerable)
+            else if (obj is IList enumerable)
             {
                 var tomlArray = ConvertToTomlArray(enumerable);
                 if (tomlArray != null)

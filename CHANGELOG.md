@@ -10,8 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Deserialize` methods for `TomlSerializer` static class
 - Unit tests for `Deserialize` methods
-- Documentation for deserialization rules
-- Documentation for `Deserialize` methods
+- Unit tests for `Serialize` methods
+- Updated documentation
+
+### Changed
+
+- `Serialize` now only serializes `IList` instead of `IEnumerable` fields
 
 ### Fixed
 

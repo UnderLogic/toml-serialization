@@ -6,8 +6,6 @@ By default, the name of the field is used as the key in the TOML document.
 
 Any underscores (`_`) at the beginning of the field name are removed.
 
-For example, the field name `_name` would be serialized as `name` in the output.
-
 ### Example
 
 ```csharp
@@ -36,6 +34,8 @@ gold = 1250
 
 Nested fields are serialized using the same rules as the top-level object.
 Nested tables are named using the dot (`.`) notation, if nested more than one level deep.
+
+**NOTE:** Nested objects must also be marked with the `Serializable` attribute.
 
 ### Example
 
@@ -81,5 +81,3 @@ wisdom = 2
 constitution = 8
 charisma = 1
 ```
-
-**NOTE:** Nested objects must be marked with the `Serializable` attribute.

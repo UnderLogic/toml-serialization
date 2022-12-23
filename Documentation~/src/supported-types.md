@@ -2,16 +2,15 @@
 
 This package library aims to support the most common use cases for serializing and deserializing data.
 
-To see more information how these are serialized, see the [Serialization Rules](serialization-rules.md) page.
+To see more information how these are serialized into TOML, see the [Serialization Rules](serialization-rules.md) page.
 
-## Scalar Types
+## Scalars
 
-The following "scalar" types are supported:
+The following scalar types are supported:
 
 - `bool`
 - `char`
 - `string`
-- `enum`
 - `sbyte`
 - `short`
 - `int`
@@ -25,23 +24,35 @@ The following "scalar" types are supported:
 
 **NOTE:** Unsigned 64-bit integer types (`ulong`) are not supported, per the [TOML specification](https://toml.io/en/v1.0.0#integer).
 
-## Object Types
+## Enum Values
 
-Custom `struct` and `class` objects are supported if they are marked with the `Serializable` attribute.
+Enum values are supported include bitflags marked with the `Flags` attribute.
 
-Unity's `ScriptableObject` and `MonoBehaviour` types are also supported.
+## Object Values
 
-**NOTE:** Each serialized field of the object must be one of the supported types, or marked with the `NonSerialized` attribute.
+Boxed `object` values are supported.
+This can be useful when used in conjunction with arrays, lists, and dictionaries for mixed collections.
 
-## Array Types
+## Structs
 
-Array of supported types is also allowed, including `IEnumerable<T>` collections.
+Custom struct types are supported and must be marked with the `Serializable` attribute.
 
-Custom objects that implement `IEnumerable<T>` are also supported if the `T` type is one of the supported types.
+## Classes
 
-## Dictionary Types
+Custom class types are supported and must be marked with the `Serializable` attribute.
+
+Unity's `ScriptableObject` and `MonoBehaviour` types are supported, but must also be marked with the `Serializable` attribute.
+
+## Arrays
+
+Arrays of any supported type are allowed and can be serialized.
+
+## Lists
+
+Lists of any supported type are allowed and can be serialized.
+This includes `IList` non-generic and `IList<T>` generic interfaces.
+
+## Dictionaries
 
 Dictionaries are supported if `TKey` is `string` and `TValue` is one of the supported types.
 This includes custom types, array types, and nested dictionary types as a value.
-
-Custom objects that implement `IDictionary<string, TValue>` are also supported.

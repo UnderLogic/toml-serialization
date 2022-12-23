@@ -11,13 +11,14 @@
 # Serialization
 
 - [Supported Types](supported-types.md)
+- [Limitations](limitations.md)
 - [Serialization Rules](serialization-rules.md)
-  - [Limitations](serialization-rules/limitations.md)
   - [Field Selection](serialization-rules/field-selection.md)
   - [Field Naming](serialization-rules/field-naming.md)
   - [Scalar Fields](serialization-rules/scalar-fields.md)
   - [Object Fields](serialization-rules/object-fields.md)
   - [Array Fields](serialization-rules/array-fields.md)
+  - [List Fields](serialization-rules/list-fields.md)
   - [Dictionary Fields](serialization-rules/dictionary-fields.md)
 - [Deserialization Rules](deserialization-rules.md)
   - [Field Selection](deserialization-rules/field-selection.md)
