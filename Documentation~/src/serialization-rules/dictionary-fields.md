@@ -5,6 +5,18 @@
 A dictionary field is a field that is a `Dictionary<string, TValue>`, where `TValue` is a supported type.
 `TValue` can be a scalar, object, array, list, or dictionary type.
 
+## Definition
+
+```csharp
+[Serializable]
+public class MyData
+{
+    private Dictionary<string, int> _scores;
+    private Dictionary<string, string> _names;
+    private Dictionary<string, object> _metadata;
+}
+```
+
 ## Mapping
 
 A dictionary field is mapped to either an [inline TOML table](https://toml.io/en/v1.0.0#inline-table) or a [standard TOML table](https://toml.io/en/v1.0.0#table) based on the type of the dictionary values.
