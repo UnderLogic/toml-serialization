@@ -20,7 +20,7 @@ public class PlayerCharacter
 }
 ```
 
-In the above example, the `_name`, `_level`, `_health`, `_maxHealth`, and `_gold` fields are serialized and will appear in the output TOML:
+Would serialize into...
 
 ```toml
 name = "Player 1"
@@ -29,6 +29,8 @@ health = 160
 maxHealth = 200
 gold = 1250
 ```
+
+In the above example, the `_name`, `_level`, `_health`, `_maxHealth`, and `_gold` fields are serialized and will appear in the output TOML:
 
 ## Nested Fields
 
@@ -64,7 +66,7 @@ public class PlayerStats
 }
 ```
 
-In the above example, the `_name`, `_level`, `_health`, `_maxHealth`, `_gold`, and `_stats` fields are serialized and will appear in the output TOML:
+Would serialize into...
 
 ```toml
 name = "Player 1"
@@ -81,3 +83,5 @@ wisdom = 2
 constitution = 8
 charisma = 1
 ```
+
+In the above example, the `_name`, `_level`, `_health`, `_maxHealth`, `_gold`, and `_stats` fields are serialized and will appear in the output TOML:

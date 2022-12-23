@@ -7,6 +7,7 @@
 
 - [Installation](installation.md)
 - [Getting Started](getting-started.md)
+- [Under the Hood](under-the-hood.md)
 
 # Serialization
 
@@ -22,6 +23,7 @@
   - [Dictionary Fields](serialization-rules/dictionary-fields.md)
 - [Deserialization Rules](deserialization-rules.md)
   - [Field Selection](deserialization-rules/field-selection.md)
+  - [Field Matching](deserialization-rules/field-matching.md)
 
 # Library Reference
 

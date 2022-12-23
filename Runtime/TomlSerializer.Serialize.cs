@@ -121,9 +121,9 @@ namespace UnderLogic.Serialization.Toml
                 if (tomlTable != null)
                     return tomlTable;
             }
-            else if (obj is IList enumerable)
+            else if (obj is IList list)
             {
-                var tomlArray = ConvertToTomlArray(enumerable);
+                var tomlArray = ConvertToTomlArray(list);
                 if (tomlArray != null)
                     return tomlArray;
             }
@@ -144,7 +144,7 @@ namespace UnderLogic.Serialization.Toml
 
             if (collection.Count < 1)
                 return TomlArray.Empty;
-            
+
             if (collection.All(value => Type.GetTypeCode(value.GetType()) == TypeCode.Object))
             {
                 var tomlTableArray = new TomlTableArray();
