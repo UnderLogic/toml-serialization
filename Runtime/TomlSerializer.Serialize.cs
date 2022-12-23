@@ -70,7 +70,7 @@ namespace UnderLogic.Serialization.Toml
                 var fieldType = field.FieldType;
                 var fieldValue = field.GetValue(obj);
 
-                var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldKey);
+                var tomlValue = ConvertToTomlValue(fieldValue, fieldType);
 
                 if (tomlValue == null)
                     throw new InvalidOperationException($"Type {type.Name} is not serializable");
@@ -79,7 +79,7 @@ namespace UnderLogic.Serialization.Toml
             }
         }
 
-        private static TomlValue ConvertToTomlValue(object obj, Type type, string key)
+        private static TomlValue ConvertToTomlValue(object obj, Type type)
         {
             if (obj == null)
                 return TomlNull.Value;
@@ -121,7 +121,7 @@ namespace UnderLogic.Serialization.Toml
             }
             else if (obj is IEnumerable enumerable)
             {
-                var tomlArray = ConvertToTomlArray(enumerable, key);
+                var tomlArray = ConvertToTomlArray(enumerable);
                 if (tomlArray != null)
                     return tomlArray;
             }
@@ -136,7 +136,7 @@ namespace UnderLogic.Serialization.Toml
             return null;
         }
 
-        private static TomlValue ConvertToTomlArray(IEnumerable values, string key)
+        private static TomlValue ConvertToTomlArray(IEnumerable values)
         {
             var collection = values.OfType<object>().ToList();
 
@@ -157,7 +157,7 @@ namespace UnderLogic.Serialization.Toml
             }
 
             var tomlValues = collection.Select(value =>
-                ConvertToTomlValue(value, value?.GetType(), key));
+                ConvertToTomlValue(value, value?.GetType()));
 
             return new TomlArray(tomlValues);
         }
@@ -171,7 +171,7 @@ namespace UnderLogic.Serialization.Toml
                 var value = dictionary[innerKey];
                 var valueType = value?.GetType();
 
-                var tomlValue = ConvertToTomlValue(value, value?.GetType(), innerKeyString);
+                var tomlValue = ConvertToTomlValue(value, value?.GetType());
                 
                 if (tomlValue == null)
                     throw new InvalidOperationException($"Type {valueType?.Name} is not serializable");
