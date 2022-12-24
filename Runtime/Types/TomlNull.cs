@@ -5,5 +5,7 @@ namespace UnderLogic.Serialization.Toml.Types
         public static readonly TomlNull Value = new();
         
         private TomlNull() { }
+
+        public override string ToString() => "<null>";
     }
 }

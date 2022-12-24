@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnderLogic.Serialization.Toml.Types;
@@ -102,17 +100,20 @@ namespace UnderLogic.Serialization.Toml
                 if (!table.TryGetValue(fieldKey, out var tomlValue))
                     continue;
 
-                if (tomlValue is TomlTable)
-                    continue;
-
-                if (tomlValue is TomlTableArray)
-                    continue;
-
-                if (tomlValue is TomlArray tomlArray)
+                if (tomlValue is TomlTable tomlTable)
+                {
+                    if (IsStringDictionary(fieldType))
+                        DeserializeDictionaryField(tomlTable, field, obj);
+                }
+                else if (tomlValue is TomlTableArray)
+                {
+                    
+                }
+                else if (tomlValue is TomlArray tomlArray)
                 {
                     if (fieldType.IsArray)
                         DeserializeArrayField(tomlArray, field, obj);
-                    else if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
+                    else if (IsGenericList(fieldType))
                         DeserializeListField(tomlArray, field, obj);
                 }
                 else DeserializeScalarField(tomlValue, field, obj);
@@ -150,5 +151,22 @@ namespace UnderLogic.Serialization.Toml
             else
                 throw new InvalidOperationException($"Unable to deserialize list into {field.Name}");
         }
+
+        private static void DeserializeDictionaryField(TomlTable tomlTable, FieldInfo field, object obj)
+        {
+            var fieldType = field.FieldType;
+            var valueType = fieldType.GetGenericArguments()[1];
+            
+            if (TomlConvert.TryIntoDictionary(tomlTable, valueType, out var dictResult))
+                field.SetValue(obj, dictResult);
+            else
+                throw new InvalidOperationException($"Unable to deserialize dictionary into {field.Name}");
+        }
+
+        private static bool IsGenericList(Type t) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>);
+
+        private static bool IsStringDictionary(Type t) => t.IsGenericType &&
+                                                          t.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
+                                                          t.GetGenericArguments()[0] == typeof(string);
     }
 }

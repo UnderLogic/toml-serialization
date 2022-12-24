@@ -10,9 +10,10 @@ namespace UnderLogic.Serialization.Toml
 {
     internal class TomlReader : IDisposable
     {
-        private static readonly Regex KeyValueRegex = new (@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Compiled);
-        private static readonly Regex ArrayRegex = new (@"^\s*\[\s*(.*)\s*\]", RegexOptions.Compiled);
-        
+        private static readonly Regex KeyValueRegex = new(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Compiled);
+        private static readonly Regex ArrayRegex = new(@"^\s*\[\s*(.*)\s*\]", RegexOptions.Compiled);
+        private static readonly Regex TableInlineRegex = new(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
+
         private readonly TextReader _reader;
         private bool _isDisposed;
 
@@ -42,8 +43,8 @@ namespace UnderLogic.Serialization.Toml
             var rootTable = new TomlTable();
 
             var currentTable = rootTable;
-            
-            string line = null;
+
+            string line;
             while ((line = _reader.ReadLine()) != null)
             {
                 // Skip comments
@@ -51,23 +52,10 @@ namespace UnderLogic.Serialization.Toml
                     continue;
 
                 // Parse key-value pairs
-                var keyValueMatch = KeyValueRegex.Match(line);
-                if (keyValueMatch.Success)
+                if (TryParseKeyValuePair(line, out var keyValuePair))
                 {
-                    var key = keyValueMatch.Groups[1].Value.Trim();
-                    var valueString = keyValueMatch.Groups[2].Value.Trim();
-
-                    if (TryParseScalarValue(valueString, out var scalarValue))
-                    {
-                        currentTable.Add(key, scalarValue);
-                        continue;
-                    }
-                    
-                    if (TryParseArrayValue(valueString, out var arrayValue))
-                    {
-                        currentTable.Add(key, arrayValue);
-                        continue;
-                    }
+                    currentTable.Add(keyValuePair.Key, keyValuePair.Value);
+                    continue;
                 }
             }
 
@@ -83,7 +71,7 @@ namespace UnderLogic.Serialization.Toml
                 tomlValue = TomlNull.Value;
                 return true;
             }
-            
+
             var trimmedText = text.Trim();
 
             if (TryParseBooleanValue(trimmedText, out var boolValue))
@@ -100,26 +88,93 @@ namespace UnderLogic.Serialization.Toml
             return tomlValue != null;
         }
 
-        private static bool TryParseArrayValue(string text, out TomlArray tomlArray)
+        private static bool TryParseKeyValuePair(string text, out TomlKeyValuePair keyValuePair)
+        {
+            keyValuePair = null;
+
+            var keyValueMatch = KeyValueRegex.Match(text);
+            if (!keyValueMatch.Success)
+                return false;
+
+            var key = keyValueMatch.Groups[1].Value.Trim();
+            var valueString = keyValueMatch.Groups[2].Value.Trim();
+
+            TomlValue value;
+
+            if (TryParseTableInline(valueString, out var tableValue))
+                value = tableValue;
+            else if (TryParseArray(valueString, out var arrayValue))
+                value = arrayValue;
+            else if (TryParseScalarValue(valueString, out var scalarValue))
+                value = scalarValue;
+            else
+                return false;
+
+            keyValuePair = new TomlKeyValuePair(key, value);
+            return true;
+        }
+
+        private static bool TryParseArray(string text, out TomlArray tomlArray)
         {
             tomlArray = null;
-            
-            var arrayMatch = ArrayRegex.Match(text);
+
+            var arrayMatch = ArrayRegex.Match(text.Trim());
             if (!arrayMatch.Success)
                 return false;
 
-            var arrayValues = SplitString(arrayMatch.Groups[1].Value, ',');
+            var contentString = arrayMatch.Groups[1].Value.Trim();
+            if (string.IsNullOrWhiteSpace(contentString))
+            {
+                tomlArray = TomlArray.Empty;
+                return true;
+            }
+
+            var arrayValues = SplitString(contentString, ',');
             var parsedValues = new List<TomlValue>();
-            
+
             foreach (var eachValue in arrayValues)
             {
-                if (TryParseScalarValue(eachValue, out var scalarValue))
-                    parsedValues.Add(scalarValue);
-                else if (TryParseArrayValue(eachValue, out var childArrayValue))
+                if (TryParseTableInline(eachValue, out var tableValue))
+                    parsedValues.Add(tableValue);
+                else if (TryParseArray(eachValue, out var childArrayValue))
                     parsedValues.Add(childArrayValue);
+                else if (TryParseScalarValue(eachValue, out var scalarValue))
+                    parsedValues.Add(scalarValue);
+                else
+                    return false;
             }
 
             tomlArray = new TomlArray(parsedValues);
+            return true;
+        }
+
+        private static bool TryParseTableInline(string text, out TomlTable tomlTable)
+        {
+            tomlTable = null;
+
+            var tableInlineMatch = TableInlineRegex.Match(text.Trim());
+            if (!tableInlineMatch.Success)
+                return false;
+
+            var contentString = tableInlineMatch.Groups[1].Value.Trim();
+            if (string.IsNullOrWhiteSpace(contentString))
+            {
+                tomlTable = TomlTable.EmptyInline;
+                return true;
+            }
+            
+            var tableValues = SplitString(contentString, ',');
+            var parsedKeyValues = new List<TomlKeyValuePair>();
+
+            foreach (var keyPairString in tableValues)
+            {
+                if (TryParseKeyValuePair(keyPairString, out var keyValuePair))
+                    parsedKeyValues.Add(keyValuePair);
+                else
+                    return false;
+            }
+
+            tomlTable = new TomlTable(parsedKeyValues) { IsInline = true };
             return true;
         }
 
@@ -129,7 +184,7 @@ namespace UnderLogic.Serialization.Toml
 
             if (text != "true" && text != "false")
                 return false;
-            
+
             tomlValue = new TomlBoolean(text == "true");
             return true;
         }
@@ -153,26 +208,26 @@ namespace UnderLogic.Serialization.Toml
         {
             tomlValue = null;
 
-            var sanitizedText = text.Replace("_", "");
+            var sanitizedText = text.Replace("_", "").ToLowerInvariant();
             if (!sanitizedText.Contains('.') && !sanitizedText.Contains('e'))
                 return false;
-            
+
             if (!double.TryParse(sanitizedText, out var doubleValue))
                 return false;
-            
+
             tomlValue = new TomlFloat(doubleValue);
             return true;
         }
-        
+
         private static bool TryParseIntegerValue(string text, out TomlInteger tomlValue)
         {
             tomlValue = null;
 
             var sanitizedText = text.Replace("_", "");
-            
+
             if (!long.TryParse(sanitizedText, out var int64Value))
                 return false;
-            
+
             tomlValue = new TomlInteger(int64Value);
             return true;
         }
@@ -211,13 +266,13 @@ namespace UnderLogic.Serialization.Toml
 
                 if (eachChar == '[' && !escaped)
                     inArray = true;
-                
+
                 if (eachChar == ']' && !escaped)
                     inArray = false;
-                
+
                 if (eachChar == '{' && !escaped)
                     inTable = true;
-                
+
                 if (eachChar == '}' && !escaped)
                     inTable = false;
 

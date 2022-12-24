@@ -32,6 +32,8 @@ namespace UnderLogic.Serialization.Toml.Types
                 _tables.Add(table);
         }
 
+        public override string ToString() => $"Count = {Count}";
+
         public IEnumerator<TomlTable> GetEnumerator() => _tables.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
