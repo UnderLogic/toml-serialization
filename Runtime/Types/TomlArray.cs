@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnderLogic.Serialization.Toml.Types
 {
@@ -31,6 +32,15 @@ namespace UnderLogic.Serialization.Toml.Types
                 }
                 else _values.Add(value);
             }
+        }
+
+        public override string ToString()
+        {
+            if (Count < 1)
+                return "[]";
+
+            var valueStrings = _values.Select(value => value.ToString());
+            return $"[ {string.Join(", ", valueStrings)} ]";
         }
 
         public IEnumerator<TomlValue> GetEnumerator() => _values.GetEnumerator();

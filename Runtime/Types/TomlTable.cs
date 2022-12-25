@@ -9,6 +9,9 @@ namespace UnderLogic.Serialization.Toml.Types
     {
         private readonly Dictionary<string, TomlValue> _table = new();
 
+        public static TomlTable Empty => new();
+        public static TomlTable EmptyInline => new() { IsInline = true };
+        
         public bool IsInline { get; set; }
         public int Count => _table.Count;
 
@@ -36,6 +39,18 @@ namespace UnderLogic.Serialization.Toml.Types
         }
 
         public bool TryGetValue(string key, out TomlValue value) => _table.TryGetValue(key, out value);
+
+        public override string ToString()
+        {
+            if (!IsInline)
+                return $"Count = {Count}";
+
+            if (Count < 1)
+                return "{}";
+
+            var valueStrings = _table.Select(keyValuePair => $"{keyValuePair.Key} = {keyValuePair.Value}");
+            return $"{{ {string.Join(", ", valueStrings)} }}";
+        }
 
         public IEnumerator<TomlKeyValuePair> GetEnumerator() =>
             _table.Select(pair => new TomlKeyValuePair(pair.Key, pair.Value)).GetEnumerator();

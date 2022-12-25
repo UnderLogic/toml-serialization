@@ -7,7 +7,7 @@ namespace UnderLogic.Serialization.Toml.Tests
     internal partial class TomlSerializerTests
     {
         [Test]
-        public void Serialize_NullDict_ShouldSerializeEmpty()
+        public void Serialize_NullDict_ShouldSerializeNull()
         {
             var dict = WrappedDictionary<string>.Null();
             var toml = TomlSerializer.Serialize(dict);

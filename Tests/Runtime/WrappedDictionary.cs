@@ -7,8 +7,13 @@ namespace UnderLogic.Serialization.Toml.Tests
     [Serializable]
     internal sealed class WrappedDictionary<TValue> : IEnumerable<KeyValuePair<string, TValue>>
     {
-        private readonly Dictionary<string, TValue> _dictionary = new();
+        private Dictionary<string, TValue> _dictionary = new();
 
+        public bool IsNull => _dictionary == null;
+        public bool IsEmpty => _dictionary != null && _dictionary.Count == 0;
+        
+        public int Count => _dictionary?.Count ?? 0;
+        
         private WrappedDictionary(Dictionary<string, TValue> dict) => _dictionary = dict;
         
         public WrappedDictionary(IEnumerable<KeyValuePair<string, TValue>> keyValuePairs = null)
@@ -26,6 +31,14 @@ namespace UnderLogic.Serialization.Toml.Tests
                 throw new ArgumentNullException(nameof(key));
 
             _dictionary.Add(key, value);
+        }
+
+        public TValue Get(string key)
+        {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+
+            return _dictionary[key];
         }
 
         public IEnumerator<KeyValuePair<string, TValue>> GetEnumerator() => _dictionary.GetEnumerator();

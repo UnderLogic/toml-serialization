@@ -46,6 +46,28 @@ namespace UnderLogic.Serialization.Toml
             return true;
         }
 
+        public static bool TryIntoDictionary(TomlTable tomlTable, Type valueType, out IDictionary dictResult)
+        {
+            dictResult = null;
+            
+            var dictType = typeof(Dictionary<,>);
+            var constructedDictType = dictType.MakeGenericType(typeof(string), valueType);
+            var dict = (IDictionary)Activator.CreateInstance(constructedDictType);
+
+            foreach (var keyPairValue in tomlTable)
+            {
+                var tomlValue = keyPairValue.Value;
+
+                if (TryIntoScalar(tomlValue, valueType, out var scalarValue))
+                    dict.Add(keyPairValue.Key, scalarValue);
+                else
+                    return false;
+            }
+
+            dictResult = dict;
+            return true;
+        }
+
         public static bool TryIntoScalar(TomlValue tomlValue, Type type, out object result)
         {
             result = null;
@@ -123,6 +145,18 @@ namespace UnderLogic.Serialization.Toml
                 if (type == typeof(uint))
                 {
                     result = (uint)integerValue.Value;
+                    return true;
+                }
+
+                if (type == typeof(float))
+                {
+                    result = (float)integerValue.Value;
+                    return true;
+                }
+
+                if (type == typeof(double))
+                {
+                    result = (double)integerValue.Value;
                     return true;
                 }
             }

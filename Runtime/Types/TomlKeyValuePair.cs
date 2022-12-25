@@ -12,5 +12,7 @@ namespace UnderLogic.Serialization.Toml.Types
             Key = key ?? throw new ArgumentNullException(nameof(key));
             Value = value ?? throw new ArgumentNullException(nameof(value));
         }
+
+        public override string ToString() => $"{Key} = {Value}";
     }
 }
