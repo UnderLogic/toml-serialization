@@ -35,9 +35,9 @@ The `TomlTable` can be inline or standard (expanded). This is determined by the 
 
 The serialization process is broken down into three steps done by the `TomlSerializer` class:
 
-    1. Iterate over the object's fields
-    2. Marshal each field's value into a TOML value
-    3. Write the TOML root table
+1. Iterate over the object's fields
+2. Marshal each field's value into a TOML value
+3. Write the TOML root table
 
 ### Field Iteration
 
@@ -62,9 +62,9 @@ The `TomlWriter` class is responsible for writing the TOML document to a string,
 
 The deserialization process is broken down into three steps done by the `TomlSerializer` class:
 
-    1. Parse the TOML document into marshalled objects
-    2. Create the deserialized object
-    3. Unmarshal the TOML root table into the deserialized object
+1. Parse the TOML document into marshalled objects
+2. Create the deserialized object
+3. Unmarshal the TOML root table into the deserialized object
 
 **NOTE:** In the `DeserializeInto` method, the deserialized object is passed in as a parameter instead of being created.
 
