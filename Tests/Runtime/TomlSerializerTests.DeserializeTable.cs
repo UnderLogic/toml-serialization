@@ -23,11 +23,11 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"[value]\n{tableValues}\n";
             TomlSerializer.DeserializeInto(toml, wrappedObject);
 
-            Assert.AreEqual(99, classObject.Id);
-            Assert.AreEqual("Hidden Item", classObject.Name);
-            Assert.AreEqual(0.5, classObject.Weight);
-            Assert.AreEqual(true, classObject.Hidden);
-            Assert.AreEqual(new DateTime(1979, 5, 27), classObject.CreatedAt);
+            Assert.AreEqual(99, wrappedObject.Value.Id);
+            Assert.AreEqual("Hidden Item", wrappedObject.Value.Name);
+            Assert.AreEqual(0.5, wrappedObject.Value.Weight);
+            Assert.AreEqual(true, wrappedObject.Value.Hidden);
+            Assert.AreEqual(new DateTime(1979, 5, 27), wrappedObject.Value.CreatedAt);
         }
 
         [Test]
@@ -47,10 +47,10 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"[value]\n{tableValues}\n";
             TomlSerializer.DeserializeInto(toml, wrappedObject);
 
-            Assert.AreEqual(42, structObject.Index);
-            Assert.AreEqual(1.42, structObject.X);
-            Assert.AreEqual(3.14, structObject.Y);
-            Assert.AreEqual(9.99, structObject.Z);
+            Assert.AreEqual(42, wrappedObject.Value.Index);
+            Assert.AreEqual(1.42f, wrappedObject.Value.X);
+            Assert.AreEqual(3.14f, wrappedObject.Value.Y);
+            Assert.AreEqual(9.99f, wrappedObject.Value.Z);
         }
     }
 }

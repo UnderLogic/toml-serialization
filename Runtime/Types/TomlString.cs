@@ -6,6 +6,6 @@ namespace UnderLogic.Serialization.Toml.Types
 
         public TomlString(string value) => Value = value;
 
-        public override string ToString() => Value != null ? "<null>" : $"\"{Value}\"";
+        public override string ToString() => Value != null ? $"\"{Value}\"" : "null";
     }
 }

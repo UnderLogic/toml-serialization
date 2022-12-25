@@ -13,6 +13,7 @@ namespace UnderLogic.Serialization.Toml
         private static readonly Regex KeyValueRegex = new(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Compiled);
         private static readonly Regex ArrayRegex = new(@"^\s*\[\s*(.*)\s*\]", RegexOptions.Compiled);
         private static readonly Regex TableInlineRegex = new(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
+        private static readonly Regex TableRegex = new (@"^\s*\[(.+?)\]", RegexOptions.Compiled);
 
         private readonly TextReader _reader;
         private bool _isDisposed;
@@ -42,7 +43,8 @@ namespace UnderLogic.Serialization.Toml
 
             var rootTable = new TomlTable();
 
-            var currentTable = rootTable;
+            var tableStack = new Stack<TomlTable>();
+            tableStack.Push(rootTable);
 
             string line;
             while ((line = _reader.ReadLine()) != null)
@@ -50,6 +52,19 @@ namespace UnderLogic.Serialization.Toml
                 // Skip comments
                 if (line.StartsWith("#"))
                     continue;
+
+                // Start of a new table, push to table stack
+                var tableMatch = TableRegex.Match(line);
+                if (tableMatch.Success)
+                {
+                    var childTable = new TomlTable();
+                    var tableName = tableMatch.Groups[1].Value.Trim();
+                    rootTable.Add(tableName, childTable);
+                    
+                    tableStack.Push(childTable);
+                }
+
+                var currentTable = tableStack.Peek();
 
                 // Parse key-value pairs
                 if (TryParseKeyValuePair(line, out var keyValuePair))

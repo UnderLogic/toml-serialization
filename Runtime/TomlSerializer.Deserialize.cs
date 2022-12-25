@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -104,6 +103,10 @@ namespace UnderLogic.Serialization.Toml
                 {
                     if (IsStringDictionary(fieldType))
                         DeserializeDictionaryField(tomlTable, field, obj);
+                    else if (IsObjectType(fieldType))
+                        DeserializeObjectField(tomlTable, field, obj);
+                    else
+                        throw new InvalidOperationException($"Type {fieldType.Name} is not supported");
                 }
                 else if (tomlValue is TomlTableArray)
                 {
@@ -115,9 +118,18 @@ namespace UnderLogic.Serialization.Toml
                         DeserializeArrayField(tomlArray, field, obj);
                     else if (IsGenericList(fieldType))
                         DeserializeListField(tomlArray, field, obj);
+                    else
+                        throw new InvalidOperationException($"Type {fieldType.Name} is not supported");
                 }
                 else DeserializeScalarField(tomlValue, field, obj);
             }
+        }
+
+        private static void DeserializeObjectField(TomlTable tomlTable, FieldInfo field, object obj)
+        {
+            var fieldObj = Activator.CreateInstance(field.FieldType);
+            DeserializeObject(tomlTable, fieldObj);
+            field.SetValue(obj, fieldObj);
         }
 
         private static void DeserializeScalarField(TomlValue tomlValue, FieldInfo field, object obj)
@@ -162,11 +174,5 @@ namespace UnderLogic.Serialization.Toml
             else
                 throw new InvalidOperationException($"Unable to deserialize dictionary into {field.Name}");
         }
-
-        private static bool IsGenericList(Type t) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>);
-
-        private static bool IsStringDictionary(Type t) => t.IsGenericType &&
-                                                          t.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-                                                          t.GetGenericArguments()[0] == typeof(string);
     }
 }

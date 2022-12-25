@@ -86,6 +86,26 @@ namespace UnderLogic.Serialization.Toml
             if (obj == null)
                 return TomlNull.Value;
 
+            if (obj is IDictionary dictionary)
+            {
+                var tomlTable = ConvertToTomlTableInline(dictionary);
+                if (tomlTable != null)
+                    return tomlTable;
+            }
+            else if (obj is IList list)
+            {
+                var tomlArray = ConvertToTomlArray(list);
+                if (tomlArray != null)
+                    return tomlArray;
+            }
+            else if (IsObjectType(type))
+            {
+                var tomlTable = ConvertToTomlTableExpanded(obj);
+                
+                if (tomlTable != null)
+                    return tomlTable;
+            }
+            
             if (type == typeof(bool) && obj is bool boolValue)
                 return new TomlBoolean(boolValue);
             if (type == typeof(char) && obj is char charValue)
@@ -115,26 +135,6 @@ namespace UnderLogic.Serialization.Toml
             if (type == typeof(DateTime) && obj is DateTime dateTimeValue)
                 return new TomlDateTime(dateTimeValue);
 
-            if (obj is IDictionary dictionary)
-            {
-                var tomlTable = ConvertToTomlTableInline(dictionary);
-                if (tomlTable != null)
-                    return tomlTable;
-            }
-            else if (obj is IList list)
-            {
-                var tomlArray = ConvertToTomlArray(list);
-                if (tomlArray != null)
-                    return tomlArray;
-            }
-            else if (Type.GetTypeCode(type) == TypeCode.Object)
-            {
-                var tomlTable = ConvertToTomlTableExpanded(obj);
-                
-                if (tomlTable != null)
-                    return tomlTable;
-            }
-
             return null;
         }
 
@@ -145,7 +145,7 @@ namespace UnderLogic.Serialization.Toml
             if (collection.Count < 1)
                 return TomlArray.Empty;
 
-            if (collection.All(value => Type.GetTypeCode(value.GetType()) == TypeCode.Object))
+            if (collection.All(IsObjectType))
             {
                 var tomlTableArray = new TomlTableArray();
                 foreach (var value in collection)
