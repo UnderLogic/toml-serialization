@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -108,9 +110,12 @@ namespace UnderLogic.Serialization.Toml
                     else
                         throw new InvalidOperationException($"Type {fieldType.Name} is not supported");
                 }
-                else if (tomlValue is TomlTableArray)
+                else if (tomlValue is TomlTableArray tomlTableArray)
                 {
-                    
+                    if (fieldType.IsArray)
+                        DeserializeObjectArrayField(tomlTableArray, field, obj);
+                    else if (IsGenericList(fieldType))
+                        DeserializeObjectListField(tomlTableArray, field, obj);
                 }
                 else if (tomlValue is TomlArray tomlArray)
                 {
@@ -130,6 +135,42 @@ namespace UnderLogic.Serialization.Toml
             var fieldObj = Activator.CreateInstance(field.FieldType);
             DeserializeObject(tomlTable, fieldObj);
             field.SetValue(obj, fieldObj);
+        }
+        
+        private static void DeserializeObjectArrayField(TomlTableArray tomlTableArray, FieldInfo field, object obj)
+        {
+            var fieldType = field.FieldType;
+            var elementType = fieldType.GetElementType();
+            
+            var array = Array.CreateInstance(elementType, tomlTableArray.Count);
+            for (var index = 0; index < tomlTableArray.Count; index++)
+            {
+                var table = tomlTableArray[index];
+                var element = Activator.CreateInstance(elementType);
+                
+                DeserializeObject(table, element);
+                array.SetValue(element, index);
+            }
+            field.SetValue(obj, array);
+        }
+        
+        private static void DeserializeObjectListField(TomlTableArray tomlTableArray, FieldInfo field, object obj)
+        {
+            var fieldType = field.FieldType;
+            var elementType = fieldType.GetGenericArguments()[0];
+            
+            var listType = typeof(List<>);
+            var constructedListType = listType.MakeGenericType(elementType);
+            var list = (IList)Activator.CreateInstance(constructedListType);
+            
+            foreach (var table in tomlTableArray)
+            {
+                var element = Activator.CreateInstance(elementType);
+                
+                DeserializeObject(table, element);
+                list.Add(element);
+            }
+            field.SetValue(obj, list);
         }
 
         private static void DeserializeScalarField(TomlValue tomlValue, FieldInfo field, object obj)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnderLogic.Serialization.Toml.Types;
@@ -14,6 +15,7 @@ namespace UnderLogic.Serialization.Toml
         private static readonly Regex ArrayRegex = new(@"^\s*\[\s*(.*)\s*\]", RegexOptions.Compiled);
         private static readonly Regex TableInlineRegex = new(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
         private static readonly Regex TableRegex = new (@"^\s*\[(.+?)\]", RegexOptions.Compiled);
+        private static readonly Regex TableArrayRegex = new (@"^\s*\[\[(.+?)\]\]", RegexOptions.Compiled);
 
         private readonly TextReader _reader;
         private bool _isDisposed;
@@ -41,9 +43,10 @@ namespace UnderLogic.Serialization.Toml
         {
             CheckIfDisposed();
 
-            var rootTable = new TomlTable();
-
             var tableStack = new Stack<TomlTable>();
+            TomlTableArray currentTableArray = null;
+            
+            var rootTable = new TomlTable();
             tableStack.Push(rootTable);
 
             string line;
@@ -53,24 +56,52 @@ namespace UnderLogic.Serialization.Toml
                 if (line.StartsWith("#"))
                     continue;
 
+                var currentTable = tableStack.Peek();
+
+                // Start of a new table array
+                var tableArrayMatch = TableArrayRegex.Match(line);
+                if (tableArrayMatch.Success)
+                {
+                    var arrayKey = tableArrayMatch.Groups[1].Value.Trim();
+                    
+                    if (!currentTable.TryGetValue(arrayKey, out var existingArray))
+                    {
+                        var newTableArray = new TomlTableArray();
+                        currentTable.Add(arrayKey, newTableArray);
+
+                        currentTableArray = newTableArray;
+                    }
+                    else currentTableArray = existingArray as TomlTableArray;
+                    
+                    var newTable = new TomlTable();
+                    currentTableArray.Add(newTable);
+                    continue;
+                }
+
                 // Start of a new table, push to table stack
                 var tableMatch = TableRegex.Match(line);
                 if (tableMatch.Success)
                 {
+                    currentTableArray = null;
+                    var tableKey = tableMatch.Groups[1].Value.Trim();
+                    
                     var childTable = new TomlTable();
-                    var tableName = tableMatch.Groups[1].Value.Trim();
-                    rootTable.Add(tableName, childTable);
+                    rootTable.Add(tableKey, childTable);
                     
                     tableStack.Push(childTable);
+                    currentTable = tableStack.Peek();
+                    continue;
                 }
-
-                var currentTable = tableStack.Peek();
 
                 // Parse key-value pairs
                 if (TryParseKeyValuePair(line, out var keyValuePair))
                 {
-                    currentTable.Add(keyValuePair.Key, keyValuePair.Value);
-                    continue;
+                    if (currentTableArray != null)
+                    {
+                        var arrayTable = currentTableArray[currentTableArray.Count - 1];
+                        arrayTable.Add(keyValuePair.Key, keyValuePair.Value);
+                    }
+                    else currentTable.Add(keyValuePair.Key, keyValuePair.Value);
                 }
             }
 

@@ -36,7 +36,7 @@ The `TomlTable` can be inline or standard (expanded). This is determined by the 
 The serialization process is broken down into three steps done by the `TomlSerializer` class:
 
 1. Iterate over the object's fields
-2. Marshal each field's value into a TOML value
+2. Marshal each field's value into a TOML value (recursively)
 3. Write the TOML root table
 
 ### Field Iteration
@@ -64,7 +64,7 @@ The deserialization process is broken down into three steps done by the `TomlSer
 
 1. Parse the TOML document into marshalled objects
 2. Create the deserialized object
-3. Unmarshal the TOML root table into the deserialized object
+3. Unmarshal the TOML root table into the deserialized object (recursively)
 
 **NOTE:** In the `DeserializeInto` method, the deserialized object is passed in as a parameter instead of being created.
 
