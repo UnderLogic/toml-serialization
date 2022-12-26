@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -8,49 +9,59 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Deserialize_ClassType_ShouldSetFields()
         {
-            var classObject = new MockSimpleClass();
-            var wrappedObject = new WrappedValue<MockSimpleClass>(classObject);
+            var inventoryItem = new InventoryItem();
+            var wrappedObject = new WrappedValue<InventoryItem>(inventoryItem);
 
             var tableValues = string.Join("\n", new[]
             {
-                "id = 99",
-                "name = \"Hidden Item\"",
-                "weight = 0.5",
-                "hidden = true",
-                "createdAt = 1979-05-27"
+                "slot = 2",
+                "key = \"item_red_potion\"",
+                "displayName = \"Red Potion\"",
+                "weight = 0.1",
+                "amount= 5",
+                "maxAmount = 30",
+                "canUse = true",
+                "canDrop = true",
+                "acquiredAt = 1999-08-02"
             });
 
             var toml = $"[value]\n{tableValues}\n";
             TomlSerializer.DeserializeInto(toml, wrappedObject);
 
-            Assert.AreEqual(99, wrappedObject.Value.Id);
-            Assert.AreEqual("Hidden Item", wrappedObject.Value.Name);
-            Assert.AreEqual(0.5, wrappedObject.Value.Weight);
-            Assert.AreEqual(true, wrappedObject.Value.Hidden);
-            Assert.AreEqual(new DateTime(1979, 5, 27), wrappedObject.Value.CreatedAt);
+            var deserializedItem = wrappedObject.Value;
+            Assert.AreEqual(2, deserializedItem.Slot);
+            Assert.AreEqual("item_red_potion", deserializedItem.Key);
+            Assert.AreEqual("Red Potion", deserializedItem.DisplayName);
+            Assert.AreEqual(0.1f, deserializedItem.Weight);
+            Assert.AreEqual(5, deserializedItem.Amount);
+            Assert.AreEqual(30, deserializedItem.MaxAmount);
+            Assert.AreEqual(true, deserializedItem.CanUse);
+            Assert.AreEqual(true, deserializedItem.CanDrop);
+            Assert.AreEqual(new DateTime(1999, 8, 2), deserializedItem.AcquiredAt);
         }
 
         [Test]
         public void Deserialize_StructType_ShouldSetField()
         {
-            var structObject = new MockSimpleStruct();
-            var wrappedObject = new WrappedValue<MockSimpleStruct>(structObject);
+            var location = new PlayerLocation();
+            var wrappedObject = new WrappedValue<PlayerLocation>(location);
 
             var tableValues = string.Join("\n", new[]
             {
-                "index = 42",
-                "x = 1.42",
-                "y = 3.14",
-                "z = 9.99",
+                "map = 500",
+                "x = 24",
+                "y = 12",
+                "zIndex = 1",
             });
 
             var toml = $"[value]\n{tableValues}\n";
             TomlSerializer.DeserializeInto(toml, wrappedObject);
 
-            Assert.AreEqual(42, wrappedObject.Value.Index);
-            Assert.AreEqual(1.42f, wrappedObject.Value.X);
-            Assert.AreEqual(3.14f, wrappedObject.Value.Y);
-            Assert.AreEqual(9.99f, wrappedObject.Value.Z);
+            var deserializedLocation = wrappedObject.Value;
+            Assert.AreEqual(500, deserializedLocation.Map);
+            Assert.AreEqual(24, deserializedLocation.X);
+            Assert.AreEqual(12, deserializedLocation.Y);
+            Assert.AreEqual(1, deserializedLocation.ZIndex);
         }
     }
 }

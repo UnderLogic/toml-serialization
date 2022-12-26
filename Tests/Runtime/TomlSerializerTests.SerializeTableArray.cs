@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -8,43 +9,59 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_ClassArray_ShouldSerializeTableArray()
         {
-            var firstItem = new MockSimpleClass
+            var firstItem = new InventoryItem
             {
-                Id = 10,
-                Name = "First Item",
-                Weight = 1.5f,
-                Hidden = false,
-                CreatedAt = new DateTime(2022, 10, 1)
+                Slot = 2,
+                Key = "item_red_potion",
+                DisplayName = "Red Potion",
+                Weight = 0.1f,
+                Amount = 5,
+                MaxAmount = 30,
+                CanUse = true,
+                CanDrop = true,
+                AcquiredAt = new DateTime(1999, 8, 2)
+            };
+            
+            var secondItem = new InventoryItem
+            {
+                Slot = 3,
+                Key = "item_oak_stick",
+                DisplayName = "Oak Stick",
+                Weight = 0.5f,
+                Amount = 1,
+                MaxAmount = 1,
+                CanUse = false,
+                CanDrop = true,
+                AcquiredAt = new DateTime(1999, 8, 2)
             };
 
-            var secondItem = new MockSimpleClass
-            {
-                Id = 10,
-                Name = "First Item",
-                Weight = 1.5f,
-                Hidden = false,
-                CreatedAt = new DateTime(2022, 10, 1)
-            };
-
-            var wrappedArray = WrappedArray<MockSimpleClass>.FromValues(firstItem, secondItem);
+            var wrappedArray = WrappedArray<InventoryItem>.FromValues(firstItem, secondItem);
             var toml = TomlSerializer.Serialize(wrappedArray);
 
             var expectedFirstItem = string.Join("\n", new[]
             {
-                $"id = {firstItem.Id}",
-                $"name = \"{firstItem.Name}\"",
-                $"weight = {firstItem.Weight}",
-                $"hidden = {firstItem.Hidden.ToString().ToLowerInvariant()}",
-                $"createdAt = {firstItem.CreatedAt:yyyy-MM-dd HH:mm:ss.fffZ}",
+                $"slot = {firstItem.Slot}",
+                $"key = \"{firstItem.Key}\"",
+                $"displayName = \"{firstItem.DisplayName}\"",
+                $"weight = {(double)firstItem.Weight}",
+                $"amount = {firstItem.Amount}",
+                $"maxAmount = {firstItem.MaxAmount}",
+                $"canUse = {firstItem.CanUse.ToString().ToLowerInvariant()}",
+                $"canDrop = {firstItem.CanDrop.ToString().ToLowerInvariant()}",
+                $"acquiredAt = {firstItem.AcquiredAt:yyyy-MM-dd HH:mm:ss.fffZ}"
             });
 
             var expectedSecondItem = string.Join("\n", new[]
             {
-                $"id = {secondItem.Id}",
-                $"name = \"{secondItem.Name}\"",
-                $"weight = {secondItem.Weight}",
-                $"hidden = {secondItem.Hidden.ToString().ToLowerInvariant()}",
-                $"createdAt = {secondItem.CreatedAt:yyyy-MM-dd HH:mm:ss.fffZ}",
+                $"slot = {secondItem.Slot}",
+                $"key = \"{secondItem.Key}\"",
+                $"displayName = \"{secondItem.DisplayName}\"",
+                $"weight = {(double)secondItem.Weight}",
+                $"amount = {secondItem.Amount}",
+                $"maxAmount = {secondItem.MaxAmount}",
+                $"canUse = {secondItem.CanUse.ToString().ToLowerInvariant()}",
+                $"canDrop = {secondItem.CanDrop.ToString().ToLowerInvariant()}",
+                $"acquiredAt = {secondItem.AcquiredAt:yyyy-MM-dd HH:mm:ss.fffZ}"
             });
 
             Assert.AreEqual($"[[array]]\n{expectedFirstItem}\n\n[[array]]\n{expectedSecondItem}\n", toml);
@@ -53,26 +70,26 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_StructArray_ShouldSerializeTableArray()
         {
-            var firstCoord = new MockSimpleStruct { Index = 10, X = 1.1f, Y = 2.2f, Z = 3.3f };
-            var secondCoord = new MockSimpleStruct { Index = 20, X = 2.2f, Y = 4.4f, Z = 6.6f };
+            var firstLocation = new PlayerLocation { Map = 500, X = 24, Y = 42, ZIndex = 1 };
+            var secondLocation = new PlayerLocation { Map = 3008, X = 42, Y = 99, ZIndex = 2 };
 
-            var wrappedArray = WrappedArray<MockSimpleStruct>.FromValues(firstCoord, secondCoord);
+            var wrappedArray = WrappedArray<PlayerLocation>.FromValues(firstLocation, secondLocation);
             var toml = TomlSerializer.Serialize(wrappedArray);
 
             var expectedCoord1 = string.Join("\n", new[]
             {
-                $"index = {firstCoord.Index}",
-                $"x = {(double)firstCoord.X}",
-                $"y = {(double)firstCoord.Y}",
-                $"z = {(double)firstCoord.Z}",
+                $"map = {firstLocation.Map}",
+                $"x = {firstLocation.X}",
+                $"y = {firstLocation.Y}",
+                $"zIndex = {firstLocation.ZIndex}",
             });
 
             var expectedCoord2 = string.Join("\n", new[]
             {
-                $"index = {secondCoord.Index}",
-                $"x = {(double)secondCoord.X}",
-                $"y = {(double)secondCoord.Y}",
-                $"z = {(double)secondCoord.Z}",
+                $"map = {secondLocation.Map}",
+                $"x = {secondLocation.X}",
+                $"y = {secondLocation.Y}",
+                $"zIndex = {secondLocation.ZIndex}",
             });
 
             Assert.AreEqual($"[[array]]\n{expectedCoord1}\n\n[[array]]\n{expectedCoord2}\n", toml);

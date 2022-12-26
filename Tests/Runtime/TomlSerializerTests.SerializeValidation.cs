@@ -1,8 +1,8 @@
 using System;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {

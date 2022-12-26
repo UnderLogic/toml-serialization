@@ -13,6 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests.Mocks
         private int _maxAmount = 1;
         private bool _canUse;
         private bool _canDrop = true;
+        private DateTime _acquiredAt;
 
         public int Slot
         {
@@ -60,6 +61,12 @@ namespace UnderLogic.Serialization.Toml.Tests.Mocks
         {
             get => _canDrop;
             set => _canDrop = value;
+        }
+        
+        public DateTime AcquiredAt
+        {
+            get => _acquiredAt;
+            set => _acquiredAt = value;
         }
     }
 }

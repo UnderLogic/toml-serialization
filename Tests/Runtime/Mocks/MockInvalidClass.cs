@@ -1,6 +1,6 @@
 using System;
 
-namespace UnderLogic.Serialization.Toml.Tests
+namespace UnderLogic.Serialization.Toml.Tests.Mocks
 {
     [Serializable]
     internal class MockInvalidClass

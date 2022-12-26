@@ -1,8 +1,7 @@
 using System;
-using System.Globalization;
 using System.IO;
-using System.Text;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -29,7 +28,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void DeserializeIntoFromString_NullString_ThrowsException()
         {
-            var obj = new MockSimpleClass();
+            var obj = new Player();
             Assert.Throws<ArgumentNullException>(() => { TomlSerializer.DeserializeInto(null as string, obj); });
         }
 
@@ -42,7 +41,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void DeserializeIntoFromStream_NullStream_ThrowsException()
         {
-            var obj = new MockSimpleClass();
+            var obj = new Player();
             Assert.Throws<ArgumentNullException>(() => { TomlSerializer.DeserializeInto(null as Stream, obj); });
         }
 
@@ -56,7 +55,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void DeserializeIntoFromReader_NullReader_ThrowsException()
         {
-            var obj = new MockSimpleClass();
+            var obj = new Player();
             Assert.Throws<ArgumentNullException>(() => { TomlSerializer.DeserializeInto(null as TextReader, obj); });
         }
 
