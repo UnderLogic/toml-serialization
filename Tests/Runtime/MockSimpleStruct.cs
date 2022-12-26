@@ -3,7 +3,7 @@ using System;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public struct MockSimpleStruct
+    internal struct MockSimpleStruct
     {
         private int _index;
         private float _x;

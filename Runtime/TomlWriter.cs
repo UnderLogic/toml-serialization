@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -201,9 +202,12 @@ namespace UnderLogic.Serialization.Toml
                 WriteTableKey(tableKey);
 
             var isFirstItem = true;
-            
+
             if (table != null)
             {
+                var childTables = new Dictionary<string, TomlTable>();
+                var tableArrays = new Dictionary<string, TomlTableArray>();
+                
                 foreach (var keyValuePair in table)
                 {
                     var key = keyValuePair.Key;
@@ -221,21 +225,14 @@ namespace UnderLogic.Serialization.Toml
                         }
                         else
                         {
-                            if (!isFirstItem)
-                                _writer.WriteLine();
-                            
-                            WriteTableExpanded(childTableKey, childTable);
+                            childTables.Add(key, childTable);
+                            continue;
                         }
                     }
                     else if (value is TomlTableArray childTableArray)
                     {
-                        if (childTableArray.Count > 0)
-                        {
-                            if (!isFirstItem)
-                                _writer.WriteLine();
-                            
-                            WriteTableArray(childTableKey, childTableArray);
-                        }
+                        tableArrays.Add(key, childTableArray);
+                        continue;
                     }
                     else
                     {
@@ -243,6 +240,24 @@ namespace UnderLogic.Serialization.Toml
                         _writer.WriteLine();
                     }
 
+                    isFirstItem = false;
+                }
+
+                foreach (var childTable in childTables)
+                {
+                    if (!isFirstItem)
+                        _writer.WriteLine();
+
+                    WriteTableExpanded(childTable.Key, childTable.Value);
+                    isFirstItem = false;
+                }
+
+                foreach (var childArray in tableArrays)
+                {
+                    if (!isFirstItem)
+                        _writer.WriteLine();
+
+                    WriteTableArray(childArray.Key, childArray.Value);
                     isFirstItem = false;
                 }
             }

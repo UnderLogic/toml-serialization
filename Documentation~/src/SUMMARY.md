@@ -16,6 +16,7 @@
 - [Serialization Rules](serialization-rules.md)
   - [Field Selection](serialization-rules/field-selection.md)
   - [Field Naming](serialization-rules/field-naming.md)
+  - [Field Ordering](serialization-rules/field-ordering.md)
   - [Scalar Fields](serialization-rules/scalar-fields.md)
   - [Object Fields](serialization-rules/object-fields.md)
   - [Array Fields](serialization-rules/array-fields.md)
