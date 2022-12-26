@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public class MockNestedItem
+    internal class MockNestedItem
     {
         private int _id = 1;
         private string _key = "item_key";

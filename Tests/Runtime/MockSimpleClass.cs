@@ -3,7 +3,7 @@ using System;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    public class MockSimpleClass
+    internal class MockSimpleClass
     {
         private int _id;
         private string _name;

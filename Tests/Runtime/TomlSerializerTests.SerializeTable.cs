@@ -136,5 +136,104 @@ namespace UnderLogic.Serialization.Toml.Tests
             
             Assert.AreEqual($"{tableString}\n\n{nestedItemsString}\n", toml);
         }
+
+        [Test]
+        public void Serialize_UnorderedClass_ShouldSerializeInOrder()
+        {
+            var monster = new MockUnorderedClass()
+            {
+                Id = 42,
+                Name = "Test Monster",
+                AggroRadius = 3.14159f,
+                CurrentTarget = "Player",
+                Gold = 25,
+                Experience = 125,
+                SpawnedAt = new DateTime(2020, 10, 1),
+                DespawnAt = new DateTime(2021, 10, 1)
+            };
+
+            var monsterStats = new MockUnorderedStats
+            {
+                Health = 600,
+                MaxHealth = 600,
+                Mana = 50,
+                MaxMana = 50,
+                Strength = 2,
+                Dexterity = 1,
+                Intelligence = 1,
+                Wisdom = 1,
+                Constitution = 3,
+                Charisma = 1,
+                Luck = 25
+            };
+
+            var commonLoot = new MockUnorderedItem
+            {
+                Index = 1,
+                LootTable = "Common",
+                DropChance = 12.5f,
+                CanPickpocket = true
+            };
+
+            var rareLoot = new MockUnorderedItem
+            {
+                Index = 2,
+                LootTable = "Rare",
+                DropChance = 1.25f,
+                CanPickpocket = false
+            };
+
+            monster.Stats = monsterStats;
+            monster.AddLoot(commonLoot);
+            monster.AddLoot(rareLoot);
+
+            monster.SetAggro("Player", 99);
+            monster.SetAggro("Healer", 42);
+
+            var toml = TomlSerializer.Serialize(monster);
+
+            var aggroTableLines = string.Join(", ", monster.AggroTable.Select(aggro => $"{aggro.Key} = {aggro.Value}"));
+
+            var keyValuePairLines = string.Join("\n", new[]
+            {
+                $"id = {monster.Id}",
+                $"name = \"{monster.Name}\"",
+                $"aggroRadius = {(double)monster.AggroRadius}",
+                $"aggroTable = {{ {aggroTableLines} }}",
+                $"currentTarget = \"{monster.CurrentTarget}\"",
+                $"gold = {monster.Gold}",
+                $"experience = {monster.Experience}",
+                $"spawnedAt = {monster.SpawnedAt:yyyy-MM-dd HH:mm:ss.fffZ}",
+                $"despawnAt = {monster.DespawnAt:yyyy-MM-dd HH:mm:ss.fffZ}",
+            });
+
+            var statLines = string.Join("\n", new[]
+            {
+                "[stats]",
+                $"health = {monsterStats.Health}",
+                $"maxHealth = {monsterStats.MaxHealth}",
+                $"mana = {monsterStats.Mana}",
+                $"maxMana = {monsterStats.MaxMana}",
+                $"strength = {monsterStats.Strength}",
+                $"dexterity = {monsterStats.Dexterity}",
+                $"intelligence = {monsterStats.Intelligence}",
+                $"wisdom = {monsterStats.Wisdom}",
+                $"constitution = {monsterStats.Constitution}",
+                $"charisma = {monsterStats.Charisma}",
+                $"luck = {monsterStats.Luck}"
+            });
+
+            var lootLines = string.Join("\n\n", monster.Loot.Select(item => string.Join("\n", new[]
+            {
+                "[[loot]]",
+                $"index = {item.Index}",
+                $"lootTable = \"{item.LootTable}\"",
+                $"dropChance = {(double)item.DropChance}",
+                $"canPickpocket = {item.CanPickpocket.ToString().ToLowerInvariant()}"
+            })));
+            
+            var tableString = $"{keyValuePairLines}\n\n{statLines}\n\n{lootLines}\n";
+            Assert.AreEqual(tableString, toml);
+        }
     }
 }

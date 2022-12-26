@@ -26,7 +26,7 @@ The following scalar types are supported:
 
 ## Enum Values
 
-Enum values are supported include bitflags marked with the `Flags` attribute.
+Enum values are supported including bitflags marked with the `Flags` attribute.
 
 ## Object Values
 
