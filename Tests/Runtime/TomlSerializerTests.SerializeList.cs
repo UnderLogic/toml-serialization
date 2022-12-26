@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -64,7 +65,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_EnumList_ShouldSerializeQuoted()
         {
             var wrappedList =
-                WrappedList<MockEnum>.FromValues(MockEnum.North, MockEnum.South, MockEnum.East, MockEnum.West);
+                WrappedList<Direction>.FromValues(Direction.Up, Direction.Down, Direction.Left, Direction.Right);
             var toml = TomlSerializer.Serialize(wrappedList);
 
             var valueStrings = wrappedList.Select(value => $"\"{value}\"");
@@ -77,8 +78,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_EnumFlagsList_ShouldSerializeQuoted()
         {
             var wrappedList =
-                WrappedList<MockFlags>.FromValues(MockFlags.None, MockFlags.Available | MockFlags.InProgress,
-                    MockFlags.All);
+                WrappedList<StatusEffects>.FromValues(StatusEffects.None, StatusEffects.Poison, StatusEffects.Blind,
+                    StatusEffects.Frozen | StatusEffects.Sleep, StatusEffects.All);
             var toml = TomlSerializer.Serialize(wrappedList);
 
             var valueStrings = wrappedList.Select(value => $"\"{value}\"");
@@ -229,12 +230,12 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var wrappedList =
                 WrappedList<object>.FromValues(true, 42, new[] { 3.14, 1.412 }, classObject, structObject,
-                    MockEnum.West);
+                    Direction.Left);
 
             var toml = TomlSerializer.Serialize(wrappedList);
 
             Assert.AreEqual(
-                "list = [ true, 42, [ 3.14, 1.412 ], { id = 99, name = \"Hidden Item\", weight = 0.5, hidden = true, createdAt = 2022-10-01 00:00:00.000Z }, { index = 31, x = 0.5, y = 1.5, z = 5 }, \"West\" ]\n",
+                "list = [ true, 42, [ 3.14, 1.412 ], { id = 99, name = \"Hidden Item\", weight = 0.5, hidden = true, createdAt = 2022-10-01 00:00:00.000Z }, { index = 31, x = 0.5, y = 1.5, z = 5 }, \"Left\" ]\n",
                 toml);
         }
     }

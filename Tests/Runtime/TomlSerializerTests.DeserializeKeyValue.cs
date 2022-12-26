@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -68,13 +69,13 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(stringValue, existingValue.Value);
         }
 
-        [TestCase(MockEnum.North)]
-        [TestCase(MockEnum.South)]
-        [TestCase(MockEnum.East)]
-        [TestCase(MockEnum.West)]
-        public void Deserialize_EnumKeyValue_ShouldSetValue(MockEnum enumValue)
+        [TestCase(Direction.Up)]
+        [TestCase(Direction.Down)]
+        [TestCase(Direction.Left)]
+        [TestCase(Direction.Right)]
+        public void Deserialize_EnumKeyValue_ShouldSetValue(Direction enumValue)
         {
-            var existingValue = new WrappedValue<MockEnum>(MockEnum.None);
+            var existingValue = new WrappedValue<Direction>(Direction.None);
 
             var toml = $"value = \"{enumValue:F}\"\n";
             TomlSerializer.DeserializeInto(toml, existingValue);
@@ -82,15 +83,13 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(enumValue, existingValue.Value);
         }
 
-        [TestCase(MockFlags.Available)]
-        [TestCase(MockFlags.InProgress)]
-        [TestCase(MockFlags.Completed)]
-        [TestCase(MockFlags.Cancelled)]
-        [TestCase(MockFlags.Available | MockFlags.InProgress)]
-        [TestCase(MockFlags.All)]
-        public void Deserialize_EnumKeyValue_ShouldSetValue(MockFlags flagsValue)
+        [TestCase(StatusEffects.Poison)]
+        [TestCase(StatusEffects.Blind)]
+        [TestCase(StatusEffects.Frozen | StatusEffects.Sleep)]
+        [TestCase(StatusEffects.All)]
+        public void Deserialize_EnumKeyValue_ShouldSetValue(StatusEffects flagsValue)
         {
-            var existingValue = new WrappedValue<MockFlags>(MockFlags.None);
+            var existingValue = new WrappedValue<StatusEffects>(StatusEffects.None);
 
             var toml = $"value = \"{flagsValue:F}\"\n";
             TomlSerializer.DeserializeInto(toml, existingValue);

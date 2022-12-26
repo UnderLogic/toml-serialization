@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -57,25 +58,27 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual($"value = \"{escapedValue}\"\n", toml);
         }
 
-        [TestCase(MockEnum.None)]
-        [TestCase(MockEnum.North)]
-        [TestCase(MockEnum.South)]
-        [TestCase(MockEnum.East)]
-        [TestCase(MockEnum.West)]
-        public void Serialize_EnumKeyValue_ShouldSerializeQuoted(MockEnum enumValue)
+        [TestCase(Direction.None)]
+        [TestCase(Direction.Up)]
+        [TestCase(Direction.Down)]
+        [TestCase(Direction.Left)]
+        [TestCase(Direction.Right)]
+        public void Serialize_EnumKeyValue_ShouldSerializeQuoted(Direction enumValue)
         {
-            var wrappedValue = new WrappedValue<MockEnum>(enumValue);
+            var wrappedValue = new WrappedValue<Direction>(enumValue);
             var toml = TomlSerializer.Serialize(wrappedValue);
 
             Assert.AreEqual($"value = \"{enumValue:F}\"\n", toml);
         }
 
-        [TestCase(MockFlags.None)]
-        [TestCase(MockFlags.Available | MockFlags.InProgress)]
-        [TestCase(MockFlags.All)]
-        public void Serialize_EnumFlagsKeyValue_ShouldSerializeQuoted(MockFlags flagsValue)
+        [TestCase(StatusEffects.None)]
+        [TestCase(StatusEffects.Poison)]
+        [TestCase(StatusEffects.Blind)]
+        [TestCase(StatusEffects.Frozen | StatusEffects.Sleep)]
+        [TestCase(StatusEffects.All)]
+        public void Serialize_EnumFlagsKeyValue_ShouldSerializeQuoted(StatusEffects flagsValue)
         {
-            var wrappedValue = new WrappedValue<MockFlags>(flagsValue);
+            var wrappedValue = new WrappedValue<StatusEffects>(flagsValue);
             var toml = TomlSerializer.Serialize(wrappedValue);
 
             Assert.AreEqual($"value = \"{flagsValue:F}\"\n", toml);
