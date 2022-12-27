@@ -40,6 +40,33 @@ namespace UnderLogic.Serialization.Toml.Types
 
         public bool TryGetValue(string key, out TomlValue value) => _table.TryGetValue(key, out value);
 
+        public bool TryGetValuePath(string keyPath, out TomlValue value)
+        {
+            value = null;
+            
+            var components = keyPath.Split('.');
+
+            if (components.Length < 2)
+                return TryGetValue(components[0], out value);
+
+            var tablePath = components.Take(components.Length - 1);
+            var key = components.Last();
+
+            var currentTable = this;
+            foreach(var tableKey in tablePath)
+            {
+                if (!TryGetValue(tableKey, out var valueAtPath))
+                    return false;
+                
+                if (valueAtPath is TomlTable childTable)
+                    currentTable = childTable;
+                else
+                    return false;
+            }
+            
+            return currentTable.TryGetValue(key, out value);
+        }
+
         public override string ToString()
         {
             if (!IsInline)

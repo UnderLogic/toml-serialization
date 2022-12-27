@@ -42,12 +42,11 @@ namespace UnderLogic.Serialization.Toml
         public TomlTable ReadDocument()
         {
             CheckIfDisposed();
-
-            var tableStack = new Stack<TomlTable>();
+            
             TomlTableArray currentTableArray = null;
 
+            var currentTableKey = string.Empty;
             var rootTable = new TomlTable();
-            tableStack.Push(rootTable);
 
             string line;
             while ((line = _reader.ReadLine()) != null)
@@ -56,18 +55,15 @@ namespace UnderLogic.Serialization.Toml
                 if (line.StartsWith("#"))
                     continue;
 
-                var currentTable = tableStack.Peek();
-
                 // Start of a new table array
                 var tableArrayMatch = TableArrayRegex.Match(line);
                 if (tableArrayMatch.Success)
                 {
                     var arrayKey = tableArrayMatch.Groups[1].Value.Trim();
-
-                    if (!currentTable.TryGetValue(arrayKey, out var existingValue))
+                    if (!rootTable.TryGetValue(arrayKey, out var existingValue))
                     {
                         var newTableArray = new TomlTableArray();
-                        currentTable.Add(arrayKey, newTableArray);
+                        rootTable.Add(arrayKey, newTableArray);
 
                         currentTableArray = newTableArray;
                     }
@@ -84,29 +80,43 @@ namespace UnderLogic.Serialization.Toml
                     continue;
                 }
 
-                // Start of a new table, push to table stack
+                // Start of a new table
                 var tableMatch = TableRegex.Match(line);
                 if (tableMatch.Success)
                 {
                     currentTableArray = null;
-                    var tableKey = tableMatch.Groups[1].Value.Trim();
+                    currentTableKey = tableMatch.Groups[1].Value.Trim();
 
                     var childTable = new TomlTable();
-                    rootTable.Add(tableKey, childTable);
-
-                    tableStack.Push(childTable);
+                    rootTable.Add(currentTableKey, childTable);
                     continue;
                 }
 
-                // Parse key-value pairs
+                // Parse key-value pairs into current table/table array
                 if (TryParseKeyValuePair(line, out var keyValuePair))
                 {
+                    // If we're in a table array, add the key-value pair to the last table
                     if (currentTableArray != null)
                     {
                         var arrayTable = currentTableArray[currentTableArray.Count - 1];
                         arrayTable.Add(keyValuePair.Key, keyValuePair.Value);
                     }
-                    else currentTable.Add(keyValuePair.Key, keyValuePair.Value);
+                    // If we're in a table, add the key-value pair to that table
+                    else if(!string.IsNullOrWhiteSpace(currentTableKey))
+                    {
+                        if (!rootTable.TryGetValue(currentTableKey, out var existingValue))
+                            throw new InvalidOperationException($"Table {currentTableKey} does not exist");
+                        
+                        if (!(existingValue is TomlTable existingTable))
+                            throw new InvalidOperationException($"Key {currentTableKey} is not a table");
+
+                        existingTable.Add(keyValuePair.Key, keyValuePair.Value);
+                    }
+                    // Otherwise, add the key-value pair to the root table
+                    else
+                    {
+                        rootTable.Add(keyValuePair.Key, keyValuePair.Value);
+                    }
                 }
             }
 
