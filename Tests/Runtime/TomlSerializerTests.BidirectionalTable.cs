@@ -71,6 +71,31 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(serializedPlayer.Stats.Constitution, deserializePlayer.Stats.Constitution);
             Assert.AreEqual(serializedPlayer.Stats.Dexterity, deserializePlayer.Stats.Dexterity);
         }
+        
+        [Test]
+        public void SerializeDeserialize_ClassType_ShouldSetNestedStructs()
+        {
+            var serializedPlayer = new Player
+            {
+                Location = new PlayerLocation
+                {
+                    Map = 500,
+                    X = 24,
+                    Y = 42,
+                    ZIndex = 1
+                }
+            };
+            
+            var tomlString = TomlSerializer.Serialize(serializedPlayer);
+            
+            var deserializePlayer = new Player();
+            TomlSerializer.DeserializeInto(tomlString, deserializePlayer);
+            
+            Assert.AreEqual(serializedPlayer.Location.Map, deserializePlayer.Location.Map);
+            Assert.AreEqual(serializedPlayer.Location.X, deserializePlayer.Location.X);
+            Assert.AreEqual(serializedPlayer.Location.Y, deserializePlayer.Location.Y);
+            Assert.AreEqual(serializedPlayer.Location.ZIndex, deserializePlayer.Location.ZIndex);
+        }
 
         [Test]
         public void SerializeDeserialize_StructType_ShouldSetFields()

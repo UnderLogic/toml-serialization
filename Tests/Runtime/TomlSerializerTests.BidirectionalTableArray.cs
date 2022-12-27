@@ -10,9 +10,9 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void SerializeDeserialize_ClassType_ShouldSetObjectArrays()
         {
             var serializedPlayer = new Player();
-            var inventoryItems = new InventoryItem[]
+            var inventoryItems = new[]
             {
-                new InventoryItem
+                new()
                 {
                     Slot = 2,
                     Key = "item_red_potion",
