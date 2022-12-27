@@ -39,11 +39,11 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(monster);
 
             var sections = toml.Split("\n\n");
-            Assert.GreaterOrEqual(sections.Length, lootTableSections.Length + 1, "Missing one or more loot sections");
+            Assert.GreaterOrEqual(sections.Length, lootTableSections.Length + 2, "Missing one or more loot sections");
 
             for (var i = 0; i < lootTableSections.Length; i++)
             {
-                var actualTable = sections[1 + i];
+                var actualTable = sections[2 + i];
                 var expectedTable = string.Join("\n", new[]
                 {
                     $"[loot.{lootTableSections[i]}]",
@@ -53,7 +53,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                     $"dropForAllPlayers = {lootTables[i].DropForAllPlayers.ToString().ToLowerInvariant()}"
                 });
                 
-                Assert.AreEqual(expectedTable, actualTable);
+                Assert.AreEqual(expectedTable, actualTable.Trim());
             }
         }
     }

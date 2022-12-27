@@ -201,20 +201,18 @@ namespace UnderLogic.Serialization.Toml
             if (!string.IsNullOrWhiteSpace(tableKey))
                 WriteTableKey(tableKey);
 
-            var isFirstItem = true;
+            var isFirstItem = string.IsNullOrWhiteSpace(tableKey);
 
             if (table != null)
             {
                 var childTables = new Dictionary<string, TomlTable>();
-                var tableArrays = new Dictionary<string, TomlTableArray>();
+                var childArrays = new Dictionary<string, TomlTableArray>();
                 
                 foreach (var keyValuePair in table)
                 {
                     var key = keyValuePair.Key;
                     var value = keyValuePair.Value;
 
-                    var childTableKey = string.IsNullOrWhiteSpace(tableKey) ? key : $"{tableKey}.{key}";
-                    
                     if (value is TomlTable childTable)
                     {
                         if (childTable.IsInline)
@@ -231,7 +229,7 @@ namespace UnderLogic.Serialization.Toml
                     }
                     else if (value is TomlTableArray childTableArray)
                     {
-                        tableArrays.Add(key, childTableArray);
+                        childArrays.Add(key, childTableArray);
                         continue;
                     }
                     else
@@ -248,16 +246,24 @@ namespace UnderLogic.Serialization.Toml
                     if (!isFirstItem)
                         _writer.WriteLine();
 
-                    WriteTableExpanded(childTable.Key, childTable.Value);
+                    var childTablePath = string.IsNullOrWhiteSpace(tableKey)
+                        ? childTable.Key
+                        : $"{tableKey}.{childTable.Key}";
+                    
+                    WriteTableExpanded(childTablePath, childTable.Value);
                     isFirstItem = false;
                 }
-
-                foreach (var childArray in tableArrays)
+                
+                foreach (var childArray in childArrays)
                 {
                     if (!isFirstItem)
                         _writer.WriteLine();
+                    
+                    var childArrayPath = string.IsNullOrWhiteSpace(tableKey)
+                        ? childArray.Key
+                        : $"{tableKey}.{childArray.Key}";
 
-                    WriteTableArray(childArray.Key, childArray.Value);
+                    WriteTableArray(childArrayPath, childArray.Value);
                     isFirstItem = false;
                 }
             }
