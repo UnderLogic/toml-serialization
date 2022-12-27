@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Mocks;
 
@@ -35,7 +36,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             TomlSerializer.DeserializeInto(toml, wrappedArray);
 
             var expectedValues = new string[] { null, null, null };
-            Assert.IsTrue(wrappedArray.ElementsAreSame(expectedValues), "Array should contain nulls");
+            Assert.IsTrue(wrappedArray.SequenceEqual(expectedValues), "Array should contain nulls");
         }
 
         [Test]

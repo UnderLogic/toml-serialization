@@ -16,7 +16,15 @@ namespace UnderLogic.Serialization.Toml
             for (var index = 0; index < tomlArray.Count; index++)
             {
                 var tomlValue = tomlArray[index];
-                if (TryIntoScalar(tomlValue, elementType, out var scalarValue))
+
+                if (tomlValue is TomlArray innerTomlArray)
+                {
+                    if (!TryIntoArray(innerTomlArray, elementType, out var innerArray))
+                        return false;
+
+                    array.SetValue(innerArray, index);
+                }
+                else if (TryIntoScalar(tomlValue, elementType, out var scalarValue))
                     array.SetValue(scalarValue, index);
                 else
                     return false;
@@ -36,7 +44,14 @@ namespace UnderLogic.Serialization.Toml
 
             foreach (var tomlValue in tomlArray)
             {
-                if (TryIntoScalar(tomlValue, elementType, out var scalarValue))
+                if (tomlValue is TomlArray innerTomlArray)
+                {
+                    if (!TryIntoList(innerTomlArray, elementType, out var innerList))
+                        return false;
+
+                    list.Add(innerList);
+                }
+                else if (TryIntoScalar(tomlValue, elementType, out var scalarValue))
                     list.Add(scalarValue);
                 else
                     return false;

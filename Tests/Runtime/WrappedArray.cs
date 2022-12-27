@@ -38,22 +38,5 @@ namespace UnderLogic.Serialization.Toml.Tests
         public static WrappedArray<T> Null() => new(null);
 
         public static WrappedArray<T> FromValues(params T[] values) => new(values);
-
-        public bool ElementsAreSame(IReadOnlyList<T> other)
-        {
-            if (other == null)
-                return false;
-
-            if (Count != other.Count)
-                return false;
-
-            for (var i = 0; i < Count; i++)
-            {
-                if (!this[i].Equals(other[i]))
-                    return false;
-            }
-
-            return true;
-        }
     }
 }
