@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -81,13 +83,13 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_EnumDict_ShouldSerializeQuoted()
         {
-            var dict = new WrappedDictionary<MockEnum>
+            var dict = new WrappedDictionary<Direction>
             {
-                { "none", MockEnum.None },
-                { "up", MockEnum.North },
-                { "down", MockEnum.South },
-                { "left", MockEnum.West },
-                { "right", MockEnum.East },
+                { "none", Direction.None },
+                { "up", Direction.Up },
+                { "down", Direction.Down },
+                { "left", Direction.Left },
+                { "right", Direction.Right },
             };
 
             var toml = TomlSerializer.Serialize(dict);
@@ -101,13 +103,13 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_EnumFlagsDict_ShouldSerializeQuoted()
         {
-            var dict = new WrappedDictionary<MockFlags>
+            var dict = new WrappedDictionary<StatusEffects>
             {
-                { "none", MockFlags.None },
-                { "available", MockFlags.Available },
-                { "available_in_progress", MockFlags.Available | MockFlags.InProgress },
-                { "cancelled", MockFlags.Cancelled },
-                { "all", MockFlags.All },
+                { "none", StatusEffects.None },
+                { "poison", StatusEffects.Poison },
+                { "blind", StatusEffects.Blind },
+                { "immobile", StatusEffects.Frozen | StatusEffects.Sleep | StatusEffects.Stun },
+                { "all", StatusEffects.All },
             };
 
             var toml = TomlSerializer.Serialize(dict);
@@ -315,38 +317,34 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_MixedDict_ShouldSerializeInline()
         {
-            var classObject = new MockSimpleClass
+            var location = new PlayerLocation
             {
-                Id = 99,
-                Name = "Cool Reward",
-                Weight = 1.25f,
-                Hidden = false,
-                CreatedAt = new DateTime(2022, 10, 1)
+                Map = 500,
+                X = 24,
+                Y = 42,
+                ZIndex = 1
             };
 
-            var structObject = new MockSimpleStruct
-            {
-                Index = 10,
-                X = 2f,
-                Y = 4f,
-                Z = 6f
-            };
+            var rewards = new Dictionary<string, string>();
+            rewards.Add("option_1", "sword");
+            rewards.Add("option_2", "axe");
+            rewards.Add("option_3", "dagger");
 
             var dict = new WrappedDictionary<object>
             {
                 { "questName", "Test Quest" },
                 { "questId", 1 },
                 { "levelRange", new[] { 10, 15 } },
-                { "status", MockFlags.Completed },
-                { "reward", classObject },
-                { "location", structObject },
+                { "hazards", StatusEffects.Poison },
+                { "rewards", rewards },
+                { "location", location },
                 { "startedAt", new DateTime(2022, 10, 1) }
             };
 
             var toml = TomlSerializer.Serialize(dict);
 
             Assert.AreEqual(
-                "dictionary = { questName = \"Test Quest\", questId = 1, levelRange = [ 10, 15 ], status = \"Completed\", reward = { id = 99, name = \"Cool Reward\", weight = 1.25, hidden = false, createdAt = 2022-10-01 00:00:00.000Z }, location = { index = 10, x = 2, y = 4, z = 6 }, startedAt = 2022-10-01 00:00:00.000Z }\n",
+                "dictionary = { questName = \"Test Quest\", questId = 1, levelRange = [ 10, 15 ], hazards = \"Poison\", rewards = { option_1 = \"sword\", option_2 = \"axe\", option_3 = \"dagger\" }, location = { map = 500, x = 24, y = 42, zIndex = 1 }, startedAt = 2022-10-01 00:00:00.000Z }\n",
                 toml);
         }
     }

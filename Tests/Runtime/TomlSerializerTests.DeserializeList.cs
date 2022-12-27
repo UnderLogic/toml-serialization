@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -68,32 +69,32 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Deserialize_EnumList_ShouldSetElements()
         {
-            var wrappedList = WrappedList<MockEnum>.Empty();
-            const string toml = "list = [ \"North\", \"South\", \"East\", \"West\" ]\n";
+            var wrappedList = WrappedList<Direction>.Empty();
+            const string toml = "list = [ \"Up\", \"Down\", \"Left\", \"Right\" ]\n";
 
             TomlSerializer.DeserializeInto(toml, wrappedList);
             Assert.IsFalse(wrappedList.IsEmpty, "List should not be empty");
 
-            Assert.AreEqual(MockEnum.North, wrappedList[0]);
-            Assert.AreEqual(MockEnum.South, wrappedList[1]);
-            Assert.AreEqual(MockEnum.East, wrappedList[2]);
-            Assert.AreEqual(MockEnum.West, wrappedList[3]);
+            Assert.AreEqual(Direction.Up, wrappedList[0]);
+            Assert.AreEqual(Direction.Down, wrappedList[1]);
+            Assert.AreEqual(Direction.Left, wrappedList[2]);
+            Assert.AreEqual(Direction.Right, wrappedList[3]);
         }
 
         [Test]
         public void Deserialize_EnumFlagsList_ShouldSetElements()
         {
-            var wrappedList = WrappedList<MockFlags>.Empty();
+            var wrappedList = WrappedList<StatusEffects>.Empty();
             const string toml =
-                "list = [ \"Available\", \"InProgress\", \"Completed,Cancelled\", \"All\" ]\n";
+                "list = [ \"Poison\", \"Blind\", \"Frozen,Sleep\", \"All\" ]\n";
 
             TomlSerializer.DeserializeInto(toml, wrappedList);
             Assert.IsFalse(wrappedList.IsEmpty, "List should not be empty");
 
-            Assert.AreEqual(MockFlags.Available, wrappedList[0]);
-            Assert.AreEqual(MockFlags.InProgress, wrappedList[1]);
-            Assert.AreEqual(MockFlags.Completed | MockFlags.Cancelled, wrappedList[2]);
-            Assert.AreEqual(MockFlags.All, wrappedList[3]);
+            Assert.AreEqual(StatusEffects.Poison, wrappedList[0]);
+            Assert.AreEqual(StatusEffects.Blind, wrappedList[1]);
+            Assert.AreEqual(StatusEffects.Frozen | StatusEffects.Sleep, wrappedList[2]);
+            Assert.AreEqual(StatusEffects.All, wrappedList[3]);
         }
         
         [Test]

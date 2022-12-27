@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -67,32 +68,32 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Deserialize_EnumDict_ShouldSetValues()
         {
-            var dict = new WrappedDictionary<MockEnum>();
+            var dict = new WrappedDictionary<Direction>();
 
             const string toml =
-                "dictionary = { none = \"None\", up = \"North\", down = \"South\", left = \"West\", right = \"East\" }\n";
+                "dictionary = { none = \"None\", up = \"Up\", down = \"Down\", left = \"Left\", right = \"Right\" }\n";
             TomlSerializer.DeserializeInto(toml, dict);
 
-            Assert.AreEqual(MockEnum.None, dict.Get("none"));
-            Assert.AreEqual(MockEnum.North, dict.Get("up"));
-            Assert.AreEqual(MockEnum.South, dict.Get("down"));
-            Assert.AreEqual(MockEnum.West, dict.Get("left"));
-            Assert.AreEqual(MockEnum.East, dict.Get("right"));
+            Assert.AreEqual(Direction.None, dict.Get("none"));
+            Assert.AreEqual(Direction.Up, dict.Get("up"));
+            Assert.AreEqual(Direction.Down, dict.Get("down"));
+            Assert.AreEqual(Direction.Left, dict.Get("left"));
+            Assert.AreEqual(Direction.Right, dict.Get("right"));
         }
 
         [Test]
         public void Deserialize_EnumFlagsDict_ShouldSetValues()
         {
-            var dict = new WrappedDictionary<MockFlags>();
+            var dict = new WrappedDictionary<StatusEffects>();
 
             const string toml =
-                "dictionary = { none = \"None\", available = \"Available\", done = \"Completed,Cancelled\", all = \"All\" }\n";
+                "dictionary = { none = \"None\", poison = \"Poison\", immobile = \"Frozen,Sleep,Stun\", all = \"All\" }\n";
             TomlSerializer.DeserializeInto(toml, dict);
 
-            Assert.AreEqual(MockFlags.None, dict.Get("none"));
-            Assert.AreEqual(MockFlags.Available, dict.Get("available"));
-            Assert.AreEqual(MockFlags.Completed | MockFlags.Cancelled, dict.Get("done"));
-            Assert.AreEqual(MockFlags.All, dict.Get("all"));
+            Assert.AreEqual(StatusEffects.None, dict.Get("none"));
+            Assert.AreEqual(StatusEffects.Poison, dict.Get("poison"));
+            Assert.AreEqual(StatusEffects.Frozen | StatusEffects.Sleep | StatusEffects.Stun, dict.Get("immobile"));
+            Assert.AreEqual(StatusEffects.All, dict.Get("all"));
         }
 
         [Test]

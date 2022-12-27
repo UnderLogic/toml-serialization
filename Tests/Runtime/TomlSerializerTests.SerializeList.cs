@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -64,7 +66,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_EnumList_ShouldSerializeQuoted()
         {
             var wrappedList =
-                WrappedList<MockEnum>.FromValues(MockEnum.North, MockEnum.South, MockEnum.East, MockEnum.West);
+                WrappedList<Direction>.FromValues(Direction.Up, Direction.Down, Direction.Left, Direction.Right);
             var toml = TomlSerializer.Serialize(wrappedList);
 
             var valueStrings = wrappedList.Select(value => $"\"{value}\"");
@@ -77,8 +79,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_EnumFlagsList_ShouldSerializeQuoted()
         {
             var wrappedList =
-                WrappedList<MockFlags>.FromValues(MockFlags.None, MockFlags.Available | MockFlags.InProgress,
-                    MockFlags.All);
+                WrappedList<StatusEffects>.FromValues(StatusEffects.None, StatusEffects.Poison, StatusEffects.Blind,
+                    StatusEffects.Frozen | StatusEffects.Sleep, StatusEffects.All);
             var toml = TomlSerializer.Serialize(wrappedList);
 
             var valueStrings = wrappedList.Select(value => $"\"{value}\"");
@@ -177,7 +179,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrappedList = WrappedList<float>.FromValues(float.MinValue, -1, 0, 1, float.MaxValue);
             var toml = TomlSerializer.Serialize(wrappedList);
 
-            var valueStrings = wrappedList.Select(value => ((double)value).ToString());
+            var valueStrings = wrappedList.Select(value => ((double)value).ToString(CultureInfo.InvariantCulture));
             var listString = string.Join(", ", valueStrings);
 
             Assert.AreEqual($"list = [ {listString} ]\n", toml);
@@ -189,7 +191,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrappedList = WrappedList<double>.FromValues(double.MinValue, -1, 0, 1, double.MaxValue);
             var toml = TomlSerializer.Serialize(wrappedList);
 
-            var valueStrings = wrappedList.Select(value => value.ToString());
+            var valueStrings = wrappedList.Select(value => value.ToString(CultureInfo.InvariantCulture));
             var listString = string.Join(", ", valueStrings);
 
             Assert.AreEqual($"list = [ {listString} ]\n", toml);
@@ -210,31 +212,22 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_MixedList_ShouldSerializeInline()
         {
-            var classObject = new MockSimpleClass
+            var location = new PlayerLocation()
             {
-                Id = 99,
-                Name = "Hidden Item",
-                Weight = 0.5f,
-                Hidden = true,
-                CreatedAt = new DateTime(2022, 10, 1)
-            };
-
-            var structObject = new MockSimpleStruct()
-            {
-                Index = 31,
-                X = 0.5f,
-                Y = 1.5f,
-                Z = 5f
+                Map = 500,
+                X = 24,
+                Y = 42,
+                ZIndex = 1
             };
 
             var wrappedList =
-                WrappedList<object>.FromValues(true, 42, new[] { 3.14, 1.412 }, classObject, structObject,
-                    MockEnum.West);
+                WrappedList<object>.FromValues("Player", true, 42, new[] { 3.14, 1.412 }, location,
+                    Direction.Left);
 
             var toml = TomlSerializer.Serialize(wrappedList);
 
             Assert.AreEqual(
-                "list = [ true, 42, [ 3.14, 1.412 ], { id = 99, name = \"Hidden Item\", weight = 0.5, hidden = true, createdAt = 2022-10-01 00:00:00.000Z }, { index = 31, x = 0.5, y = 1.5, z = 5 }, \"West\" ]\n",
+                "list = [ \"Player\", true, 42, [ 3.14, 1.412 ], { map = 500, x = 24, y = 42, zIndex = 1 }, \"Left\" ]\n",
                 toml);
         }
     }

@@ -1,8 +1,8 @@
 using System;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
+using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -74,7 +74,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_DuplicateFieldName_ThrowsException()
         {
             var writer = new StringWriter(new StringBuilder());
-            var invalid = new MockInvalidClass();
+            var invalid = new InvalidClass();
             
             Assert.Throws<InvalidOperationException>(() => { TomlSerializer.Serialize(writer, invalid); });
         }
