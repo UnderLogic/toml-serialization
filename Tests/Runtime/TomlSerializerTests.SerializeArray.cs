@@ -25,6 +25,15 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual("array = []\n", toml);
         }
+        
+        [Test]
+        public void Serialize_ArrayOfNulls_ShouldSerializeNulls()
+        {
+            var wrappedArray = WrappedArray<string>.FromValues(null, null, null);
+            var toml = TomlSerializer.Serialize(wrappedArray);
+
+            Assert.AreEqual("array = [ null, null, null ]\n", toml);
+        }
 
         [Test]
         public void Serialize_BoolArray_ShouldSerializeLowerCase()

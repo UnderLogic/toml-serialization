@@ -27,6 +27,18 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [Test]
+        public void Deserialize_ArrayOfNulls_ShouldSetNulls()
+        {
+            var wrappedArray = WrappedArray<string>.FromValues("hello", "world");
+            const string toml = "array = [ null, null, null ]\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            var expectedValues = new string[] { null, null, null };
+            Assert.IsTrue(wrappedArray.ElementsAreSame(expectedValues), "Array should contain nulls");
+        }
+
+        [Test]
         public void Deserialize_BoolArray_ShouldSetElements()
         {
             var wrappedArray = WrappedArray<bool>.Empty();

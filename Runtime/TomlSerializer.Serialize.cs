@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -140,7 +141,12 @@ namespace UnderLogic.Serialization.Toml
 
         private static TomlValue ConvertToTomlArray(IEnumerable values)
         {
-            var collection = values.OfType<object>().ToList();
+            IList<object> collection;
+
+            if (values is IEnumerable<string> stringList)
+                collection = stringList.Cast<object>().ToList();
+            else
+                collection = values.OfType<object>().ToList();
 
             if (collection.Count < 1)
                 return TomlArray.Empty;
