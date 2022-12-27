@@ -105,7 +105,7 @@ namespace UnderLogic.Serialization.Toml
                 {
                     if (IsStringDictionary(fieldType))
                         DeserializeDictionaryField(tomlTable, field, obj);
-                    else if (IsObjectType(fieldType))
+                    else if (IsComplexType(fieldType))
                         DeserializeObjectField(tomlTable, field, obj);
                     else
                         throw new InvalidOperationException($"Type {fieldType.Name} is not supported");

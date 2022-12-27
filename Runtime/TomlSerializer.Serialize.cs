@@ -89,7 +89,9 @@ namespace UnderLogic.Serialization.Toml
 
             if (obj is IDictionary dictionary)
             {
-                var tomlTable = ConvertToTomlTableInline(dictionary);
+                var shouldInline = !IsObjectDictionary(type);
+                var tomlTable = ConvertToTomlTable(dictionary, shouldInline);
+
                 if (tomlTable != null)
                     return tomlTable;
             }
@@ -99,7 +101,7 @@ namespace UnderLogic.Serialization.Toml
                 if (tomlArray != null)
                     return tomlArray;
             }
-            else if (IsObjectType(type))
+            else if (IsComplexType(type))
             {
                 var tomlTable = ConvertToTomlTableExpanded(obj);
                 
@@ -151,7 +153,7 @@ namespace UnderLogic.Serialization.Toml
             if (collection.Count < 1)
                 return TomlArray.Empty;
 
-            if (collection.All(IsObjectType))
+            if (collection.All(IsComplexType))
             {
                 var tomlTableArray = new TomlTableArray();
                 foreach (var value in collection)
@@ -170,9 +172,9 @@ namespace UnderLogic.Serialization.Toml
             return new TomlArray(tomlValues);
         }
 
-        private static TomlTable ConvertToTomlTableInline(IDictionary dictionary)
+        private static TomlTable ConvertToTomlTable(IDictionary dictionary, bool isInline = false)
         {
-            var tomlTable = new TomlTable { IsInline = true };
+            var tomlTable = new TomlTable { IsInline = isInline };
             foreach (var innerKey in dictionary.Keys)
             {
                 var innerKeyString = innerKey.ToString();
