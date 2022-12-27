@@ -60,10 +60,10 @@ namespace UnderLogic.Serialization.Toml
                 if (tableArrayMatch.Success)
                 {
                     var arrayKey = tableArrayMatch.Groups[1].Value.Trim();
-                    if (!rootTable.TryGetValue(arrayKey, out var existingValue))
+                    if (!rootTable.TryGetValuePath(arrayKey, out var existingValue))
                     {
                         var newTableArray = new TomlTableArray();
-                        rootTable.Add(arrayKey, newTableArray);
+                        rootTable.AddPath(arrayKey, newTableArray);
 
                         currentTableArray = newTableArray;
                     }
@@ -88,7 +88,7 @@ namespace UnderLogic.Serialization.Toml
                     currentTableKey = tableMatch.Groups[1].Value.Trim();
 
                     var childTable = new TomlTable();
-                    rootTable.Add(currentTableKey, childTable);
+                    rootTable.AddPath(currentTableKey, childTable);
                     continue;
                 }
 
@@ -104,7 +104,7 @@ namespace UnderLogic.Serialization.Toml
                     // If we're in a table, add the key-value pair to that table
                     else if(!string.IsNullOrWhiteSpace(currentTableKey))
                     {
-                        if (!rootTable.TryGetValue(currentTableKey, out var existingValue))
+                        if (!rootTable.TryGetValuePath(currentTableKey, out var existingValue))
                             throw new InvalidOperationException($"Table {currentTableKey} does not exist");
                         
                         if (!(existingValue is TomlTable existingTable))
