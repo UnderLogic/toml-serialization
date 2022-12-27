@@ -8,7 +8,7 @@ namespace UnderLogic.Serialization.Toml.Tests
     internal partial class TomlSerializerTests
     {
         [Test]
-        public void SerializeDeserialize_NullArray_ShouldBeEqual()
+        public void SerializeDeserialize_NullArray_ShouldBeNull()
         {
             var serializedArray = WrappedArray<string>.Null();
             var tomlString = TomlSerializer.Serialize(serializedArray);
@@ -20,7 +20,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
         
         [Test]
-        public void SerializeDeserialize_EmptyArray_ShouldBeEqual()
+        public void SerializeDeserialize_EmptyArray_ShouldBeEmpty()
         {
             var serializedArray = WrappedArray<string>.Empty();
             var tomlString = TomlSerializer.Serialize(serializedArray);

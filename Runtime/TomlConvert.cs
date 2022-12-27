@@ -73,7 +73,14 @@ namespace UnderLogic.Serialization.Toml
             {
                 var tomlValue = keyPairValue.Value;
 
-                if (TryIntoScalar(tomlValue, valueType, out var scalarValue))
+                if (tomlValue is TomlArray innerTomlArray)
+                {
+                    if (!TryIntoList(innerTomlArray, valueType, out var innerList))
+                        return false;
+                    
+                    dict.Add(keyPairValue.Key, innerList);
+                }
+                else if (TryIntoScalar(tomlValue, valueType, out var scalarValue))
                     dict.Add(keyPairValue.Key, scalarValue);
                 else
                     return false;
@@ -156,7 +163,6 @@ namespace UnderLogic.Serialization.Toml
                     result = (ushort)integerValue.Value;
                     return true;
                 }
-
                 if (type == typeof(uint))
                 {
                     result = (uint)integerValue.Value;
@@ -168,7 +174,6 @@ namespace UnderLogic.Serialization.Toml
                     result = (float)integerValue.Value;
                     return true;
                 }
-
                 if (type == typeof(double))
                 {
                     result = (double)integerValue.Value;

@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Serialization of arrays and lists containing `null` values
+- Serialization of mixed arrays and lists containing nested arrays and lists
+- Serialization of mixed dictionaries containing arrays and lists
 
 ## [0.3.1] - 2022-12-26
 
