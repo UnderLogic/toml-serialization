@@ -144,7 +144,21 @@ namespace UnderLogic.Serialization.Toml
             {
                 if (type.IsArray)
                 {
-                    
+                    if (!TryConvertToObjectArray(tomlTableArray, type.GetElementType(), out var arrayResult))
+                        return false;
+
+                    result = arrayResult;
+                    return true;
+                }
+
+                if (IsGenericList(type))
+                {
+                    var elementType = type.GetGenericArguments()[0];
+                    if (!TryConvertToObjectList(tomlTableArray, elementType, out var listResult))
+                        return false;
+
+                    result = listResult;
+                    return true;
                 }
             }
             else if (tomlValue is TomlArray tomlArray)
@@ -193,6 +207,30 @@ namespace UnderLogic.Serialization.Toml
             return true;
         }
 
+        private static bool TryConvertToObjectList(TomlTableArray tomlTableArray, Type elementType,
+            out IList listResult)
+        {
+            listResult = null;
+
+            var listType = typeof(List<>);
+            var constructedListType = listType.MakeGenericType(elementType);
+            var list = (IList)Activator.CreateInstance(constructedListType);
+
+            foreach (var tomlTable in tomlTableArray)
+            {
+                if (!HasDefaultConstructor(elementType))
+                    return false;
+
+                var instance = Activator.CreateInstance(elementType);
+                DeserializeObject(tomlTable, instance);
+
+                list.Add(instance);
+            }
+
+            listResult = list;
+            return true;
+        }
+
         private static bool TryConvertToList(TomlArray tomlArray, Type elementType, out IList listResult)
         {
             listResult = null;
@@ -210,6 +248,25 @@ namespace UnderLogic.Serialization.Toml
             }
 
             listResult = list;
+            return true;
+        }
+
+        private static bool TryConvertToObjectArray(TomlTableArray tomlTableArray, Type elementType,
+            out Array arrayResult)
+        {
+            arrayResult = null;
+            
+            var array = Array.CreateInstance(elementType, tomlTableArray.Count);
+            for (var index = 0; index < tomlTableArray.Count; index++)
+            {
+                var tomlTable = tomlTableArray[index];
+                if (!TryConvertFromTomlValue(tomlTable, elementType, out var convertedValue))
+                    return false;
+
+                array.SetValue(convertedValue, index);
+            }
+
+            arrayResult = array;
             return true;
         }
         
