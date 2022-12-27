@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Unit tests for bidirectional serialization to and from TOML
+- Support for serializing nested objects using dot (`.`) notation
 
 ### Fixed
 

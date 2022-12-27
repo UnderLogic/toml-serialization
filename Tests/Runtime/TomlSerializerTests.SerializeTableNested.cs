@@ -6,7 +6,7 @@ namespace UnderLogic.Serialization.Toml.Tests
     internal partial class TomlSerializerTests
     {
         [Test]
-        public void Serialize_NestedClass_ShouldSerializeDotted()
+        public void Serialize_ObjectDict_ShouldSerializeDotted()
         {
             var monster = new Monster { Name = "Boss" };
             var lootTables = new LootTable[]

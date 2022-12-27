@@ -17,7 +17,14 @@ namespace UnderLogic.Serialization.Toml
             {
                 var tomlValue = tomlArray[index];
 
-                if (tomlValue is TomlArray innerTomlArray)
+                if (tomlValue is TomlTable innerTomlTable)
+                {
+                    if (!TryIntoDictionary(innerTomlTable, elementType, out var innerDict))
+                        return false;
+
+                    array.SetValue(innerDict, index);
+                }
+                else if (tomlValue is TomlArray innerTomlArray)
                 {
                     if (!TryIntoArray(innerTomlArray, elementType, out var innerArray))
                         return false;
@@ -44,7 +51,14 @@ namespace UnderLogic.Serialization.Toml
 
             foreach (var tomlValue in tomlArray)
             {
-                if (tomlValue is TomlArray innerTomlArray)
+                if (tomlValue is TomlTable innerTomlTable)
+                {
+                    if (!TryIntoDictionary(innerTomlTable, elementType, out var innerDict))
+                        return false;
+
+                    list.Add(innerDict);
+                }
+                else if (tomlValue is TomlArray innerTomlArray)
                 {
                     if (!TryIntoList(innerTomlArray, elementType, out var innerList))
                         return false;
@@ -64,7 +78,7 @@ namespace UnderLogic.Serialization.Toml
         public static bool TryIntoDictionary(TomlTable tomlTable, Type valueType, out IDictionary dictResult)
         {
             dictResult = null;
-            
+
             var dictType = typeof(Dictionary<,>);
             var constructedDictType = dictType.MakeGenericType(typeof(string), valueType);
             var dict = (IDictionary)Activator.CreateInstance(constructedDictType);
@@ -73,11 +87,18 @@ namespace UnderLogic.Serialization.Toml
             {
                 var tomlValue = keyPairValue.Value;
 
-                if (tomlValue is TomlArray innerTomlArray)
+                if (tomlValue is TomlTable innerTomlTable)
+                {
+                    if (!TryIntoDictionary(innerTomlTable, valueType, out var innerDict))
+                        return false;
+
+                    dict.Add(keyPairValue.Key, innerDict);
+                }
+                else if (tomlValue is TomlArray innerTomlArray)
                 {
                     if (!TryIntoList(innerTomlArray, valueType, out var innerList))
                         return false;
-                    
+
                     dict.Add(keyPairValue.Key, innerList);
                 }
                 else if (TryIntoScalar(tomlValue, valueType, out var scalarValue))
@@ -93,7 +114,7 @@ namespace UnderLogic.Serialization.Toml
         public static bool TryIntoScalar(TomlValue tomlValue, Type type, out object result)
         {
             result = null;
-            
+
             if (tomlValue is TomlNull)
                 return true;
 
@@ -137,16 +158,19 @@ namespace UnderLogic.Serialization.Toml
                     result = (sbyte)integerValue.Value;
                     return true;
                 }
+
                 if (type == typeof(short))
                 {
                     result = (short)integerValue.Value;
                     return true;
                 }
+
                 if (type == typeof(int))
                 {
                     result = (int)integerValue.Value;
                     return true;
                 }
+
                 if (type == typeof(long) || type == typeof(object))
                 {
                     result = integerValue.Value;
@@ -158,11 +182,13 @@ namespace UnderLogic.Serialization.Toml
                     result = (byte)integerValue.Value;
                     return true;
                 }
+
                 if (type == typeof(ushort))
                 {
                     result = (ushort)integerValue.Value;
                     return true;
                 }
+
                 if (type == typeof(uint))
                 {
                     result = (uint)integerValue.Value;
@@ -174,6 +200,7 @@ namespace UnderLogic.Serialization.Toml
                     result = (float)integerValue.Value;
                     return true;
                 }
+
                 if (type == typeof(double))
                 {
                     result = (double)integerValue.Value;
@@ -195,7 +222,7 @@ namespace UnderLogic.Serialization.Toml
                     return true;
                 }
             }
-            
+
             if (tomlValue is TomlDateTime dateTimeValue)
             {
                 result = dateTimeValue.Value;
@@ -204,5 +231,7 @@ namespace UnderLogic.Serialization.Toml
 
             return false;
         }
+        
+        
     }
 }
