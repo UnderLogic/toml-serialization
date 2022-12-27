@@ -10,7 +10,7 @@ namespace UnderLogic.Serialization.Toml.Tests.Mocks
         private int _mana = 50;
         private int _maxMana = 50;
         private int _strength = 3;
-        private int _intellect = 3;
+        private int _intelligence = 3;
         private int _wisdom = 3;
         private int _constitution = 3;
         private int _dexterity = 3;
@@ -45,10 +45,10 @@ namespace UnderLogic.Serialization.Toml.Tests.Mocks
             set => _strength = value;
         }
         
-        public int Intellect
+        public int Intelligence
         {
-            get => _intellect;
-            set => _intellect = value;
+            get => _intelligence;
+            set => _intelligence = value;
         }
         
         public int Wisdom

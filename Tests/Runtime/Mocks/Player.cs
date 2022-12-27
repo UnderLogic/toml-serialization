@@ -16,7 +16,7 @@ namespace UnderLogic.Serialization.Toml.Tests.Mocks
         private PlayerLocation _location;
         private Direction _facing = Direction.Down;
 
-        private PlayerStats _stats;
+        private PlayerStats _stats = new ();
         private int _statPoints;
 
         private StatusEffects _status;
