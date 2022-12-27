@@ -11,6 +11,7 @@ namespace UnderLogic.Serialization.Toml
     public static partial class TomlSerializer
     {
         #region Deserialize Public Methods
+
         public static T Deserialize<T>(string toml) where T : new()
         {
             if (toml == null)
@@ -39,9 +40,11 @@ namespace UnderLogic.Serialization.Toml
 
             return instance;
         }
+
         #endregion
 
         #region DeserializeInto Public Methods
+
         public static void DeserializeInto(string toml, object obj)
         {
             if (toml == null)
@@ -80,6 +83,7 @@ namespace UnderLogic.Serialization.Toml
                 DeserializeObject(rootTable, obj);
             }
         }
+
         #endregion
 
         private static void DeserializeObject(TomlTable table, object obj)
@@ -110,6 +114,10 @@ namespace UnderLogic.Serialization.Toml
         }
 
         private static bool TryConvertFromTomlValue(TomlValue tomlValue, Type type, out object result)
+            => TryConvertFromTomlValue(tomlValue, type, ConvertFlags.None, out result);
+
+        private static bool TryConvertFromTomlValue(TomlValue tomlValue, Type type, ConvertFlags flags,
+            out object result)
         {
             result = null;
 
@@ -132,7 +140,7 @@ namespace UnderLogic.Serialization.Toml
                 {
                     if (!HasDefaultConstructor(type))
                         return false;
-                    
+
                     var instance = Activator.CreateInstance(type);
                     DeserializeObject(tomlTable, instance);
 
@@ -142,18 +150,19 @@ namespace UnderLogic.Serialization.Toml
             }
             else if (tomlValue is TomlTableArray tomlTableArray)
             {
-                if (type.IsArray)
+                if (type.IsArray || flags.HasFlag(ConvertFlags.ForceArray))
                 {
-                    if (!TryConvertToObjectArray(tomlTableArray, type.GetElementType(), out var arrayResult))
+                    var elementType = type.IsArray ? type.GetElementType() : typeof(object);
+                    if (!TryConvertToObjectArray(tomlTableArray, elementType, out var arrayResult))
                         return false;
 
                     result = arrayResult;
                     return true;
                 }
 
-                if (IsGenericList(type))
+                if (IsGenericList(type) || flags.HasFlag(ConvertFlags.ForceList))
                 {
-                    var elementType = type.GetGenericArguments()[0];
+                    var elementType = IsGenericList(type) ? type.GetGenericArguments()[0] : typeof(object);
                     if (!TryConvertToObjectList(tomlTableArray, elementType, out var listResult))
                         return false;
 
@@ -163,26 +172,40 @@ namespace UnderLogic.Serialization.Toml
             }
             else if (tomlValue is TomlArray tomlArray)
             {
-                if (type.IsArray)
+                if (type.IsArray || flags.HasFlag(ConvertFlags.ForceArray))
                 {
-                    if (!TryConvertToArray(tomlArray, type.GetElementType(), out var arrayResult))
+                    var elementType = type.IsArray ? type.GetElementType() : typeof(object);
+                    if (!TryConvertToArray(tomlArray, elementType, out var arrayResult))
                         return false;
 
                     result = arrayResult;
                     return true;
                 }
 
-                if (IsGenericList(type))
+                if (IsGenericList(type) || flags.HasFlag(ConvertFlags.ForceList))
                 {
-                    var elementType = type.GetGenericArguments()[0];
+                    var elementType = IsGenericList(type) ? type.GetGenericArguments()[0] : typeof(object);
                     if (!TryConvertToList(tomlArray, elementType, out var listResult))
                         return false;
 
                     result = listResult;
                     return true;
                 }
+
+                // Default to a mixed object list when the type is not explicitly an array or list
+                if (type == typeof(object))
+                {
+                    if (!TryConvertToList(tomlArray, typeof(object), out var listResult))
+                        return false;
+
+                    result = listResult;
+                    return true;
+                }
             }
-            else return TryConvertToScalar(tomlValue, type, out result);
+            else
+            {
+                return TryConvertToScalar(tomlValue, type, out result);
+            }
 
             return false;
         }
@@ -212,15 +235,15 @@ namespace UnderLogic.Serialization.Toml
         {
             listResult = null;
 
+            if (!HasDefaultConstructor(elementType))
+                return false;
+
             var listType = typeof(List<>);
             var constructedListType = listType.MakeGenericType(elementType);
             var list = (IList)Activator.CreateInstance(constructedListType);
 
             foreach (var tomlTable in tomlTableArray)
             {
-                if (!HasDefaultConstructor(elementType))
-                    return false;
-
                 var instance = Activator.CreateInstance(elementType);
                 DeserializeObject(tomlTable, instance);
 
@@ -238,10 +261,10 @@ namespace UnderLogic.Serialization.Toml
             var listType = typeof(List<>);
             var constructedListType = listType.MakeGenericType(elementType);
             var list = (IList)Activator.CreateInstance(constructedListType);
-            
+
             foreach (var tomlValue in tomlArray)
             {
-                if (TryConvertFromTomlValue(tomlValue, elementType, out var convertedValue))
+                if (TryConvertFromTomlValue(tomlValue, elementType, ConvertFlags.ForceList, out var convertedValue))
                     list.Add(convertedValue);
                 else
                     return false;
@@ -255,30 +278,36 @@ namespace UnderLogic.Serialization.Toml
             out Array arrayResult)
         {
             arrayResult = null;
-            
+
+            if (!HasDefaultConstructor(elementType))
+                return false;
+
             var array = Array.CreateInstance(elementType, tomlTableArray.Count);
+
             for (var index = 0; index < tomlTableArray.Count; index++)
             {
                 var tomlTable = tomlTableArray[index];
-                if (!TryConvertFromTomlValue(tomlTable, elementType, out var convertedValue))
-                    return false;
 
-                array.SetValue(convertedValue, index);
+                var instance = Activator.CreateInstance(elementType);
+                DeserializeObject(tomlTable, instance);
+
+                array.SetValue(instance, index);
             }
 
             arrayResult = array;
             return true;
         }
-        
+
         private static bool TryConvertToArray(TomlArray tomlArray, Type elementType, out Array arrayResult)
         {
             arrayResult = null;
 
             var array = Array.CreateInstance(elementType, tomlArray.Count);
+
             for (var index = 0; index < tomlArray.Count; index++)
             {
                 var tomlValue = tomlArray[index];
-                if (TryConvertFromTomlValue(tomlValue, elementType, out var convertedValue))
+                if (TryConvertFromTomlValue(tomlValue, elementType, ConvertFlags.ForceArray, out var convertedValue))
                     array.SetValue(convertedValue, index);
                 else
                     return false;
@@ -303,7 +332,7 @@ namespace UnderLogic.Serialization.Toml
                 {
                     if (string.IsNullOrEmpty(tomlString.Value))
                         return false;
-                    
+
                     scalarResult = tomlString.Value[0];
                 }
                 else if (type.IsEnum)
@@ -330,7 +359,7 @@ namespace UnderLogic.Serialization.Toml
                 else if (type == typeof(uint))
                     scalarResult = (uint)tomlInteger.Value;
                 else if (type == typeof(ulong))
-                    return false;   // Not supported
+                    return false; // Not supported
                 else if (type == typeof(float))
                     scalarResult = (float)tomlInteger.Value;
                 else if (type == typeof(double))
@@ -343,7 +372,7 @@ namespace UnderLogic.Serialization.Toml
                 if (type == typeof(float))
                     scalarResult = (float)tomlFloat.Value;
                 else if (type == typeof(decimal))
-                    return false;   // Not supported
+                    return false; // Not supported
                 else
                     scalarResult = tomlFloat.Value;
             }
