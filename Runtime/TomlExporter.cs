@@ -7,24 +7,31 @@ namespace UnderLogic.Serialization.Toml
 {
     public class TomlExporter : MonoBehaviour
     {
-        [SerializeField] private ScriptableObject sourceObject;
+        [SerializeField] private ScriptableObject targetObject;
 
-        [Header("Output")]
+        [Header("Export")]
+        [SerializeField] private string outputFile = "output.toml";
+        
+        [Header("Options")]
         [SerializeField] private bool usePersistentDataPath = true;
         [SerializeField] private bool ensureDirectoryExists = true;
-        [SerializeField] private string outputDirectory = "saves";
-        [SerializeField] private string defaultFilename = "output.toml";
 
         [Space]
         public UnityEvent onExport;
         public UnityEvent<Exception> onError;
 
-        public ScriptableObject SourceObject
+        public ScriptableObject TargetObject
         {
-            get => sourceObject;
-            set => sourceObject = value;
+            get => targetObject;
+            set => targetObject = value;
         }
 
+        public string OutputFile
+        {
+            get => outputFile;
+            set => outputFile = value;
+        }
+        
         public bool UsePersistentDataPath
         {
             get => usePersistentDataPath;
@@ -36,37 +43,25 @@ namespace UnderLogic.Serialization.Toml
             get => ensureDirectoryExists;
             set => ensureDirectoryExists = value;
         }
-
-        public string OutputDirectory
-        {
-            get => outputDirectory;
-            set => outputDirectory = value;
-        }
-
-        public string DefaultFilename
-        {
-            get => defaultFilename;
-            set => defaultFilename = value;
-        }
-
-        public void Export() => ExportAs(defaultFilename);
+        
+        public void Export() => ExportAs(OutputFile);
 
         public void ExportAs(string filename)
         {
-            if (sourceObject == null)
+            if (TargetObject == null)
             {
-                Debug.LogWarning("No source object set, unable to export TOML", this);
+                Debug.LogWarning("No target object set, unable to export TOML", this);
                 return;
             }
 
             try
             {
-                var outputPath = GetOutputPath(filename);
+                var filePath = GetOutputPath(filename);
                 if (EnsureDirectoryExists)
-                    SafeMakeDirectory(Path.GetDirectoryName(outputPath));
+                    SafeMakeDirectory(Path.GetDirectoryName(filePath));
 
-                using (var stream = File.OpenWrite(outputPath))
-                    TomlSerializer.Serialize(stream, sourceObject);
+                using (var stream = File.OpenWrite(filePath))
+                    TomlSerializer.Serialize(stream, TargetObject);
 
                 onExport?.Invoke();
             }
@@ -78,9 +73,9 @@ namespace UnderLogic.Serialization.Toml
         }
 
         private string GetOutputPath(string filename) =>
-            usePersistentDataPath
-                ? Path.Combine(Application.persistentDataPath, OutputDirectory ?? "", filename)
-                : Path.Combine(Application.dataPath, OutputDirectory ?? "", filename);
+            UsePersistentDataPath
+                ? Path.Combine(Application.persistentDataPath, filename)
+                : Path.Combine(Application.dataPath, filename);
 
         private void SafeMakeDirectory(string directoryPath)
         {

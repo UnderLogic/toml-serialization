@@ -4,6 +4,19 @@ All notable changes to this library will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.3] - 2022-12-27
+
+### Added
+
+- `TomlImporter` component to import TOML files into Unity objects
+- Sample scene for `TomlImporter` component
+
+### Changed
+
+- Renamed `sourceObject` to `targetObject` for `TomlExporter` component
+- Removed `outputDirectory` from `TomlExporter` component
+- Renamed `defaultFilename` to `outputFile` for `TomlExporter` component
+
 ## [0.3.2] - 2022-12-27
 
 ### Added
@@ -44,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `TomlExporter` component for exporting TOML files from Unity scenes
+- `TomlExporter` component for exporting TOML files from Unity objects
 - Documentation for `TomlExporter` component
 - Exporter sample scene
 - Serializer sample scene

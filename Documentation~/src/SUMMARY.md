@@ -33,3 +33,4 @@
   - [TomlExporter](serialization/toml-exporter.md)
 - [Deserialization](deserialization.md)
   - [TomlSerializer](deserialization/toml-serializer.md)
+  - [TomlImporter](deserialization/toml-importer.md)

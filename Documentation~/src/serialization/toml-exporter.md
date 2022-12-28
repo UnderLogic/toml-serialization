@@ -8,11 +8,12 @@ Component that provides methods for exporting `ScriptableObject` data to TOML fi
 
 ## Serialized Fields (Inspector)
 
-- `sourceObject : ScriptableObject` - The `ScriptableObject` to export to a TOML file.
+- `targetObject : ScriptableObject` - The `ScriptableObject` to export to a TOML file.
+- `outputFile : string` - The path to the TOML file to export to.
 - `usePersistentDataPath : bool` - Whether to use the persistent data path for the exported TOML file.
 - `ensureDirectoryExists : bool` - Whether to create the directory for the exported TOML file, if it does not exist.
-- `outputDirectory : string` - The output directory to append for the exported TOML file.
-- `defaultFileName : string` - The default file name to use for the exported TOML file.
+
+**NOTE:** The `outputFile` can include directories, but the directory must already exist unless `ensureDirectoryExists` is `true`.
 
 ## Public Events (Inspector)
 
@@ -21,24 +22,21 @@ Component that provides methods for exporting `ScriptableObject` data to TOML fi
 
 ## Public Properties
 
-- `SourceObject : ScriptableObject` **(get, set)** - The `ScriptableObject` to export to a TOML file.
+- `TargetObject : ScriptableObject` **(get, set)** - The `ScriptableObject` to export to a TOML file.
+- `OutputFile : string` **(get, set)** - The path to the TOML file to export to.
 - `UsePersistentDataPath : bool` **(get, set)** - Whether to use the persistent data path for the exported TOML file.
 - `EnsureDirectoryExists : bool` **(get, set)** - Whether to create the directory for the exported TOML file, if it does not exist.
-- `OutputDirectory : string` **(get, set)** - The output directory to append for the exported TOML file.
-- `DefaultFileName : string` **(get, set)** - The default file name to use for the exported TOML file.
 
 ## Public Methods
 
-- `Export()` - Exports the source object to a TOML file with the default file name.
+- `Export()` - Exports the source object to a TOML file with the default output file name.
 - `ExportAs(string)` - Exports the source object to a TOML file with the specified file name.
 
 ## Output Directory
 
 If `usePersistentDataPath` is `true`, the output directory will be appended to the persistent data path, otherwise it will be appended to the application data path.
 
-| usePersistentDataPath | Resolved Path                                                     |
-|-----------------------|-------------------------------------------------------------------|
-| **true**              | `Application.persistentDataPath` + `outputDirectory` + `filename` |
-| **false**             | `Application.dataPath` + `outputDirectory` + `filename`           |
-
-**NOTE:** If the `outputDirectory` is `null` or empty, it will not be appended to the path.
+| usePersistentDataPath | Resolved Path                                 |
+|-----------------------|-----------------------------------------------|
+| **true**              | `Application.persistentDataPath` + `filename` |
+| **false**             | `Application.dataPath` + `filename`           |
