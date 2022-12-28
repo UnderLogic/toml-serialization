@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `TomlImporter` component to import TOML files into Unity objects
+- Custom editor for `TomlExporter` component
+- Custom editor for `TomlImporter` component
 - Sample scene for `TomlImporter` component
 
 ### Changed
@@ -16,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `sourceObject` to `targetObject` for `TomlExporter` component
 - Removed `outputDirectory` from `TomlExporter` component
 - Renamed `defaultFilename` to `outputFile` for `TomlExporter` component
+- Updated documentation
 
 ## [0.3.2] - 2022-12-27
 
