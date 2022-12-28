@@ -49,10 +49,14 @@ namespace UnderLogic.Serialization.Toml
             var rootTable = new TomlTable();
 
             string line;
+            var lineCounter = 0;
+            
             while ((line = _reader.ReadLine()) != null)
             {
+                lineCounter++;
+                
                 // Skip comments
-                if (line.StartsWith("#"))
+                if (line.StartsWith("#") || string.IsNullOrWhiteSpace(line))
                     continue;
 
                 // Start of a new table array
@@ -117,6 +121,11 @@ namespace UnderLogic.Serialization.Toml
                     {
                         rootTable.Add(keyValuePair.Key, keyValuePair.Value);
                     }
+                }
+                else
+                {
+                    var innerException = new FormatException($"Invalid TOML syntax: {line}");
+                    throw new InvalidOperationException($"Invalid TOML syntax on line {lineCounter}", innerException);
                 }
             }
 

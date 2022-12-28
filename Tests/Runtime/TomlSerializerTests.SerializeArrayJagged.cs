@@ -77,13 +77,13 @@ namespace UnderLogic.Serialization.Toml.Tests
             {
                 new[] { "test" },
                 new[] { "Hello", "World" },
-                new[] { "A", "\"Quoted\"", "String" }
+                new[] { "The", "quick", "brown", "fox" }
             });
 
             var toml = TomlSerializer.Serialize(wrappedArray);
 
             Assert.AreEqual(
-                "array = [ [ \"test\" ], [ \"Hello\", \"World\" ], [ \"A\", \"\\\\\"Quoted\\\\\"\", \"String\" ] ]\n",
+                "array = [ [ \"test\" ], [ \"Hello\", \"World\" ], [ \"The\", \"quick\", \"brown\", \"fox\" ] ]\n",
                 toml);
         }
 
@@ -253,14 +253,14 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrappedArray = new WrappedJaggedArray<double>(new[]
             {
                 new double[] { 0 },
-                new double[] { double.MinValue, double.MaxValue },
+                new double[] { 3.14e-10, 3.14e+10 },
                 new double[] { 1.412, 3.14, 9.86 }
             });
 
             var toml = TomlSerializer.Serialize(wrappedArray);
 
             Assert.AreEqual(
-                $"array = [ [ 0 ], [ {double.MinValue}, {double.MaxValue} ], [ 1.412, 3.14, 9.86 ] ]\n", toml);
+                $"array = [ [ 0 ], [ {3.14e-10}, {3.14e+10} ], [ 1.412, 3.14, 9.86 ] ]\n", toml);
         }
 
         [Test]

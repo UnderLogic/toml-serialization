@@ -32,6 +32,6 @@ namespace UnderLogic.Serialization.Toml
                                                           t.GetGenericArguments()[0] == typeof(string) &&
                                                           IsComplexType(t.GetGenericArguments()[1]);
         
-        public static bool HasDefaultConstructor(Type t) => t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
+        private static bool HasDefaultConstructor(Type t) => t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
     }
 }

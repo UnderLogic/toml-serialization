@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Serialization of jagged arrays
 
+### Changed
+
+- Made `HasDefaultConstructor` method private, as it is an internal helper method
+
+### Fixed
+
+- Escaping of quoted strings
+
 ## [0.3.3] - 2022-12-27
 
 ### Added
