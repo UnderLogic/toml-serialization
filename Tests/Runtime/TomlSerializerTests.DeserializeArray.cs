@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Mocks;
 
@@ -24,6 +25,18 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             TomlSerializer.DeserializeInto(toml, wrappedArray);
             Assert.IsTrue(wrappedArray.IsEmpty, "Array should be empty");
+        }
+
+        [Test]
+        public void Deserialize_ArrayOfNulls_ShouldSetNulls()
+        {
+            var wrappedArray = WrappedArray<string>.FromValues("hello", "world");
+            const string toml = "array = [ null, null, null ]\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            var expectedValues = new string[] { null, null, null };
+            Assert.IsTrue(wrappedArray.SequenceEqual(expectedValues), "Array should contain nulls");
         }
 
         [Test]

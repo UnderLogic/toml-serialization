@@ -33,16 +33,24 @@ scores = { math = 100, science = 90, english = 80 }
 
 ### Object Example
 
-If the dictionary contains object types, it is serialized as a [standard TOML table](https://toml.io/en/v1.0.0#table).
+If the dictionary contains complex object types, it is serialized as a [standard TOML table](https://toml.io/en/v1.0.0#table).
+Each key is a child table, using dot (`.`) notation to represent nested tables.
 
 ```toml
-[results]
-id = 102
-weather = { temperature = 100, humidity = 50 }
-sunrise = { hour = 6, minute = 30 }
-sunset = { hour = 18, minute = 30 }
-tags = [ "hot", "sunny" ]
-updatedAt = 2020-01-01 00:00:00Z
+[loot.common]
+tableName = "common-loot"
+chance = 0.25
+rolls = 3
+
+[loot.uncommon]
+tableName = "uncommon-loot"
+chance = 0.15
+rolls = 2
+
+[loot.rare]
+tableName = "rare-loot"
+chance = 0.05
+rolls = 1
 ```
 
 **NOTE:** Nested objects must be marked with the `Serializable` attribute.
@@ -50,13 +58,16 @@ updatedAt = 2020-01-01 00:00:00Z
 ### Array Example
 
 If the dictionary contains array or list types, it is serialized as a [TOML table array](https://toml.io/en/v1.0.0#array-of-tables).
+Each key is a child table, using dot (`.`) notation to represent nested table arrays.
 
 ```toml
-[[results]]
-id = 102
+[[weather.readings]]
 weather = { temperature = 100, humidity = 50 }
+timestamp = 2020-06-02 12:00:00.000Z
 
-[[results]]
-id = 103
+[[weather.readings]]
 weather = { temperature = 90, humidity = 40 }
+timestamp = 2020-06-01 12:00:00.000Z
 ```
+
+**NOTE:** Array objects must be marked with the `Serializable` attribute.

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -88,7 +89,9 @@ namespace UnderLogic.Serialization.Toml
 
             if (obj is IDictionary dictionary)
             {
-                var tomlTable = ConvertToTomlTableInline(dictionary);
+                var shouldInline = !IsObjectDictionary(type);
+                var tomlTable = ConvertToTomlTable(dictionary, shouldInline);
+
                 if (tomlTable != null)
                     return tomlTable;
             }
@@ -98,7 +101,7 @@ namespace UnderLogic.Serialization.Toml
                 if (tomlArray != null)
                     return tomlArray;
             }
-            else if (IsObjectType(type))
+            else if (IsComplexType(type))
             {
                 var tomlTable = ConvertToTomlTableExpanded(obj);
                 
@@ -140,12 +143,17 @@ namespace UnderLogic.Serialization.Toml
 
         private static TomlValue ConvertToTomlArray(IEnumerable values)
         {
-            var collection = values.OfType<object>().ToList();
+            IList<object> collection;
+
+            if (values is IEnumerable<string> stringList)
+                collection = stringList.Cast<object>().ToList();
+            else
+                collection = values.OfType<object>().ToList();
 
             if (collection.Count < 1)
                 return TomlArray.Empty;
 
-            if (collection.All(IsObjectType))
+            if (collection.All(IsComplexType))
             {
                 var tomlTableArray = new TomlTableArray();
                 foreach (var value in collection)
@@ -164,9 +172,9 @@ namespace UnderLogic.Serialization.Toml
             return new TomlArray(tomlValues);
         }
 
-        private static TomlTable ConvertToTomlTableInline(IDictionary dictionary)
+        private static TomlTable ConvertToTomlTable(IDictionary dictionary, bool isInline = false)
         {
-            var tomlTable = new TomlTable { IsInline = true };
+            var tomlTable = new TomlTable { IsInline = isInline };
             foreach (var innerKey in dictionary.Keys)
             {
                 var innerKeyString = innerKey.ToString();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnderLogic.Serialization.Toml.Types;
@@ -13,8 +14,8 @@ namespace UnderLogic.Serialization.Toml
         private static readonly Regex KeyValueRegex = new(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Compiled);
         private static readonly Regex ArrayRegex = new(@"^\s*\[\s*(.*)\s*\]", RegexOptions.Compiled);
         private static readonly Regex TableInlineRegex = new(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
-        private static readonly Regex TableRegex = new (@"^\s*\[(.+?)\]", RegexOptions.Compiled);
-        private static readonly Regex TableArrayRegex = new (@"^\s*\[\[(.+?)\]\]", RegexOptions.Compiled);
+        private static readonly Regex TableRegex = new(@"^\s*\[(.+?)\]", RegexOptions.Compiled);
+        private static readonly Regex TableArrayRegex = new(@"^\s*\[\[(.+?)\]\]", RegexOptions.Compiled);
 
         private readonly TextReader _reader;
         private bool _isDisposed;
@@ -41,12 +42,11 @@ namespace UnderLogic.Serialization.Toml
         public TomlTable ReadDocument()
         {
             CheckIfDisposed();
-
-            var tableStack = new Stack<TomlTable>();
-            TomlTableArray currentTableArray = null;
             
+            TomlTableArray currentTableArray = null;
+
+            var currentTableKey = string.Empty;
             var rootTable = new TomlTable();
-            tableStack.Push(rootTable);
 
             string line;
             while ((line = _reader.ReadLine()) != null)
@@ -55,52 +55,68 @@ namespace UnderLogic.Serialization.Toml
                 if (line.StartsWith("#"))
                     continue;
 
-                var currentTable = tableStack.Peek();
-
                 // Start of a new table array
                 var tableArrayMatch = TableArrayRegex.Match(line);
                 if (tableArrayMatch.Success)
                 {
                     var arrayKey = tableArrayMatch.Groups[1].Value.Trim();
-                    
-                    if (!currentTable.TryGetValue(arrayKey, out var existingArray))
+                    if (!rootTable.TryGetValuePath(arrayKey, out var existingValue))
                     {
                         var newTableArray = new TomlTableArray();
-                        currentTable.Add(arrayKey, newTableArray);
+                        rootTable.AddPath(arrayKey, newTableArray);
 
                         currentTableArray = newTableArray;
                     }
-                    else currentTableArray = existingArray as TomlTableArray;
-                    
+                    else
+                    {
+                        if (existingValue is TomlTableArray existingTableArray)
+                            currentTableArray = existingTableArray;
+                        else
+                            throw new InvalidOperationException($"Key {arrayKey} is not a table array");
+                    }
+
                     var newTable = new TomlTable();
                     currentTableArray.Add(newTable);
                     continue;
                 }
 
-                // Start of a new table, push to table stack
+                // Start of a new table
                 var tableMatch = TableRegex.Match(line);
                 if (tableMatch.Success)
                 {
                     currentTableArray = null;
-                    var tableKey = tableMatch.Groups[1].Value.Trim();
-                    
+                    currentTableKey = tableMatch.Groups[1].Value.Trim();
+
                     var childTable = new TomlTable();
-                    rootTable.Add(tableKey, childTable);
-                    
-                    tableStack.Push(childTable);
-                    currentTable = tableStack.Peek();
+                    rootTable.AddPath(currentTableKey, childTable);
                     continue;
                 }
 
-                // Parse key-value pairs
+                // Parse key-value pairs into current table/table array
                 if (TryParseKeyValuePair(line, out var keyValuePair))
                 {
+                    // If we're in a table array, add the key-value pair to the last table
                     if (currentTableArray != null)
                     {
                         var arrayTable = currentTableArray[currentTableArray.Count - 1];
                         arrayTable.Add(keyValuePair.Key, keyValuePair.Value);
                     }
-                    else currentTable.Add(keyValuePair.Key, keyValuePair.Value);
+                    // If we're in a table, add the key-value pair to that table
+                    else if(!string.IsNullOrWhiteSpace(currentTableKey))
+                    {
+                        if (!rootTable.TryGetValuePath(currentTableKey, out var existingValue))
+                            throw new InvalidOperationException($"Table {currentTableKey} does not exist");
+                        
+                        if (!(existingValue is TomlTable existingTable))
+                            throw new InvalidOperationException($"Key {currentTableKey} is not a table");
+
+                        existingTable.Add(keyValuePair.Key, keyValuePair.Value);
+                    }
+                    // Otherwise, add the key-value pair to the root table
+                    else
+                    {
+                        rootTable.Add(keyValuePair.Key, keyValuePair.Value);
+                    }
                 }
             }
 
@@ -146,7 +162,9 @@ namespace UnderLogic.Serialization.Toml
 
             TomlValue value;
 
-            if (TryParseTableInline(valueString, out var tableValue))
+            if (valueString == "null")
+                value = TomlNull.Value;
+            else if (TryParseTableInline(valueString, out var tableValue))
                 value = tableValue;
             else if (TryParseArray(valueString, out var arrayValue))
                 value = arrayValue;
@@ -174,12 +192,14 @@ namespace UnderLogic.Serialization.Toml
                 return true;
             }
 
-            var arrayValues = SplitString(contentString, ',');
+            var arrayValues = SplitString(contentString, ',').Select(value => value?.Trim());
             var parsedValues = new List<TomlValue>();
 
             foreach (var eachValue in arrayValues)
             {
-                if (TryParseTableInline(eachValue, out var tableValue))
+                if (eachValue == "null")
+                    parsedValues.Add(TomlNull.Value);
+                else if (TryParseTableInline(eachValue, out var tableValue))
                     parsedValues.Add(tableValue);
                 else if (TryParseArray(eachValue, out var childArrayValue))
                     parsedValues.Add(childArrayValue);
@@ -207,7 +227,7 @@ namespace UnderLogic.Serialization.Toml
                 tomlTable = TomlTable.EmptyInline;
                 return true;
             }
-            
+
             var tableValues = SplitString(contentString, ',');
             var parsedKeyValues = new List<TomlKeyValuePair>();
 

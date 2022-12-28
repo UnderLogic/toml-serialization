@@ -10,7 +10,11 @@ namespace UnderLogic.Serialization.Toml
 {
     public static partial class TomlSerializer
     {
+        private static readonly Type ListType = typeof(List<>);
+        private static readonly Type DictionaryType = typeof(Dictionary<,>);
+
         #region Deserialize Public Methods
+
         public static T Deserialize<T>(string toml) where T : new()
         {
             if (toml == null)
@@ -39,9 +43,11 @@ namespace UnderLogic.Serialization.Toml
 
             return instance;
         }
+
         #endregion
 
         #region DeserializeInto Public Methods
+
         public static void DeserializeInto(string toml, object obj)
         {
             if (toml == null)
@@ -80,6 +86,7 @@ namespace UnderLogic.Serialization.Toml
                 DeserializeObject(rootTable, obj);
             }
         }
+
         #endregion
 
         private static void DeserializeObject(TomlTable table, object obj)
@@ -101,119 +108,315 @@ namespace UnderLogic.Serialization.Toml
                 if (!table.TryGetValue(fieldKey, out var tomlValue))
                     continue;
 
-                if (tomlValue is TomlTable tomlTable)
-                {
-                    if (IsStringDictionary(fieldType))
-                        DeserializeDictionaryField(tomlTable, field, obj);
-                    else if (IsObjectType(fieldType))
-                        DeserializeObjectField(tomlTable, field, obj);
-                    else
-                        throw new InvalidOperationException($"Type {fieldType.Name} is not supported");
-                }
-                else if (tomlValue is TomlTableArray tomlTableArray)
-                {
-                    if (fieldType.IsArray)
-                        DeserializeObjectArrayField(tomlTableArray, field, obj);
-                    else if (IsGenericList(fieldType))
-                        DeserializeObjectListField(tomlTableArray, field, obj);
-                }
-                else if (tomlValue is TomlArray tomlArray)
-                {
-                    if (fieldType.IsArray)
-                        DeserializeArrayField(tomlArray, field, obj);
-                    else if (IsGenericList(fieldType))
-                        DeserializeListField(tomlArray, field, obj);
-                    else
-                        throw new InvalidOperationException($"Type {fieldType.Name} is not supported");
-                }
-                else DeserializeScalarField(tomlValue, field, obj);
+                if (!TryConvertFromTomlValue(tomlValue, fieldType, out var parsedValue))
+                    throw new InvalidOperationException(
+                        $"Type {fieldType.Name} could not be deserialized for field {field.Name}");
+
+                field.SetValue(obj, parsedValue);
             }
         }
 
-        private static void DeserializeObjectField(TomlTable tomlTable, FieldInfo field, object obj)
+        private static bool TryConvertFromTomlValue(TomlValue tomlValue, Type type, out object result)
+            => TryConvertFromTomlValue(tomlValue, type, ConvertFlags.None, out result);
+
+        private static bool TryConvertFromTomlValue(TomlValue tomlValue, Type type, ConvertFlags flags,
+            out object result)
         {
-            var fieldObj = Activator.CreateInstance(field.FieldType);
-            DeserializeObject(tomlTable, fieldObj);
-            field.SetValue(obj, fieldObj);
+            result = null;
+
+            if (tomlValue is TomlNull)
+                return true;
+
+            if (tomlValue is TomlTable tomlTable)
+            {
+                if (IsScalarDictionary(type) || IsMixedDictionary(type))
+                {
+                    var valueType = type.GetGenericArguments()[1];
+                    if (!TryConvertToDictionary(tomlTable, valueType, out var dictResult))
+                        return false;
+
+                    result = dictResult;
+                    return true;
+                }
+
+                if (IsObjectDictionary(type))
+                {
+                    var valueType = type.GetGenericArguments()[1];
+                    if (!TryConvertToObjectDictionary(tomlTable, valueType, out var dictResult))
+                        return false;
+
+                    result = dictResult;
+                    return true;
+                }
+
+                if (IsComplexType(type))
+                {
+                    if (!HasDefaultConstructor(type))
+                        return false;
+
+                    var instance = Activator.CreateInstance(type);
+                    DeserializeObject(tomlTable, instance);
+
+                    result = instance;
+                    return true;
+                }
+            }
+            else if (tomlValue is TomlTableArray tomlTableArray)
+            {
+                if (type.IsArray || flags.HasFlag(ConvertFlags.ForceArray))
+                {
+                    var elementType = type.IsArray ? type.GetElementType() : typeof(object);
+                    if (!TryConvertToObjectArray(tomlTableArray, elementType, out var arrayResult))
+                        return false;
+
+                    result = arrayResult;
+                    return true;
+                }
+
+                if (IsGenericList(type) || flags.HasFlag(ConvertFlags.ForceList))
+                {
+                    var elementType = IsGenericList(type) ? type.GetGenericArguments()[0] : typeof(object);
+                    if (!TryConvertToObjectList(tomlTableArray, elementType, out var listResult))
+                        return false;
+
+                    result = listResult;
+                    return true;
+                }
+            }
+            else if (tomlValue is TomlArray tomlArray)
+            {
+                if (type.IsArray || flags.HasFlag(ConvertFlags.ForceArray))
+                {
+                    var elementType = type.IsArray ? type.GetElementType() : typeof(object);
+                    if (!TryConvertToArray(tomlArray, elementType, out var arrayResult))
+                        return false;
+
+                    result = arrayResult;
+                    return true;
+                }
+
+                if (IsGenericList(type) || flags.HasFlag(ConvertFlags.ForceList))
+                {
+                    var elementType = IsGenericList(type) ? type.GetGenericArguments()[0] : typeof(object);
+                    if (!TryConvertToList(tomlArray, elementType, out var listResult))
+                        return false;
+
+                    result = listResult;
+                    return true;
+                }
+
+                // Default to a mixed object list when the type is not explicitly an array or list
+                if (type == typeof(object))
+                {
+                    if (!TryConvertToList(tomlArray, typeof(object), out var listResult))
+                        return false;
+
+                    result = listResult;
+                    return true;
+                }
+            }
+            else
+            {
+                return TryConvertToScalar(tomlValue, type, out result);
+            }
+
+            return false;
         }
-        
-        private static void DeserializeObjectArrayField(TomlTableArray tomlTableArray, FieldInfo field, object obj)
+
+        private static bool TryConvertToObjectDictionary(TomlTable tomlTable, Type valueType,
+            out IDictionary dictResult)
         {
-            var fieldType = field.FieldType;
-            var elementType = fieldType.GetElementType();
-            
+            dictResult = null;
+
+            if (!HasDefaultConstructor(valueType))
+                return false;
+
+            var constructedDictType = DictionaryType.MakeGenericType(typeof(string), valueType);
+            var dict = (IDictionary)Activator.CreateInstance(constructedDictType);
+
+            foreach (var keyValuePair in tomlTable)
+            {
+                if (keyValuePair.Value is TomlTable childTable)
+                {
+                    var instance = Activator.CreateInstance(valueType);
+                    DeserializeObject(childTable, instance);
+
+                    dict.Add(keyValuePair.Key, instance);
+                }
+                else return false;
+            }
+
+            dictResult = dict;
+            return true;
+        }
+
+        private static bool TryConvertToDictionary(TomlTable tomlTable, Type valueType, out IDictionary dictResult)
+        {
+            dictResult = null;
+
+            var constructedDictType = DictionaryType.MakeGenericType(typeof(string), valueType);
+            var dict = (IDictionary)Activator.CreateInstance(constructedDictType);
+
+            foreach (var keyValuePair in tomlTable)
+            {
+                if (TryConvertFromTomlValue(keyValuePair.Value, valueType, out var convertedValue))
+                    dict.Add(keyValuePair.Key, convertedValue);
+                else
+                    return false;
+            }
+
+            dictResult = dict;
+            return true;
+        }
+
+        private static bool TryConvertToObjectList(TomlTableArray tomlTableArray, Type elementType,
+            out IList listResult)
+        {
+            listResult = null;
+
+            if (!HasDefaultConstructor(elementType))
+                return false;
+
+            var constructedListType = ListType.MakeGenericType(elementType);
+            var list = (IList)Activator.CreateInstance(constructedListType);
+
+            foreach (var tomlTable in tomlTableArray)
+            {
+                var instance = Activator.CreateInstance(elementType);
+                DeserializeObject(tomlTable, instance);
+
+                list.Add(instance);
+            }
+
+            listResult = list;
+            return true;
+        }
+
+        private static bool TryConvertToList(TomlArray tomlArray, Type elementType, out IList listResult)
+        {
+            listResult = null;
+
+            var constructedListType = ListType.MakeGenericType(elementType);
+            var list = (IList)Activator.CreateInstance(constructedListType);
+
+            foreach (var tomlValue in tomlArray)
+            {
+                if (TryConvertFromTomlValue(tomlValue, elementType, ConvertFlags.ForceList, out var convertedValue))
+                    list.Add(convertedValue);
+                else
+                    return false;
+            }
+
+            listResult = list;
+            return true;
+        }
+
+        private static bool TryConvertToObjectArray(TomlTableArray tomlTableArray, Type elementType,
+            out Array arrayResult)
+        {
+            arrayResult = null;
+
+            if (!HasDefaultConstructor(elementType))
+                return false;
+
             var array = Array.CreateInstance(elementType, tomlTableArray.Count);
+
             for (var index = 0; index < tomlTableArray.Count; index++)
             {
-                var table = tomlTableArray[index];
-                var element = Activator.CreateInstance(elementType);
-                
-                DeserializeObject(table, element);
-                array.SetValue(element, index);
+                var tomlTable = tomlTableArray[index];
+
+                var instance = Activator.CreateInstance(elementType);
+                DeserializeObject(tomlTable, instance);
+
+                array.SetValue(instance, index);
             }
-            field.SetValue(obj, array);
+
+            arrayResult = array;
+            return true;
         }
-        
-        private static void DeserializeObjectListField(TomlTableArray tomlTableArray, FieldInfo field, object obj)
+
+        private static bool TryConvertToArray(TomlArray tomlArray, Type elementType, out Array arrayResult)
         {
-            var fieldType = field.FieldType;
-            var elementType = fieldType.GetGenericArguments()[0];
-            
-            var listType = typeof(List<>);
-            var constructedListType = listType.MakeGenericType(elementType);
-            var list = (IList)Activator.CreateInstance(constructedListType);
-            
-            foreach (var table in tomlTableArray)
+            arrayResult = null;
+
+            var array = Array.CreateInstance(elementType, tomlArray.Count);
+
+            for (var index = 0; index < tomlArray.Count; index++)
             {
-                var element = Activator.CreateInstance(elementType);
-                
-                DeserializeObject(table, element);
-                list.Add(element);
+                var tomlValue = tomlArray[index];
+                if (TryConvertFromTomlValue(tomlValue, elementType, ConvertFlags.ForceArray, out var convertedValue))
+                    array.SetValue(convertedValue, index);
+                else
+                    return false;
             }
-            field.SetValue(obj, list);
+
+            arrayResult = array;
+            return true;
         }
 
-        private static void DeserializeScalarField(TomlValue tomlValue, FieldInfo field, object obj)
+        private static bool TryConvertToScalar(TomlValue tomlValue, Type type, out object scalarResult)
         {
-            var fieldType = field.FieldType;
-            
-            if (TomlConvert.TryIntoScalar(tomlValue, fieldType, out var scalarValue))
-                field.SetValue(obj, scalarValue);
-            else
-                throw new InvalidOperationException($"Unable to deserialize value into {field.Name}");
-        }
+            scalarResult = null;
 
-        private static void DeserializeArrayField(TomlArray tomlArray, FieldInfo field, object obj)
-        {
-            var fieldType = field.FieldType;
-            var elementType = fieldType.GetElementType();
+            if (tomlValue is TomlNull)
+                return true;
 
-            if (TomlConvert.TryIntoArray(tomlArray, elementType, out var arrayResult))
-                field.SetValue(obj, arrayResult);
-            else
-                throw new InvalidOperationException($"Unable to deserialize array into {field.Name}");
-        }
+            if (tomlValue is TomlBoolean tomlBool)
+                scalarResult = tomlBool.Value;
+            else if (tomlValue is TomlString tomlString)
+            {
+                if (type == typeof(char))
+                {
+                    if (string.IsNullOrEmpty(tomlString.Value))
+                        return false;
 
-        private static void DeserializeListField(TomlArray tomlArray, FieldInfo field, object obj)
-        {
-            var fieldType = field.FieldType;
-            var elementType = fieldType.GetGenericArguments()[0];
+                    scalarResult = tomlString.Value[0];
+                }
+                else if (type.IsEnum)
+                {
+                    if (!Enum.TryParse(type, tomlString.Value, false, out var enumValue))
+                        return false;
 
-            if (TomlConvert.TryIntoList(tomlArray, elementType, out var listResult))
-                field.SetValue(obj, listResult);
-            else
-                throw new InvalidOperationException($"Unable to deserialize list into {field.Name}");
-        }
+                    scalarResult = enumValue;
+                }
+                else scalarResult = tomlString.Value;
+            }
+            else if (tomlValue is TomlInteger tomlInteger)
+            {
+                if (type == typeof(sbyte))
+                    scalarResult = (sbyte)tomlInteger.Value;
+                else if (type == typeof(short))
+                    scalarResult = (short)tomlInteger.Value;
+                else if (type == typeof(int))
+                    scalarResult = (int)tomlInteger.Value;
+                else if (type == typeof(byte))
+                    scalarResult = (byte)tomlInteger.Value;
+                else if (type == typeof(ushort))
+                    scalarResult = (ushort)tomlInteger.Value;
+                else if (type == typeof(uint))
+                    scalarResult = (uint)tomlInteger.Value;
+                else if (type == typeof(ulong))
+                    return false; // Not supported
+                else if (type == typeof(float))
+                    scalarResult = (float)tomlInteger.Value;
+                else if (type == typeof(double))
+                    scalarResult = (double)tomlInteger.Value;
+                else
+                    scalarResult = tomlInteger.Value;
+            }
+            else if (tomlValue is TomlFloat tomlFloat)
+            {
+                if (type == typeof(float))
+                    scalarResult = (float)tomlFloat.Value;
+                else if (type == typeof(decimal))
+                    return false; // Not supported
+                else
+                    scalarResult = tomlFloat.Value;
+            }
+            else if (tomlValue is TomlDateTime tomlDateTime)
+                scalarResult = tomlDateTime.Value;
 
-        private static void DeserializeDictionaryField(TomlTable tomlTable, FieldInfo field, object obj)
-        {
-            var fieldType = field.FieldType;
-            var valueType = fieldType.GetGenericArguments()[1];
-            
-            if (TomlConvert.TryIntoDictionary(tomlTable, valueType, out var dictResult))
-                field.SetValue(obj, dictResult);
-            else
-                throw new InvalidOperationException($"Unable to deserialize dictionary into {field.Name}");
+            return scalarResult != null;
         }
     }
 }

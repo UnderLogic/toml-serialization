@@ -82,6 +82,4 @@ This is done by calling the default constructor of the object's type.
 ### Field Deserialization
 
 The `TomlSerializer` class converts each parsed `TomlValue` to the field's type and sets it.
-
-This is done by calling helper methods on the `TomlConvert` static class.
 This includes scalar values, complex types, arrays, lists, and dictionaries.

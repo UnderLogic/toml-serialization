@@ -38,7 +38,69 @@ namespace UnderLogic.Serialization.Toml.Types
                 throw new InvalidOperationException($"Key {key} already exists in table");
         }
 
+        public void AddPath(string keyPath, TomlValue value)
+        {
+            if (keyPath == null)
+                throw new ArgumentNullException(nameof(keyPath));
+            
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            var components = keyPath.Split('.');
+            if (components.Length < 2)
+            {
+                Add(components[0], value);
+                return;
+            }
+
+            var tablePath = components.Take(components.Length - 1);
+            var key = components.Last();
+            
+            var currentTable = this;
+            foreach (var tableKey in tablePath)
+            {
+                if (!currentTable._table.TryGetValue(tableKey, out var tableValue))
+                {
+                    tableValue = new TomlTable();
+                    currentTable.Add(tableKey, tableValue);
+                }
+
+                if (!(tableValue is TomlTable table))
+                    throw new InvalidOperationException($"Key {tableKey} is not a table");
+
+                currentTable = table;
+            }
+            
+            currentTable.Add(key, value);
+        }
+
         public bool TryGetValue(string key, out TomlValue value) => _table.TryGetValue(key, out value);
+
+        public bool TryGetValuePath(string keyPath, out TomlValue value)
+        {
+            value = null;
+            
+            var components = keyPath.Split('.');
+            if (components.Length < 2)
+                return TryGetValue(components[0], out value);
+
+            var tablePath = components.Take(components.Length - 1);
+            var key = components.Last();
+
+            var currentTable = this;
+            foreach(var tableKey in tablePath)
+            {
+                if (!TryGetValue(tableKey, out var valueAtPath))
+                    return false;
+                
+                if (valueAtPath is TomlTable childTable)
+                    currentTable = childTable;
+                else
+                    return false;
+            }
+            
+            return currentTable.TryGetValue(key, out value);
+        }
 
         public override string ToString()
         {

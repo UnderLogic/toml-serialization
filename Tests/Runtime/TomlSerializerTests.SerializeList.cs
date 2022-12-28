@@ -27,6 +27,15 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [Test]
+        public void Serialize_ListOfNulls_ShouldSerializeNulls()
+        {
+            var wrappedList = WrappedList<string>.FromValues(null, null, null);
+            var toml = TomlSerializer.Serialize(wrappedList);
+
+            Assert.AreEqual("list = [ null, null, null ]\n", toml);
+        }
+
+        [Test]
         public void Serialize_BoolList_ShouldSerializeLowerCase()
         {
             var wrappedList = WrappedList<bool>.FromValues(true, false);

@@ -14,6 +14,12 @@ namespace UnderLogic.Serialization.Toml.Tests
         
         public int Count => _dictionary?.Count ?? 0;
         
+        public TValue this[string key]
+        {
+            get => _dictionary[key];
+            set => _dictionary[key] = value;
+        }
+        
         private WrappedDictionary(Dictionary<string, TValue> dict) => _dictionary = dict;
         
         public WrappedDictionary(IEnumerable<KeyValuePair<string, TValue>> keyValuePairs = null)
