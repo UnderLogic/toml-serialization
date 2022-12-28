@@ -8,7 +8,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Deserialize_ObjectDict_ShouldSetValues()
         {
-            var toml = string.Join("\n", new string[]
+            var toml = string.Join("\n", new []
             {
                 "name = \"Boss\"",
                 "",
@@ -18,19 +18,19 @@ namespace UnderLogic.Serialization.Toml.Tests
                 "tableName = \"boss-common\"",
                 "chance = 0.50",
                 "rolls = 3",
-                "dropsForAllPlayers = false",
+                "dropForAllPlayers = false",
                 "",
                 "[loot.uncommon]",
                 "tableName = \"boss-uncommon\"",
                 "chance = 0.25",
                 "rolls = 2",
-                "dropsForAllPlayers = false",
+                "dropForAllPlayers = false",
                 "",
                 "[loot.rare]",
                 "tableName = \"boss-rare\"",
                 "chance = 0.05",
                 "rolls = 1",
-                "dropsForAllPlayers = true",
+                "dropForAllPlayers = true",
             });
 
             var monster = new Monster();
@@ -43,19 +43,19 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var commonLoot = monster.Loot["common"];
             Assert.AreEqual("boss-common", commonLoot.TableName);
-            Assert.AreEqual(0.50, commonLoot.Chance);
+            Assert.AreEqual((float)0.50, commonLoot.Chance);
             Assert.AreEqual(3, commonLoot.Rolls);
             Assert.AreEqual(false, commonLoot.DropForAllPlayers);
 
             var uncommonLoot = monster.Loot["uncommon"];
             Assert.AreEqual("boss-uncommon", uncommonLoot.TableName);
-            Assert.AreEqual(0.25, uncommonLoot.Chance);
+            Assert.AreEqual((float)0.25, uncommonLoot.Chance);
             Assert.AreEqual(2, uncommonLoot.Rolls);
             Assert.AreEqual(false, uncommonLoot.DropForAllPlayers);
 
             var rareLoot = monster.Loot["rare"];
             Assert.AreEqual("boss-rare", rareLoot.TableName);
-            Assert.AreEqual(0.05, rareLoot.Chance);
+            Assert.AreEqual((float)0.05, rareLoot.Chance);
             Assert.AreEqual(1, rareLoot.Rolls);
             Assert.AreEqual(true, rareLoot.DropForAllPlayers);
         }

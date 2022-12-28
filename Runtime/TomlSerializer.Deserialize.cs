@@ -10,6 +10,9 @@ namespace UnderLogic.Serialization.Toml
 {
     public static partial class TomlSerializer
     {
+        private static readonly Type ListType = typeof(List<>);
+        private static readonly Type DictionaryType = typeof(Dictionary<,>);
+
         #region Deserialize Public Methods
 
         public static T Deserialize<T>(string toml) where T : new()
@@ -136,6 +139,16 @@ namespace UnderLogic.Serialization.Toml
                     return true;
                 }
 
+                if (IsObjectDictionary(type))
+                {
+                    var valueType = type.GetGenericArguments()[1];
+                    if (!TryConvertToObjectDictionary(tomlTable, valueType, out var dictResult))
+                        return false;
+
+                    result = dictResult;
+                    return true;
+                }
+
                 if (IsComplexType(type))
                 {
                     if (!HasDefaultConstructor(type))
@@ -210,12 +223,38 @@ namespace UnderLogic.Serialization.Toml
             return false;
         }
 
+        private static bool TryConvertToObjectDictionary(TomlTable tomlTable, Type valueType,
+            out IDictionary dictResult)
+        {
+            dictResult = null;
+
+            if (!HasDefaultConstructor(valueType))
+                return false;
+
+            var constructedDictType = DictionaryType.MakeGenericType(typeof(string), valueType);
+            var dict = (IDictionary)Activator.CreateInstance(constructedDictType);
+
+            foreach (var keyValuePair in tomlTable)
+            {
+                if (keyValuePair.Value is TomlTable childTable)
+                {
+                    var instance = Activator.CreateInstance(valueType);
+                    DeserializeObject(childTable, instance);
+
+                    dict.Add(keyValuePair.Key, instance);
+                }
+                else return false;
+            }
+
+            dictResult = dict;
+            return true;
+        }
+
         private static bool TryConvertToDictionary(TomlTable tomlTable, Type valueType, out IDictionary dictResult)
         {
             dictResult = null;
 
-            var dictType = typeof(Dictionary<,>);
-            var constructedDictType = dictType.MakeGenericType(typeof(string), valueType);
+            var constructedDictType = DictionaryType.MakeGenericType(typeof(string), valueType);
             var dict = (IDictionary)Activator.CreateInstance(constructedDictType);
 
             foreach (var keyValuePair in tomlTable)
@@ -238,8 +277,7 @@ namespace UnderLogic.Serialization.Toml
             if (!HasDefaultConstructor(elementType))
                 return false;
 
-            var listType = typeof(List<>);
-            var constructedListType = listType.MakeGenericType(elementType);
+            var constructedListType = ListType.MakeGenericType(elementType);
             var list = (IList)Activator.CreateInstance(constructedListType);
 
             foreach (var tomlTable in tomlTableArray)
@@ -258,8 +296,7 @@ namespace UnderLogic.Serialization.Toml
         {
             listResult = null;
 
-            var listType = typeof(List<>);
-            var constructedListType = listType.MakeGenericType(elementType);
+            var constructedListType = ListType.MakeGenericType(elementType);
             var list = (IList)Activator.CreateInstance(constructedListType);
 
             foreach (var tomlValue in tomlArray)
