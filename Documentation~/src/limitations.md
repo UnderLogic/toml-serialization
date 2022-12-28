@@ -34,6 +34,11 @@ This is something that may be added in a future version of the library.
 
 It does support strings that contain escaped quotes (`\"` or `\'`) characters.
 
+## Multiline Arrays & Tables
+
+This library does not support multiline arrays or tables.
+This is something that may be added in a future version of the library.
+
 ## Interfaces
 
 This library does not support two-way serialization of fields that represent interfaces.
