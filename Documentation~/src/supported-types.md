@@ -46,6 +46,7 @@ Unity's `ScriptableObject` and `MonoBehaviour` types are supported, but must als
 ## Arrays
 
 Arrays of any supported type are allowed and can be serialized.
+Jagged arrays are supported, but multidimensional arrays are not.
 
 ## Lists
 
