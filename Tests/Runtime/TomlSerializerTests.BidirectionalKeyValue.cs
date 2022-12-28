@@ -48,6 +48,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase("Hello, world!")]
         [TestCase("This is a \"quoted\" string")]
         [TestCase("C:\\Windows\\System32")]
+        [TestCase("\\Network\\Share\\Drive")]
         public void SerializeDeserialize_StringValue_ShouldBeEqual(string stringValue)
         {
             var serializedValue = new WrappedValue<string>(stringValue);

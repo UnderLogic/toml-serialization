@@ -55,7 +55,7 @@ namespace UnderLogic.Serialization.Toml
                 return;
             }
 
-            var escapedString = value.Replace("\"", "\\\"").Replace("\"", "\\\"");
+            var escapedString = value.Replace("\"", "\\\"");
             _writer.Write($"\"{escapedString}\"");
         }
 

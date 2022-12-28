@@ -65,7 +65,13 @@ While this is not a problem for most use cases, it is something to be aware of i
 
 ## Multidimensional Arrays
 
-This library does not currently support multidimensional or jagged arrays, but it may be added in a future version.
+This library does not support multidimensional arrays.
+This is because it is not possible to represent multidimensional arrays in TOML.
+
+However, jagged arrays ("arrays of arrays") are supported for scalar types.
+They must be all of the same type, or boxed as `object` arrays.
+
+For example, you can use `int[][]` but not `int[,]`.
 
 ## Unsigned 64-bit Integers
 

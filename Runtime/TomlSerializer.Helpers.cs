@@ -12,7 +12,9 @@ namespace UnderLogic.Serialization.Toml
             type == typeof(DateTime);
 
         private static bool IsComplexType(object value) => value != null && IsComplexType(value.GetType());
-        private static bool IsComplexType(Type t) => t != typeof(object) && Type.GetTypeCode(t) == TypeCode.Object;
+
+        private static bool IsComplexType(Type t) =>
+            t != typeof(object) && !t.IsArray && Type.GetTypeCode(t) == TypeCode.Object;
 
         private static bool IsGenericList(Type t) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>);
 
@@ -30,6 +32,6 @@ namespace UnderLogic.Serialization.Toml
                                                           t.GetGenericArguments()[0] == typeof(string) &&
                                                           IsComplexType(t.GetGenericArguments()[1]);
         
-        public static bool HasDefaultConstructor(Type t) => t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
+        private static bool HasDefaultConstructor(Type t) => t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
     }
 }

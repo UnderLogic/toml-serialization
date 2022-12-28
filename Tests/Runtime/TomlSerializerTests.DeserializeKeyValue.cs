@@ -58,9 +58,10 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase("I'm a string with a \"quote\" in it.")]
         [TestCase("C:\\Windows\\System32")]
         [TestCase("This is a quoted path: \"C:\\Windows\\System32\"")]
+        [TestCase("\\Network\\Share\\Drive")]
         public void Deserialize_StringKeyValue_ShouldUnescapeValue(string stringValue)
         {
-            var escapedValue = stringValue.Replace("\"", "\\\"").Replace("\\", "\\\\");
+            var escapedValue = stringValue.Replace("\"", "\\\"");
             var existingValue = new WrappedValue<string>("???");
 
             var toml = $"value = \"{escapedValue}\"\n";

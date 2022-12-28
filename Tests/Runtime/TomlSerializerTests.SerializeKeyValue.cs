@@ -54,7 +54,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrappedValue = new WrappedValue<string>(stringValue);
             var toml = TomlSerializer.Serialize(wrappedValue);
 
-            var escapedValue = stringValue.Replace("\"", "\\\"").Replace("\"", "\\\"");
+            var escapedValue = stringValue.Replace("\"", "\\\"");
             Assert.AreEqual($"value = \"{escapedValue}\"\n", toml);
         }
 
