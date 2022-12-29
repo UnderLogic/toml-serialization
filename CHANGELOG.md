@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.5] - Unreleased
 
+### Added
+
+
+
+### Changed
+
+- Updated icons for `TomlImporter` and `TomlExporter` components
 
 ## [0.3.4] - 2022-12-28
 
