@@ -6,9 +6,9 @@ namespace UnderLogic.Serialization.Toml
     [AttributeUsage(AttributeTargets.Field)]
     public class TomlKeyAttribute : Attribute
     {
-        private static readonly Regex KeyRegex = new(@"^[a-z0-9-_]$", RegexOptions.IgnoreCase| RegexOptions.Compiled);
+        private static readonly Regex KeyRegex = new(@"^[a-z0-9-_]+$", RegexOptions.IgnoreCase| RegexOptions.Compiled);
         
-        private string Key { get; }
+        public string Key { get; }
 
         public TomlKeyAttribute(string key)
         {

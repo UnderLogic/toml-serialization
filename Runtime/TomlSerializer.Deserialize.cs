@@ -104,6 +104,10 @@ namespace UnderLogic.Serialization.Toml
 
                 var fieldKey = field.Name.Trim('_');
                 var fieldType = field.FieldType;
+                
+                // Allow the key to be renamed via the TomlKeyAttribute
+                if (TryGetAttribute<TomlKeyAttribute>(field, out var keyAttribute))
+                    fieldKey = keyAttribute.Key;
 
                 if (!table.TryGetValue(fieldKey, out var tomlValue))
                     continue;

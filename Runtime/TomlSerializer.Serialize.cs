@@ -73,6 +73,10 @@ namespace UnderLogic.Serialization.Toml
                 var fieldType = field.FieldType;
                 var fieldValue = field.GetValue(obj);
 
+                // Allow the key to be renamed via the TomlKeyAttribute
+                if (TryGetAttribute<TomlKeyAttribute>(field, out var keyAttribute))
+                    fieldKey = keyAttribute.Key;
+
                 var tomlValue = ConvertToTomlValue(fieldValue, fieldType);
 
                 if (tomlValue == null)

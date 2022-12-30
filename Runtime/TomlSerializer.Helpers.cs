@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace UnderLogic.Serialization.Toml
 {
@@ -33,5 +34,16 @@ namespace UnderLogic.Serialization.Toml
                                                           IsComplexType(t.GetGenericArguments()[1]);
         
         private static bool HasDefaultConstructor(Type t) => t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
+
+        private static bool TryGetAttribute<T>(MemberInfo memberInfo, out T attribute) where T : Attribute
+        {
+            attribute = null;
+
+            if (Attribute.GetCustomAttribute(memberInfo, typeof(T), false) is not T attr)
+                return false;
+            
+            attribute = attr;
+            return true;
+        }
     }
 }
