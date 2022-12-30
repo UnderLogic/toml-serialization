@@ -38,6 +38,11 @@ symbol = "$"
 
 String fields are mapped to a [TOML string](https://toml.io/en/v1.0.0#string) value and serialized as a sequence of characters, surrounded by double quotes.
 
+By default, the string is serialized as a basic (escaped) string.
+You can override this behavior by using the [`TomlLiteralAttribute`](../attributes/toml-literal-attribute.md) for literal strings to be serialized with single quotes.
+
+You can serialize multiline strings by using the [`TomlMultilineAttribute`](../attributes/toml-multiline-attribute.md) attribute, which will use the TOML multiline string syntax.
+
 ### Example
 
 ```toml

@@ -39,4 +39,8 @@
   - [TomlImporter](deserialization/toml-importer.md)
 - [Attributes](attributes.md)
   - [TomlCasingAttribute](attributes/toml-casing-attribute.md)
+  - [TomlExpandAttribute](attributes/toml-expand-attribute.md)
+  - [TomlInlineAttribute](attributes/toml-inline-attribute.md)
   - [TomlKeyAttribute](attributes/toml-key-attribute.md)
+  - [TomlLiteralAttribute](attributes/toml-literal-attribute.md)
+  - [TomlMultilineAttribute](attributes/toml-multiline-attribute.md)

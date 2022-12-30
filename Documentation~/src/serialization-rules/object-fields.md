@@ -14,6 +14,9 @@ Unity's built-in `MonoBehaviour` and `ScriptableObject` types are supported, but
 
 An complex type can be mapped to either an [inline TOML table](https://toml.io/en/v1.0.0#inline-table) or a [standard TOML table](https://toml.io/en/v1.0.0#table).
 
+By default, the complex type will be serialized as a standard (expanded) table.
+You can override this behavior by using the [`TomlInlineAttribute`](../attributes/toml-inline-attribute.md) attribute to serialize the complex type as an inline table.
+
 ### Inline Example
 
 ```toml
