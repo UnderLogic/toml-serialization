@@ -26,6 +26,9 @@ For more information on how objects are deserialized from TOML, see the [Deseria
 **NOTE:** The `Deserialize` methods do not close the stream after reading from it.
 To close the stream after reading from it, set the optional `leaveOpen` parameter to `false`.
 
+**NOTE:** The `DeserializeInto` method will replace any existing values in the object with values from the TOML data.
+If the object has complex types, they will be recreated with new instances via the parameterless constructor.
+
 ## ScriptableObjects
 
 The `TomlSerializer` class can be used to deserialize TOML data into a `ScriptableObject` instance using the `DeserializeInto` method.

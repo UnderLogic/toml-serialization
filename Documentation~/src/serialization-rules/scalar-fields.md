@@ -3,7 +3,7 @@
 ## Overview
 
 A scalar field is a field that is not a complex object or collection.
-It represents a single value, such as a `string`, `int`, or `DateTime`.
+It represents a single value, such as a `string`, `int`, `Enum`, or `DateTime`.
 
 It can also represent a boxed `object` value that contains a scalar value.
 
@@ -56,7 +56,7 @@ Enum fields are mapped to a [TOML string](https://toml.io/en/v1.0.0#string) valu
 
 ```toml
 status = "Active"
-directions = "North,East"
+directions = "North, East"
 ```
 
 **NOTE:** Bit flags will be serialized as a comma-separated list of the individual flags.
@@ -95,7 +95,7 @@ By default, the date and time are serialized in UTC and using the ISO 8601 forma
 ### Example
 
 ```toml
-timestamp = 2020-01-01 00:00:00.000Z
+timestamp = 2020-01-01 12:34:56.789Z
 ```
 
 ## Object

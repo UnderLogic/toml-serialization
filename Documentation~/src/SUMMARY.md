@@ -25,6 +25,9 @@
 - [Deserialization Rules](deserialization-rules.md)
   - [Field Selection](deserialization-rules/field-selection.md)
   - [Field Matching](deserialization-rules/field-matching.md)
+  - [Scalar Fields](deserialization-rules/scalar-fields.md)
+  - [List Fields](deserialization-rules/list-fields.md)
+  - [Object Fields](deserialization-rules/object-fields.md)
 
 # Library Reference
 

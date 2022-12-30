@@ -1,5 +1,7 @@
 # Overview
 
+![image](images/cover.png)
+
 Unity package library for serializing and deserializing [TOML](https://toml.io/en/) data.
 
 ## What is TOML?

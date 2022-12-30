@@ -4,6 +4,25 @@ All notable changes to this library will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.5] - 2022-12-29
+
+### Added
+
+- Deserialization of multiline basic strings using `"""` syntax
+- Deserialization of multiline literal strings using `'''` syntax
+- Deserialization of unicode escape sequences in basic strings using `\uXXXX` syntax
+- More documentation on deserialization rules
+- Proper escaping of serialized strings
+
+### Changed
+
+- Updated icons for `TomlImporter` and `TomlExporter` components
+
+### Fixed
+
+- Now properly ignores inline comments when parsing TOML
+- Ignore escape sequences in literal strings
+
 ## [0.3.4] - 2022-12-28
 
 ### Added

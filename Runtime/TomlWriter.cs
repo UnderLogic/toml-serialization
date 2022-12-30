@@ -115,7 +115,10 @@ namespace UnderLogic.Serialization.Toml
             if (value is TomlNull)
                 WriteNullValue();
             else if (value is TomlString stringValue)
-                WriteStringValue(stringValue.Value);
+            {
+                var escapedValue = Escape(stringValue.Value);
+                WriteStringValue(escapedValue);
+            }
             else if (value is TomlBoolean boolValue)
                 WriteBooleanValue(boolValue.Value);
             else if (value is TomlInteger intValue)
@@ -342,6 +345,19 @@ namespace UnderLogic.Serialization.Toml
         {
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
+        }
+
+        private static string Escape(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            return text
+                .Replace("\"", "\\\"")
+                .Replace("\t", "\\t")
+                .Replace("\r", "\\r")
+                .Replace("\n", "\\n")
+                .Replace("\\", "\\\\");
         }
 
         private void CheckIfDisposed()

@@ -31,6 +31,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 Add(pair.Key, pair.Value);
         }
 
+        public bool ContainsKey(string key) => _dictionary.ContainsKey(key);
+        
         public void Add(string key, TValue value)
         {
             if (key == null)

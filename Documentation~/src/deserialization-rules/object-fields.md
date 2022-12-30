@@ -12,7 +12,11 @@ Unity's built-in `MonoBehaviour` and `ScriptableObject` types are supported, but
 
 ## Mapping
 
-An complex type can be mapped to either an [inline TOML table](https://toml.io/en/v1.0.0#inline-table) or a [standard TOML table](https://toml.io/en/v1.0.0#table).
+A complex type field can be deserialized from either an [inline TOML table](https://toml.io/en/v1.0.0#inline-table) or a [standard TOML table](https://toml.io/en/v1.0.0#table).
+
+## Coercion
+
+There is no coercion for object fields.
 
 ### Inline Example
 
@@ -34,7 +38,7 @@ z = 300
 
 ### Nested Example
 
-Nested objects are serialized using child tables.
+Nested objects are deserialized using child tables.
 
 ```toml
 name = "Player 1"
@@ -53,7 +57,7 @@ charisma = 5
 
 ### Array Example
 
-Arrays of complex types are serialized as a table array.
+Arrays of complex types are deserialized as a table array.
 
 ```toml
 name = "Player 1"

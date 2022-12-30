@@ -27,13 +27,6 @@ For key-value pairs, the key will never be serialized using dot notation.
 The library does not attempt to escape the key names in any way.
 This is usually not a problem, as C# field names usually are alphanumeric.
 
-## Multiline Strings
-
-The library does not support multiline strings using the `"""` or `'''` syntax.
-This is something that may be added in a future version of the library.
-
-It does support strings that contain escaped quotes (`\"` or `\'`) characters.
-
 ## Multiline Arrays & Tables
 
 This library does not support multiline arrays or tables.

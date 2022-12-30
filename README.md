@@ -2,6 +2,8 @@
 
 [![openupm](https://img.shields.io/npm/v/com.underlogic.toml-serialization?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.underlogic.toml-serialization/)
 
+![image](Documentation~/src/images/cover.png)
+
 Unity package library for serializing and deserializing [TOML](https://toml.io/en/) data.
 
 ## Installation

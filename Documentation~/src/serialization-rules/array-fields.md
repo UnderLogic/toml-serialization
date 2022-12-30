@@ -31,6 +31,16 @@ If the array contains scalar types, it is serialized as an [inline TOML array](h
 scores = [ 100, 50, 25 ]
 ```
 
+### Jagged Example
+
+If the array contains arrays of arrays, it is serialized as an [inline TOML array](https://toml.io/en/v1.0.0#array).
+
+```toml
+values = [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]
+```
+
+This can be deserialized as an `int[][]`, or other compatible scalar types.
+
 ### Object Example
 
 If the array contains complex types, it is serialized as a [TOML table array](https://toml.io/en/v1.0.0#array-of-tables).
