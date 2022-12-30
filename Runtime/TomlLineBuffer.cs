@@ -16,7 +16,7 @@ namespace UnderLogic.Serialization.Toml
 
             while (line != null)
             {
-                var tomlLine = StripComment(line);
+                var tomlLine = line.StripTomlComment();
                 if (!string.IsNullOrWhiteSpace(tomlLine))
                     yield return tomlLine;
                 
@@ -105,31 +105,6 @@ namespace UnderLogic.Serialization.Toml
             }
             
             return null;
-        }
-
-        private static string StripComment(string line)
-        {
-            if (line.StartsWith("#"))
-                return string.Empty;
-            
-            var inDoubleQuotes = false;
-            var inSingleQuotes = false;
-
-            for (var charIndex = 0; charIndex < line.Length; charIndex++)
-            {
-                var eachChar = line[charIndex];
-
-                if (eachChar == '"')
-                    inDoubleQuotes = !inDoubleQuotes;
-
-                if (eachChar == '\'')
-                    inSingleQuotes = !inSingleQuotes;
-
-                if (!inDoubleQuotes && !inSingleQuotes && eachChar == '#')
-                    return line.Substring(0, charIndex);
-            }
-
-            return line;
         }
     }
 }

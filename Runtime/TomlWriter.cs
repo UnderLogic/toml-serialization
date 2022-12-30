@@ -45,7 +45,7 @@ namespace UnderLogic.Serialization.Toml
             _writer.Write($"\"{value}\"");
         }
 
-        public void WriteStringValue(string value)
+        public void WriteStringValue(string value, bool escapeChars = true)
         {
             CheckIfDisposed();
 
@@ -55,8 +55,10 @@ namespace UnderLogic.Serialization.Toml
                 return;
             }
 
-            var escapedString = value.Replace("\"", "\\\"");
-            _writer.Write($"\"{escapedString}\"");
+            if (escapeChars)
+                value = value.EscapeTomlString();
+
+            _writer.Write($"\"{value}\"");
         }
 
         public void WriteEnumValue<T>(T value) where T : Enum
@@ -115,10 +117,7 @@ namespace UnderLogic.Serialization.Toml
             if (value is TomlNull)
                 WriteNullValue();
             else if (value is TomlString stringValue)
-            {
-                var escapedValue = Escape(stringValue.Value);
-                WriteStringValue(escapedValue);
-            }
+                WriteStringValue(stringValue.Value);
             else if (value is TomlBoolean boolValue)
                 WriteBooleanValue(boolValue.Value);
             else if (value is TomlInteger intValue)
@@ -346,20 +345,7 @@ namespace UnderLogic.Serialization.Toml
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
         }
-
-        private static string Escape(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return text;
-
-            return text
-                .Replace("\"", "\\\"")
-                .Replace("\t", "\\t")
-                .Replace("\r", "\\r")
-                .Replace("\n", "\\n")
-                .Replace("\\", "\\\\");
-        }
-
+        
         private void CheckIfDisposed()
         {
             if (_isDisposed)

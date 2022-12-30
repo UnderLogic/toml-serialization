@@ -13,6 +13,7 @@ namespace UnderLogic.Serialization.Toml
     public static partial class TomlSerializer
     {
         #region Serialize Public Methods
+
         public static string Serialize(object obj)
         {
             if (obj == null)
@@ -47,10 +48,11 @@ namespace UnderLogic.Serialization.Toml
 
             var rootTable = new TomlTable();
             SerializeObject(rootTable, obj);
-            
+
             using (var tomlWriter = new TomlWriter(writer))
                 tomlWriter.WriteDocument(rootTable);
         }
+
         #endregion
 
         private static void SerializeObject(TomlTable table, object obj)
@@ -62,6 +64,11 @@ namespace UnderLogic.Serialization.Toml
             if (!type.IsSerializable)
                 throw new InvalidOperationException($"Type {type.Name} is not serializable");
 
+            // Allow the top-level object to specify a default field casing
+            var objectFieldCasing = StringCasing.Default;
+            if (TryGetAttribute<TomlCasingAttribute>(type, out var objectCasingAttribute))
+                objectFieldCasing = objectCasingAttribute.Casing;
+
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             foreach (var field in fields)
@@ -69,9 +76,24 @@ namespace UnderLogic.Serialization.Toml
                 if (field.IsNotSerialized)
                     continue;
 
+                var fieldCasing = objectFieldCasing;
                 var fieldKey = field.Name.Trim('_');
                 var fieldType = field.FieldType;
                 var fieldValue = field.GetValue(obj);
+
+                // Allow the key to be renamed via the TomlKeyAttribute
+                if (TryGetAttribute<TomlKeyAttribute>(field, out var keyAttribute))
+                    fieldKey = keyAttribute.Key;
+                else
+                {
+                    // Allow the field to specify a custom field casing
+                    if (TryGetAttribute<TomlCasingAttribute>(field, out var fieldCasingAttribute))
+                        fieldCasing = fieldCasingAttribute.Casing;
+
+                    // Apply the field casing to the key
+                    if (fieldCasing != StringCasing.Default)
+                        fieldKey = fieldKey.ToCase(fieldCasing);
+                }
 
                 var tomlValue = ConvertToTomlValue(fieldValue, fieldType);
 
@@ -104,11 +126,11 @@ namespace UnderLogic.Serialization.Toml
             else if (IsComplexType(type))
             {
                 var tomlTable = ConvertToTomlTableExpanded(obj);
-                
+
                 if (tomlTable != null)
                     return tomlTable;
             }
-            
+
             if (type == typeof(bool) && obj is bool boolValue)
                 return new TomlBoolean(boolValue);
             if (type == typeof(char) && obj is char charValue)
@@ -182,7 +204,7 @@ namespace UnderLogic.Serialization.Toml
                 var valueType = value?.GetType();
 
                 var tomlValue = ConvertToTomlValue(value, value?.GetType());
-                
+
                 if (tomlValue == null)
                     throw new InvalidOperationException($"Type {valueType?.Name} is not serializable");
 

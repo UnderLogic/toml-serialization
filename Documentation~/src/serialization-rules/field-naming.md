@@ -3,8 +3,12 @@
 ## Overview
 
 By default, the name of the field is used as the key in the TOML document.
-
 Any underscores (`_`) at the beginning of the field name are removed.
+
+This can be overridden by using the [`TomlKeyAttribute`](../attributes/toml-key-attribute.md) attribute.
+
+The case of the key can be overriden by using the [`TomlCasingAttribute`](../attributes/toml-casing-attribute.md) attribute.
+It can be applied on the entire class, struct, or an individual field.
 
 ### Example
 

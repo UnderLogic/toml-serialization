@@ -37,3 +37,6 @@
 - [Deserialization](deserialization.md)
   - [TomlSerializer](deserialization/toml-serializer.md)
   - [TomlImporter](deserialization/toml-importer.md)
+- [Attributes](attributes.md)
+  - [TomlCasingAttribute](attributes/toml-casing-attribute.md)
+  - [TomlKeyAttribute](attributes/toml-key-attribute.md)

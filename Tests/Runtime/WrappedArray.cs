@@ -6,6 +6,7 @@ using System.Linq;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
+    [TomlCasing(StringCasing.Default)]
     internal sealed class WrappedArray<T> : IReadOnlyList<T>
     {
         private T[] _array;
