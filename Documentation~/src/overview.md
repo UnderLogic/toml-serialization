@@ -4,6 +4,8 @@
 
 Unity package library for serializing and deserializing [TOML](https://toml.io/en/) data.
 
+**NOTE:** This package is still in development and may have breaking changes in future versions until a stable v1.0.0 release is made.
+
 ## What is TOML?
 
 TOML is a relatively newer data format that is gaining popularity.
