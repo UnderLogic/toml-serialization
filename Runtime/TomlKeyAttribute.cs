@@ -6,19 +6,19 @@ namespace UnderLogic.Serialization.Toml
     [AttributeUsage(AttributeTargets.Field)]
     public class TomlKeyAttribute : Attribute
     {
-        private static readonly Regex KeyRegex = new(@"^[a-z0-9-_]+$", RegexOptions.IgnoreCase| RegexOptions.Compiled);
-        
-        public string Key { get; }
+        private static readonly Regex KeyRegex = new(@"^[a-z0-9-_]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private string _key;
+
+        public string Key
+        {
+            get => _key;
+            private set => _key = KeyRegex.IsMatch(value) ? value : throw new ArgumentException("Invalid TOML key");
+        }
 
         public TomlKeyAttribute(string key)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-            
-            if (!KeyRegex.IsMatch(key))
-                throw new ArgumentException("Key must be a valid TOML key", nameof(key));
-
-            Key = key;
+            Key = key ?? throw new ArgumentNullException(nameof(key));
         }
     }
 }

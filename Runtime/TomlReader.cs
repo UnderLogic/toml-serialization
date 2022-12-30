@@ -16,7 +16,6 @@ namespace UnderLogic.Serialization.Toml
         private static readonly Regex TableInlineRegex = new(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
         private static readonly Regex TableRegex = new(@"^\s*\[(.+?)\]", RegexOptions.Compiled);
         private static readonly Regex TableArrayRegex = new(@"^\s*\[\[(.+?)\]\]", RegexOptions.Compiled);
-        private static readonly Regex UnicodeCharRegex = new(@"\\u([0-9a-f]{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         
         private readonly TextReader _reader;
         private bool _isDisposed;
@@ -215,7 +214,9 @@ namespace UnderLogic.Serialization.Toml
                 return true;
             }
 
-            var arrayValues = SplitString(contentString, ',').Select(value => value?.Trim());
+            var arrayValues = contentString.SplitTomlString(',')
+                .Select(value => value?.Trim());
+            
             var parsedValues = new List<TomlValue>();
 
             foreach (var eachValue in arrayValues)
@@ -251,7 +252,7 @@ namespace UnderLogic.Serialization.Toml
                 return true;
             }
 
-            var tableValues = SplitString(contentString, ',');
+            var tableValues = contentString.SplitTomlString(',');
             var parsedKeyValues = new List<TomlKeyValuePair>();
 
             foreach (var keyPairString in tableValues)
@@ -300,8 +301,8 @@ namespace UnderLogic.Serialization.Toml
 
             if (isBasicString)
             {
-                stringValue = Unescape(stringValue);
-                stringValue = DecodeUnicodeChars(stringValue);
+                stringValue = stringValue.UnescapeTomlString();
+                stringValue = stringValue.DecodeUnicodeChars();
             }
 
             tomlValue = new TomlString(stringValue);
@@ -346,78 +347,6 @@ namespace UnderLogic.Serialization.Toml
 
             tomlValue = new TomlDateTime(dateTimeValue);
             return true;
-        }
-
-        private static string Unescape(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return text;
-
-            return text
-                .Replace("\\\\", "\\")
-                .Replace("\\\"", "\"")
-                .Replace("\\t", "\t")
-                .Replace("\\r", "\r")
-                .Replace("\\n", "\n");
-        }
-
-        private static string DecodeUnicodeChars(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return text;
-
-            return UnicodeCharRegex.Replace(text, match =>
-            {
-                var hexValue = match.Groups[1].Value;
-                return int.TryParse(hexValue, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var intValue)
-                    ? ((char)intValue).ToString()
-                    : match.Value;
-            });
-        }
-
-        private static IEnumerable<string> SplitString(string text, char separator)
-        {
-            var currentString = new StringBuilder();
-            var inQuotes = false;
-            var inArray = false;
-            var inTable = false;
-            var escaped = false;
-
-            foreach (var eachChar in text)
-            {
-                if (eachChar == separator && !inQuotes && !inArray && !inTable)
-                {
-                    yield return currentString.ToString();
-                    currentString.Clear();
-                    continue;
-                }
-
-                if (eachChar == '"' && !escaped)
-                    inQuotes = !inQuotes;
-
-                if (eachChar == '[' && !escaped)
-                    inArray = true;
-
-                if (eachChar == ']' && !escaped)
-                    inArray = false;
-
-                if (eachChar == '{' && !escaped)
-                    inTable = true;
-
-                if (eachChar == '}' && !escaped)
-                    inTable = false;
-
-                if (eachChar == '\\' && !escaped)
-                {
-                    escaped = true;
-                    continue;
-                }
-
-                currentString.Append(eachChar);
-                escaped = false;
-            }
-
-            yield return currentString.ToString();
         }
 
         public void Close()

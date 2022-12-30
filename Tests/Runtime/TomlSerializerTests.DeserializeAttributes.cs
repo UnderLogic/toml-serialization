@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using UnderLogic.Serialization.Toml.Tests.Mocks;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -8,26 +7,72 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Deserialize_TomlKeyAttribute_ShouldMapKey()
         {
-            var toml = string.Join("\n", new[]
-            {
-                "quest_name = \"quest_starter_gather_wood\"",
-                "quest_title = \"Gather Wood\"",
-                "quest_description = \"Fetch me some wood around here.\"",
-                "quest_objectives = [ \"Gather 10 Wood\" ]",
-                "reward = 100",
-                "repeatable = true"
-            });
+            const string toml = "renamedValue = \"The quick brown fox jumps over the lazy dog.\"";
 
-            var deserializedQuest = new Quest();
-            TomlSerializer.DeserializeInto(toml, deserializedQuest);
+            var deserializedValue = new WrappedRenamedValue<string>();
+            TomlSerializer.DeserializeInto(toml, deserializedValue);
 
-            Assert.AreEqual("quest_starter_gather_wood", deserializedQuest.Name);
-            Assert.AreEqual("Gather Wood", deserializedQuest.Title);
-            Assert.AreEqual("Fetch me some wood around here.", deserializedQuest.Description);
-            Assert.AreEqual(1, deserializedQuest.Objectives.Count);
-            Assert.AreEqual("Gather 10 Wood", deserializedQuest.Objectives[0]);
-            Assert.AreEqual(100, deserializedQuest.GoldReward);
-            Assert.AreEqual(true, deserializedQuest.IsRepeatable);
+            Assert.AreEqual("The quick brown fox jumps over the lazy dog.", deserializedValue.Value);
+        }
+        
+        [Test]
+        public void Deserialize_TomlCasingAttribute_ShouldMapLowerCaseKey()
+        {
+            var wrappedValues = new WrappedCasedValues<int>(0);
+            const string toml = "lowervalue = 42\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedValues);
+            Assert.AreEqual(42, wrappedValues.LowerValue);
+        }
+
+        [Test]
+        public void Deserialize_TomlCasingAttribute_ShouldMapUpperCaseKey()
+        {
+            var wrappedValues = new WrappedCasedValues<int>(0);
+            const string toml = "UPPERVALUE = 42\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedValues);
+            Assert.AreEqual(42, wrappedValues.UpperValue);
+        }
+
+        [Test]
+        public void Deserialize_TomlCasingAttribute_ShouldMapCamelCaseKey()
+        {
+            var wrappedValues = new WrappedCasedValues<int>(0);
+            const string toml = "camelValue = 42\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedValues);
+            Assert.AreEqual(42, wrappedValues.CamelValue);
+        }
+        
+        [Test]
+        public void Deserialize_TomlCasingAttribute_ShouldMapPascalCaseKey()
+        {
+            var wrappedValues = new WrappedCasedValues<int>(0);
+            const string toml = "PascalValue = 42\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedValues);
+            Assert.AreEqual(42, wrappedValues.PascalValue);
+        }
+        
+        [Test]
+        public void Deserialize_TomlCasingAttribute_ShouldMapSnakeCaseKey()
+        {
+            var wrappedValues = new WrappedCasedValues<int>(0);
+            const string toml = "snake_value = 42\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedValues);
+            Assert.AreEqual(42, wrappedValues.SnakeValue);
+        }
+        
+        [Test]
+        public void Deserialize_TomlCasingAttribute_ShouldMapKebabCaseKey()
+        {
+            var wrappedValues = new WrappedCasedValues<int>(0);
+            const string toml = "kebab-value = 42\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedValues);
+            Assert.AreEqual(42, wrappedValues.KebabValue);
         }
     }
 }

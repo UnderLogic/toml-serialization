@@ -4,8 +4,9 @@ namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
     [TomlCasing(StringCasing.Default)]
-    internal sealed class WrappedValue<T>
+    internal sealed class WrappedRenamedValue<T>
     {
+        [TomlKey("renamedValue")]
         private T _value;
 
         public T Value
@@ -14,8 +15,11 @@ namespace UnderLogic.Serialization.Toml.Tests
             set => _value = value;
         }
 
-        public WrappedValue() { }
+        public WrappedRenamedValue() { }
 
-        public WrappedValue(T value) => _value = value;
+        public WrappedRenamedValue(T value)
+        {
+            _value = value;
+        }
     }
 }

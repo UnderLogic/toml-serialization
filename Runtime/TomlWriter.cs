@@ -56,7 +56,7 @@ namespace UnderLogic.Serialization.Toml
             }
 
             if (escapeChars)
-                value = Escape(value);
+                value = value.EscapeTomlString();
 
             _writer.Write($"\"{value}\"");
         }
@@ -345,20 +345,7 @@ namespace UnderLogic.Serialization.Toml
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
         }
-
-        private static string Escape(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return text;
-
-            return text
-                .Replace("\\", "\\\\")
-                .Replace("\"", "\\\"")
-                .Replace("\t", "\\t")
-                .Replace("\r", "\\r")
-                .Replace("\n", "\\n");
-        }
-
+        
         private void CheckIfDisposed()
         {
             if (_isDisposed)
