@@ -122,13 +122,20 @@ directions = "North, East"
 
 Integer fields are deserialized from a [TOML integer](https://toml.io/en/v1.0.0#integer) value and coerced to one of the following values:
 
-- `sbyte` - 8-bit signed integer
+### Signed Types
+
+- `sbyte` - signed 8-bit integer
 - `short` - signed 16-bit integer
 - `int` - signed 32-bit integer
 - `long` - signed 64-bit integer
+
+### Unsigned Types
+
 - `byte` - unsigned 8-bit integer
 - `ushort` - unsigned 16-bit integer
 - `uint` - unsigned 32-bit integer
+
+**NOTE:** Unsigned 64-bit integers (`ulong`) are not supported by TOML.
 
 ### Example
 
@@ -136,8 +143,6 @@ Integer fields are deserialized from a [TOML integer](https://toml.io/en/v1.0.0#
 positive = 42
 negative = -42
 ```
-
-**NOTE:** Unsigned 64-bit integers are not supported by TOML.
 
 ## Floating Point
 
