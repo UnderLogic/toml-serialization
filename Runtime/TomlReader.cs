@@ -354,11 +354,11 @@ namespace UnderLogic.Serialization.Toml
                 return text;
 
             return text
+                .Replace("\\\\", "\\")
                 .Replace("\\\"", "\"")
                 .Replace("\\t", "\t")
                 .Replace("\\r", "\r")
-                .Replace("\\n", "\n")
-                .Replace("\\\\", "\\");
+                .Replace("\\n", "\n");
         }
 
         private static string DecodeUnicodeChars(string text)

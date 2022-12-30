@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `TomlKeyAttribute` custom attribute for overriding the TOML key of a field
 
+### Fixed
+
+- Excessive escaping of strings in TOML output
 
 ## [0.3.5] - 2022-12-29
 

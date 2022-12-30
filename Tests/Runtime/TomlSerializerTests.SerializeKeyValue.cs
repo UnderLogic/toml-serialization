@@ -45,7 +45,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"value = \"{stringValue}\"\n", toml);
         }
-        
+
         [TestCase("I'm a string with a \"quote\" in it.")]
         [TestCase("C:\\Windows\\System32")]
         [TestCase("This is a quoted path: \"C:\\Windows\\System32\"")]
@@ -54,7 +54,10 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrappedValue = new WrappedValue<string>(stringValue);
             var toml = TomlSerializer.Serialize(wrappedValue);
 
-            var escapedValue = stringValue.Replace("\"", "\\\"");
+            var escapedValue = stringValue
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"");
+
             Assert.AreEqual($"value = \"{escapedValue}\"\n", toml);
         }
 

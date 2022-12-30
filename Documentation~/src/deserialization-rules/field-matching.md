@@ -3,8 +3,9 @@
 ## Overview
 
 By default, the name of the key is used to match the field.
-
 Any underscores (`_`) at the beginning of the field name are removed and ignored when matching.
+
+This can be overridden by using the [`TomlKeyAttribute`](../attributes/toml-key-attribute.md) attribute.
 
 ### Example
 

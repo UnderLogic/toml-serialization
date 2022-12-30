@@ -3,9 +3,9 @@
 ## Overview
 
 By default, the name of the field is used as the key in the TOML document.
-This can be overridden by using the [`TomlKeyAttribute`](../attributes/toml-key-attribute.md) attribute.
-
 Any underscores (`_`) at the beginning of the field name are removed.
+
+This can be overridden by using the [`TomlKeyAttribute`](../attributes/toml-key-attribute.md) attribute.
 
 ### Example
 

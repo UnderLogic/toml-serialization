@@ -18,7 +18,6 @@ namespace UnderLogic.Serialization.Toml.Tests
             
             var expected = string.Join("\n", new[]
             {
-                "[quest]",
                 "quest_name = \"quest_gather_wood\"",
                 "quest_title = \"Gather Wood\"",
             });
