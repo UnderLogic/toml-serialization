@@ -24,6 +24,11 @@ This could be player progress, game state, or any other data that needs to be sa
 Where you need to serialize and deserialize level or template data.
 This could be level settings, monster variations, or any other data that needs to be saved and loaded.
 
+### Translations & Localization
+
+Where you need to serialize and deserialize data related to translations and localization.
+This could be different languages, different countries, or any other data that needs to be saved and loaded.
+
 ### Human Readable & Editable
 
 TOML is designed to be easy to read and write by humans.

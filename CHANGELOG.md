@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Deserialization of multiline basic strings using `"""` syntax
+- Deserialization of multiline literal strings using `'''` syntax
+- Deserialization of unicode escape sequences in basic strings using `\uXXXX` syntax
+- More documentation on deserialization rules
 
 ### Changed
 
@@ -16,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Now properly ignores inline comments when parsing TOML
+- Ignore escape sequences in literal strings
 
 ## [0.3.4] - 2022-12-28
 

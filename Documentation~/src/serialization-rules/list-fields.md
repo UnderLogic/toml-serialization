@@ -17,7 +17,7 @@ public class MyData
 }
 ```
 
-**NOTE:** You should always use a generic list (`List<T>`) type when possible.
+**NOTE:** You should always use a generic list (`List<T>`) type when possible over an array type (`T[]`).
 
 ## Mapping
 
