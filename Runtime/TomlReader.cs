@@ -11,12 +11,13 @@ namespace UnderLogic.Serialization.Toml
 {
     internal class TomlReader : IDisposable
     {
-        private static readonly Regex KeyValueRegex = new(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Compiled);
+        private static readonly Regex KeyValueRegex = new(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Singleline | RegexOptions.Compiled);
         private static readonly Regex ArrayRegex = new(@"^\s*\[\s*(.*)\s*\]", RegexOptions.Compiled);
         private static readonly Regex TableInlineRegex = new(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
         private static readonly Regex TableRegex = new(@"^\s*\[(.+?)\]", RegexOptions.Compiled);
         private static readonly Regex TableArrayRegex = new(@"^\s*\[\[(.+?)\]\]", RegexOptions.Compiled);
-
+        private static readonly Regex UnicodeCharRegex = new(@"\\u([0-9a-f]{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        
         private readonly TextReader _reader;
         private bool _isDisposed;
 
@@ -48,90 +49,103 @@ namespace UnderLogic.Serialization.Toml
             var currentTableKey = string.Empty;
             var rootTable = new TomlTable();
 
-            string line;
-            var lineCounter = 0;
+            var lineBuffer = new TomlLineBuffer();
             
-            while ((line = _reader.ReadLine()) != null)
+            string rawLine;
+            var lineCounter = 0;
+
+            while ((rawLine = _reader.ReadLine()) != null)
             {
                 lineCounter++;
-                
-                // Skip comments
-                if (line.StartsWith("#") || string.IsNullOrWhiteSpace(line))
-                    continue;
+                lineBuffer.AppendLine(rawLine);
 
-                // Start of a new table array
-                var tableArrayMatch = TableArrayRegex.Match(line);
-                if (tableArrayMatch.Success)
+                IEnumerable<string> tomlLines;
+                try
                 {
-                    var arrayKey = tableArrayMatch.Groups[1].Value.Trim();
-                    if (!rootTable.TryGetValuePath(arrayKey, out var existingValue))
-                    {
-                        var newTableArray = new TomlTableArray();
-                        rootTable.AddPath(arrayKey, newTableArray);
+                    tomlLines = lineBuffer.GetTomlLines();
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException($"Invalid TOML syntax on line {lineCounter}", e);
+                }
 
-                        currentTableArray = newTableArray;
-                    }
-                    else
+                foreach (var tomlLine in tomlLines)
+                {
+                    // Start of a new table array
+                    var tableArrayMatch = TableArrayRegex.Match(tomlLine);
+                    if (tableArrayMatch.Success)
                     {
-                        if (existingValue is TomlTableArray existingTableArray)
-                            currentTableArray = existingTableArray;
+                        var arrayKey = tableArrayMatch.Groups[1].Value.Trim();
+                        if (!rootTable.TryGetValuePath(arrayKey, out var existingValue))
+                        {
+                            var newTableArray = new TomlTableArray();
+                            rootTable.AddPath(arrayKey, newTableArray);
+
+                            currentTableArray = newTableArray;
+                        }
                         else
-                            throw new InvalidOperationException($"Key {arrayKey} is not a table array");
+                        {
+                            if (existingValue is TomlTableArray existingTableArray)
+                                currentTableArray = existingTableArray;
+                            else
+                                throw new InvalidOperationException($"Key {arrayKey} is not a table array");
+                        }
+
+                        var newTable = new TomlTable();
+                        currentTableArray.Add(newTable);
+                        continue;
                     }
 
-                    var newTable = new TomlTable();
-                    currentTableArray.Add(newTable);
-                    continue;
-                }
-
-                // Start of a new table
-                var tableMatch = TableRegex.Match(line);
-                if (tableMatch.Success)
-                {
-                    currentTableArray = null;
-                    currentTableKey = tableMatch.Groups[1].Value.Trim();
-
-                    var childTable = new TomlTable();
-                    rootTable.AddPath(currentTableKey, childTable);
-                    continue;
-                }
-
-                // Parse key-value pairs into current table/table array
-                if (TryParseKeyValuePair(line, out var keyValuePair))
-                {
-                    // If we're in a table array, add the key-value pair to the last table
-                    if (currentTableArray != null)
+                    // Start of a new table
+                    var tableMatch = TableRegex.Match(tomlLine);
+                    if (tableMatch.Success)
                     {
-                        var arrayTable = currentTableArray[currentTableArray.Count - 1];
-                        arrayTable.Add(keyValuePair.Key, keyValuePair.Value);
-                    }
-                    // If we're in a table, add the key-value pair to that table
-                    else if(!string.IsNullOrWhiteSpace(currentTableKey))
-                    {
-                        if (!rootTable.TryGetValuePath(currentTableKey, out var existingValue))
-                            throw new InvalidOperationException($"Table {currentTableKey} does not exist");
-                        
-                        if (!(existingValue is TomlTable existingTable))
-                            throw new InvalidOperationException($"Key {currentTableKey} is not a table");
+                        currentTableArray = null;
+                        currentTableKey = tableMatch.Groups[1].Value.Trim();
 
-                        existingTable.Add(keyValuePair.Key, keyValuePair.Value);
+                        var childTable = new TomlTable();
+                        rootTable.AddPath(currentTableKey, childTable);
+                        continue;
                     }
-                    // Otherwise, add the key-value pair to the root table
+
+                    // Parse key-value pairs into current table/table array
+                    if (TryParseKeyValuePair(tomlLine, out var keyValuePair))
+                    {
+                        // If we're in a table array, add the key-value pair to the last table
+                        if (currentTableArray != null)
+                        {
+                            var arrayTable = currentTableArray[currentTableArray.Count - 1];
+                            arrayTable.Add(keyValuePair.Key, keyValuePair.Value);
+                        }
+                        // If we're in a table, add the key-value pair to that table
+                        else if (!string.IsNullOrWhiteSpace(currentTableKey))
+                        {
+                            if (!rootTable.TryGetValuePath(currentTableKey, out var existingValue))
+                                throw new InvalidOperationException($"Table {currentTableKey} does not exist");
+
+                            if (!(existingValue is TomlTable existingTable))
+                                throw new InvalidOperationException($"Key {currentTableKey} is not a table");
+
+                            existingTable.Add(keyValuePair.Key, keyValuePair.Value);
+                        }
+                        // Otherwise, add the key-value pair to the root table
+                        else
+                        {
+                            rootTable.Add(keyValuePair.Key, keyValuePair.Value);
+                        }
+                    }
                     else
                     {
-                        rootTable.Add(keyValuePair.Key, keyValuePair.Value);
+                        // Invalid TOML syntax, throw exception
+                        var e = new FormatException($"Invalid TOML syntax: {tomlLine}");
+                        throw new InvalidOperationException($"Invalid TOML syntax on line {lineCounter}", e);
                     }
-                }
-                else
-                {
-                    var innerException = new FormatException($"Invalid TOML syntax: {line}");
-                    throw new InvalidOperationException($"Invalid TOML syntax on line {lineCounter}", innerException);
                 }
             }
 
             return rootTable;
         }
-
+        
         private static bool TryParseScalarValue(string text, out TomlValue tomlValue)
         {
             tomlValue = null;
@@ -267,14 +281,30 @@ namespace UnderLogic.Serialization.Toml
         {
             tomlValue = null;
 
-            var wrappedInDoubleQuotes = text.StartsWith('"') && text.EndsWith('"');
-            var wrappedInSingleQuotes = text.StartsWith("'") && text.EndsWith("'");
+            var isBasicString = text.StartsWith('"') && text.EndsWith('"');
+            var isLiteralString = text.StartsWith("'") && text.EndsWith("'");
 
-            if (!wrappedInDoubleQuotes && !wrappedInSingleQuotes)
+            if (!isBasicString && !isLiteralString)
                 return false;
 
-            var unescapedText = text.Substring(1, text.Length - 2).Replace("\\\\", "\\").Replace("\\\"", "\"");
-            tomlValue = new TomlString(unescapedText);
+            var quoteCount = 1;
+            if (text.StartsWith("\"\"\"") && text.EndsWith("\"\"\""))
+                quoteCount = 3;
+            else if (text.StartsWith("'''") && text.EndsWith("'''"))
+                quoteCount = 3;
+
+            if (text.Length < quoteCount * 2)
+                return false;
+
+            var stringValue = text.Substring(quoteCount, text.Length - quoteCount * 2);
+
+            if (isBasicString)
+            {
+                stringValue = Unescape(stringValue);
+                stringValue = DecodeUnicodeChars(stringValue);
+            }
+
+            tomlValue = new TomlString(stringValue);
             return true;
         }
 
@@ -316,6 +346,28 @@ namespace UnderLogic.Serialization.Toml
 
             tomlValue = new TomlDateTime(dateTimeValue);
             return true;
+        }
+
+        private static string Unescape(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            return text.Replace("\\\\", "\\").Replace("\\\"", "\"");
+        }
+
+        private static string DecodeUnicodeChars(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            return UnicodeCharRegex.Replace(text, match =>
+            {
+                var hexValue = match.Groups[1].Value;
+                return int.TryParse(hexValue, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var intValue)
+                    ? ((char)intValue).ToString()
+                    : match.Value;
+            });
         }
 
         private static IEnumerable<string> SplitString(string text, char separator)

@@ -9,10 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 
-
 ### Changed
 
 - Updated icons for `TomlImporter` and `TomlExporter` components
+
+### Fixed
+
+- Now properly ignores inline comments when parsing TOML
 
 ## [0.3.4] - 2022-12-28
 

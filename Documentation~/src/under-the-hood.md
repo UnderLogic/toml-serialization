@@ -74,6 +74,9 @@ The `TomlSerializer` class reads the TOML document using the `TomlReader` class.
 
 The `TomlReader` class is responsible for reading the TOML document from a string, stream, or reader and parsing it into `TomlValue` objects.
 
+The `TomlLineBuffer` class is used to aid parsing of multiline strings, lists, and dictionaries.
+It acts as an enumerable over the actual lines of the document (ignoring comments and whitespace).
+
 ### Object Creation
 
 The `TomlSerializer` class creates the deserialized object using the `Activator` or `Array` static class methods.
