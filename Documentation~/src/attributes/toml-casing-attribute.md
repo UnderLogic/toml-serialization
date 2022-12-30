@@ -5,7 +5,7 @@
 The `TomlCasingAttribute` can be used to override the case of the key in the TOML document.
 It can be applied on the entire class, struct, or an individual field.
 
-When applied to a class or struct, it will override the case of all keys in the TOML document.
+When applied to a class or struct, it will set the default case for all fields. It is **not** recursively applied to all child objects.
 
 When applied to a field, it will override the case of the key for that field only.
 
