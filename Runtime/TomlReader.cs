@@ -353,7 +353,12 @@ namespace UnderLogic.Serialization.Toml
             if (string.IsNullOrWhiteSpace(text))
                 return text;
 
-            return text.Replace("\\\\", "\\").Replace("\\\"", "\"");
+            return text
+                .Replace("\\\"", "\"")
+                .Replace("\\t", "\t")
+                .Replace("\\r", "\r")
+                .Replace("\\n", "\n")
+                .Replace("\\\\", "\\");
         }
 
         private static string DecodeUnicodeChars(string text)

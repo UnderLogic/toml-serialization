@@ -27,7 +27,25 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual(expectedString, wrappedValue.Value);
         }
-        
+
+        [TestCase("This has a \t tab character")]
+        [TestCase("This has a \n newline character")]
+        [TestCase("This has a \r carriage return character")]
+        public void Deserialize_BasicWhitespaceString_ShouldSetValue(string expectedString)
+        {
+            var escapedString = expectedString
+                .Replace("\t", "\\t")
+                .Replace("\r", "\\r")
+                .Replace("\n", "\\n");
+
+            var toml = $"value = \"{escapedString}\"\n";
+
+            var wrappedValue = new WrappedValue<string>(string.Empty);
+            TomlSerializer.DeserializeInto(toml, wrappedValue);
+
+            Assert.AreEqual(expectedString, wrappedValue.Value);
+        }
+
         [TestCase(@"C:\Windows\System32")]
         [TestCase(@"\\Network\\Share\\Folder")]
         public void Deserialize_BasicBackslashString_ShouldSetValue(string expectedString)
