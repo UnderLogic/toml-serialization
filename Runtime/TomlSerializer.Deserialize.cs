@@ -430,6 +430,20 @@ namespace UnderLogic.Serialization.Toml
                     scalarResult = (float)tomlFloat.Value;
                 else if (type == typeof(decimal))
                     return false; // Not supported
+                else if (type == typeof(sbyte))
+                    scalarResult = (sbyte)tomlFloat.Value;
+                else if (type == typeof(short))
+                    scalarResult = (short)tomlFloat.Value;
+                else if (type == typeof(int))
+                    scalarResult = (int)tomlFloat.Value;
+                else if (type == typeof(long))
+                    scalarResult = (long)tomlFloat.Value;
+                else if (type == typeof(byte))
+                    scalarResult = (byte)tomlFloat.Value;
+                else if (type == typeof(ushort))
+                    scalarResult = (ushort)tomlFloat.Value;
+                else if (type == typeof(uint))
+                    scalarResult = (uint)tomlFloat.Value;
                 else
                     scalarResult = tomlFloat.Value;
             }

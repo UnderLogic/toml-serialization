@@ -198,6 +198,32 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(uint32Value, existingValue.Value);
         }
 
+        [TestCase(-3.14e10f)]
+        [TestCase(0f)]
+        [TestCase(3.14e+10f)]
+        public void Deserialize_FloatKeyValue_ShouldSetValue(float floatValue)
+        {
+            var existingValue = new WrappedValue<float>(42);
+
+            var toml = $"value = {(double)floatValue}\n";
+            TomlSerializer.DeserializeInto(toml, existingValue);
+
+            Assert.AreEqual((double)floatValue, existingValue.Value);
+        }
+
+        [TestCase(-3.14e10)]
+        [TestCase(0)]
+        [TestCase(3.14e+10)]
+        public void Deserialize_DoubleKeyValue_ShouldSetValue(double doubleValue)
+        {
+            var existingValue = new WrappedValue<double>(42);
+
+            var toml = $"value = {doubleValue}\n";
+            TomlSerializer.DeserializeInto(toml, existingValue);
+
+            Assert.AreEqual(doubleValue, existingValue.Value);
+        }
+
         [TestCase("1979-05-27T07:32:00Z")]
         [TestCase("1979-05-27T00:32:00-07:00")]
         [TestCase("1979-05-27T00:32:00.999999-07:00")]

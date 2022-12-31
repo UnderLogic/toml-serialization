@@ -8,7 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `TomlLiteralAttribute` custom attribute for serializing literal strings
+- `TomlMultilineAttribute` custom attribute for serializing multi-line strings (including literals)
+- `TomlInlineAttribute` custom attribute for serializing inline tables explicitly
+- `TomlExpandAttribute` custom attribute for serializing expanded tables explicitly
+- More unit tests for various serialization cases
 
+### Changed
+
+- `TomlFloat` values can be coerced into integer values (will be truncated)
 
 ## [0.4.0] - 2022-12-30
 
