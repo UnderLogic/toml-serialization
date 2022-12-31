@@ -26,6 +26,19 @@ namespace UnderLogic.Serialization.Toml.Tests
             TomlSerializer.DeserializeInto(toml, wrappedArray);
             Assert.IsTrue(wrappedArray.IsEmpty, "Array should be empty");
         }
+        
+        [Test]
+        public void Deserialize_Array_ShouldAllowTrailingComma()
+        {
+            var wrappedArray = WrappedArray<string>.Empty();
+            const string toml = "array = [ \"Trailing\", \"Comma\", ]\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+            Assert.IsFalse(wrappedArray.IsEmpty, "Array should not be empty");
+
+            Assert.AreEqual("Trailing", wrappedArray[0]);
+            Assert.AreEqual("Comma", wrappedArray[1]);
+        }
 
         [Test]
         public void Deserialize_ArrayOfNulls_ShouldSetNulls()
@@ -280,6 +293,49 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(3.14, wrappedArray[2]);
             Assert.AreEqual(true, wrappedArray[3]);
             Assert.AreEqual(new DateTime(1979, 5, 27), wrappedArray[4]);
+        }
+
+        [Test]
+        public void Deserialize_MultilineArray_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [",
+                "  \"John\",",
+                "  \"Paul\",",
+                "  \"George\",",
+                "  \"Ringo\"",
+                "]",
+            });
+
+            var wrappedArray = WrappedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 4);
+            Assert.AreEqual("John", wrappedArray[0]);
+            Assert.AreEqual("Paul", wrappedArray[1]);
+            Assert.AreEqual("George", wrappedArray[2]);
+            Assert.AreEqual("Ringo", wrappedArray[3]);
+        }
+        
+        [Test]
+        public void Deserialize_MultilineArrayJagged_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [",
+                "  [ \"Hello\", \"World\" ]",
+                "  [ \"Foo\", \"Bar\" ]",
+                "], [",
+                "  [ \"Goodbye\", \"World\" ]",
+                "  [ \"Baz\", \"Qux\" ]",
+                "]"
+            });
+
+            var wrappedArray = WrappedJaggedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 2);
         }
     }
 }

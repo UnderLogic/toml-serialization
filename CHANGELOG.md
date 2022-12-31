@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Deserialization support for multiline arrays (including jagged arrays)
 
+### Fixed
+
+- Allow trailing commas for arrays
+
 ## [0.4.1] - 2022-12-30
 
 ### Added

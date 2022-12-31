@@ -314,13 +314,13 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_MixedArrayJagged_ShouldSetElements()
         {
             var wrappedArray = WrappedJaggedArray<object>.Empty();
-            var toml = $"array = [ [ \"John \" ], [ true, 42 ], [ 3.14, 1.412, 9.86], [ \"Up\", \"Poison\" ] ]\n";
+            var toml = $"array = [ [ \"John\" ], [ true, 42 ], [ 3.14, 1.412, 9.86], [ \"Up\", \"Poison\" ] ]\n";
 
             TomlSerializer.DeserializeInto(toml, wrappedArray);
 
             var expectedValues = new[]
             {
-                new object[] { "John " },
+                new object[] { "John" },
                 new object[] { true, 42 },
                 new object[] { 3.14, 1.412, 9.86 },
                 new object[] { $"{Direction.Up:F}", $"{StatusEffects.Poison:F}" }

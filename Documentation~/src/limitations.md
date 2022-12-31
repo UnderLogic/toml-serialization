@@ -105,10 +105,10 @@ For example, you can use `int[][]` but not `int[,]`.
 
 ## Unsigned 64-bit Integers
 
-These are not supported by the TOML specification, so they are not supported by this library.
-Unsigned 32-bit integers are supported, however.
+The `ulong` type is not supported by the TOML specification, so they are not supported by this library.
+Unsigned 32-bit integers (`uint`) are supported, however.
 
-You can use signed 64-bit integers instead, as they are supported by the TOML specification.
+You can use signed 64-bit integers (`long`) instead, as they are supported by the TOML specification.
 All integer values are stored as signed 64-bit integers in the TOML document.
 
 If you need large integer values, use `long` instead of `int` or `uint`.
@@ -120,7 +120,7 @@ Any digits beyond the 15th will be rounded.
 
 This is usually not a problem, but it is something to be aware of if you notice floating point numbers being rounded.
 
-## Decimal Values
+## Monetary Values
 
 The `decimal` type is not supported. For storing monetary values, either use a `string` for the value or `int` for the value in cents.
 

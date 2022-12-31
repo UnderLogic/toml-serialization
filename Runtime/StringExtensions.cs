@@ -13,7 +13,7 @@ namespace UnderLogic.Serialization.Toml
         private static readonly Regex WordSplitRegex =
             new(@"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=\W)(?=\w)|(?<=\w)(?=\W)|(?<=_)(?=\w)|(?<=\w)(?=_)",
                 RegexOptions.Compiled);
-        private static readonly Regex WordRegex = new(@"^[a-zA-Z0-9]+$", RegexOptions.Compiled);
+        private static readonly Regex WordRegex = new(@"^[a-z0-9]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public static string EscapeChar(this string text, char escapeChar)
         {
