@@ -60,6 +60,61 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(serializedValue.Value, deserializedValue.Value);
         }
         
+        [TestCase("This is a quest.\nYou should complete it.\n")]
+        [TestCase("  \tThis is a quest.\n    You should complete it.\n\nFor some loot.\n  ")]
+        [TestCase("Even a quest with a \"quote\" in it.\nThis is supported by TOML.\nAlso 'single quotes'.\n")]
+        public void SerializeDeserialize_MultilineString_ShouldSetEqual(string expectedValue)
+        {
+            var serializedQuest = new Quest
+            {
+                Description = expectedValue
+            };
+
+            var tomlString = TomlSerializer.Serialize(serializedQuest);
+
+            var deserializedQuest = new Quest();
+            TomlSerializer.DeserializeInto(tomlString, deserializedQuest);
+
+            Assert.AreEqual(serializedQuest.Description, deserializedQuest.Description);
+        }
+
+        [TestCase(@"C:\Scripts\Quests\GatherWood.lua")]
+        [TestCase(@"C:\John's Scripts\Quests\GatherWood.lua")]
+        [TestCase(@"\\Network\\Share\\Scripts\\Quests\\GatherWood.lua")]
+        [TestCase(@"You can use ""quotes"" in paths.")]
+        public void SerializeDeserialize_LiteralString_ShouldSetEqual(string expectedValue)
+        {
+            var serializedQuest = new Quest
+            {
+                ScriptPath = expectedValue
+            };
+
+            var tomlString = TomlSerializer.Serialize(serializedQuest);
+
+            var deserializedQuest = new Quest();
+            TomlSerializer.DeserializeInto(tomlString, deserializedQuest);
+
+            Assert.AreEqual(serializedQuest.Summary, deserializedQuest.Summary);
+        }
+
+        [TestCase("This is a quest.\nYou should complete it.\n")]
+        [TestCase("  \tThis is a quest.\n    You should complete it.\n\nFor some loot.\n  ")]
+        [TestCase("Even a quest with a \"quote\" in it.\nThis is supported by TOML.\nAlso 'single quotes'.\n")]
+        public void SerializeDeserialize_MultilineLiteralString_ShouldSetEqual(string expectedValue)
+        {
+            var serializedQuest = new Quest
+            {
+                Summary = expectedValue
+            };
+
+            var tomlString = TomlSerializer.Serialize(serializedQuest);
+
+            var deserializedQuest = new Quest();
+            TomlSerializer.DeserializeInto(tomlString, deserializedQuest);
+
+            Assert.AreEqual(serializedQuest.Summary, deserializedQuest.Summary);
+        }
+        
         [TestCase(Direction.Up)]
         [TestCase(Direction.Down)]
         [TestCase(Direction.Left)]

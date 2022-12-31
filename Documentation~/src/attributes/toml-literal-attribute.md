@@ -17,6 +17,9 @@ The `TomlLiteralAttribute` attribute can only be applied to fields.
 
 It has no effect when applied to fields that would not be serialized as a string.
 
+However, it can be used with arrays, lists, and dictionaries to serialize the elements as literal strings.
+In this case, the `TomlMultilineAttribute` cannot be used to serialize the elements as literal multi-line strings.
+
 ## Usage
 
 ### Scalar Example
@@ -67,3 +70,23 @@ Here the `_completedQuests` field has been serialized as a literal array, which 
 The third element in the array is a literal multi-line string, which is serialized using triple single quotes (`'''`) to escape the single quote character.
 
 This can be combined with the [`TomlMultilineAttribute`](toml-multiline-attribute.md) attribute to serialize the list as a multi-line array.
+
+### Dictionary Example
+
+```csharp
+[Serializable]
+public class Inventory
+{
+    [TomlLiteral]
+    private Dictionary<string, string> _equipment;
+}
+```
+
+Would serialize into...
+
+```toml
+equipment = { sword = 'The "Firey" Sword', shield = 'Aegis', helmet = '''Zeus' Helm''' }
+```
+
+Here the `_equipment` field has been serialized as a literal table, which means that the quotes around "Firey" are not escaped.
+The third element in the table is a literal multi-line string, which is serialized using triple single quotes (`'''`) to escape the single quote character.

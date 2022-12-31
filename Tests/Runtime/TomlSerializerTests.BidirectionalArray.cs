@@ -68,6 +68,23 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [Test]
+        public void SerializeDeserialize_LiteralStringArray_ShouldBeEqual()
+        {
+            var serializedQuestLog = new QuestLog();
+            serializedQuestLog.AddCompletedQuest("The Quest for the Holy Grail");
+            serializedQuestLog.AddCompletedQuest("The \"Lost\" Ring");
+            serializedQuestLog.AddCompletedQuest("Where's My Cow?");
+
+            var tomlString = TomlSerializer.Serialize(serializedQuestLog);
+            
+            var deserializedQuestLog = new QuestLog();
+            TomlSerializer.DeserializeInto(tomlString, deserializedQuestLog);
+
+            Assert.AreEqual(serializedQuestLog.CompletedQuests.Count, deserializedQuestLog.CompletedQuests.Count);
+            Assert.IsTrue(deserializedQuestLog.CompletedQuests.SequenceEqual(serializedQuestLog.CompletedQuests));
+        }
+
+        [Test]
         public void SerializeDeserialize_EnumArray_ShouldBeEqual()
         {
             var serializedArray =
@@ -210,6 +227,28 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.IsNotNull(serializedInnerArray);
             Assert.IsTrue(deserializedInnerArray.SequenceEqual(serializedInnerArray), "Array contents are not equal");
+        }
+        
+        [Test]
+        public void SerializeDeserialize_MultilineArray_ShouldSetEqual()
+        {
+            var serializedSpellbook = new Spellbook { Name = "Wizard Spells" };
+            serializedSpellbook.LearnSpell("Magic Missile");
+            serializedSpellbook.LearnSpell("Fireball");
+            serializedSpellbook.LearnSpell("Lightning Bolt");
+            serializedSpellbook.LearnSpell("Polymorph");
+            
+            serializedSpellbook.MemorizeSpell("Magic Missile");
+            serializedSpellbook.MemorizeSpell("Polymorph");
+            
+            var tomlString = TomlSerializer.Serialize(serializedSpellbook);
+
+            var deserializedSpellbook = new Spellbook();
+            TomlSerializer.DeserializeInto(tomlString, deserializedSpellbook);
+
+            Assert.AreEqual(serializedSpellbook.Name, deserializedSpellbook.Name);
+            Assert.IsTrue(serializedSpellbook.LearnedSpells.SequenceEqual(deserializedSpellbook.LearnedSpells));
+            Assert.IsTrue(serializedSpellbook.MemorizedSpells.SequenceEqual(deserializedSpellbook.MemorizedSpells));
         }
     }
 }
