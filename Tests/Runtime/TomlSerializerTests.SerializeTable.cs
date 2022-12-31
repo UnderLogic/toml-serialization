@@ -66,5 +66,26 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"[value]\n{tableString}\n", toml);
         }
+        
+        [Test]
+        public void Serialize_LiteralStringDict_ShouldSerializeLiteral()
+        {
+            var equipment = new PlayerEquipment();
+            equipment.EquipItem("head", "Zeus' Helmet");
+            equipment.EquipItem("shield", "Aegis");
+            equipment.EquipItem("finger", "The \"One\" Ring");
+
+            var toml = TomlSerializer.Serialize(equipment);
+
+            var expectedString = string.Join("\n", new[]
+            {
+                "[equipment]",
+                "head = '''Zeus' Helmet'''",
+                "shield = 'Aegis'",
+                "finger = 'The \"One\" Ring'"
+            });
+
+            Assert.AreEqual($"{expectedString}\n", toml);
+        }
     }
 }

@@ -214,10 +214,13 @@ namespace UnderLogic.Serialization.Toml
                 return tomlTableArray;
             }
 
+            // Do not propagate the multiline flag to the array elements
+            var elementFlags = flags & ~ConvertFlags.Multiline;
+            
             var tomlValues = collection.Select(value =>
-                ConvertToTomlValue(value, value?.GetType()));
+                ConvertToTomlValue(value, value?.GetType(), elementFlags));
 
-            return new TomlArray(tomlValues);
+            return new TomlArray(tomlValues) { IsMultiline = flags.HasFlag(ConvertFlags.Multiline) };
         }
 
         private static TomlTable ConvertToTomlTable(IDictionary dictionary, ConvertFlags flags = ConvertFlags.None)

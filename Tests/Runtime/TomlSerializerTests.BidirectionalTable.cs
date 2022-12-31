@@ -118,5 +118,22 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(location.Y, deserializeLocation.Value.Y);
             Assert.AreEqual(location.ZIndex, deserializeLocation.Value.ZIndex);
         }
+
+        [Test]
+        public void SerializeDeserialize_LiteralStringDict_ShouldBeEqual()
+        {
+            var serializedEquipment = new PlayerEquipment();
+            serializedEquipment.EquipItem("weapon", "The \"Sword of Doom\"");
+            serializedEquipment.EquipItem("shield", "Mirror Shield");
+            serializedEquipment.EquipItem("feet", "Hermes' Sandals");
+
+            var tomlString = TomlSerializer.Serialize(serializedEquipment);
+
+            var deserializeEquipment = new PlayerEquipment();
+            TomlSerializer.DeserializeInto(tomlString, deserializeEquipment);
+
+            Assert.AreEqual(serializedEquipment.Equipment.Count, deserializeEquipment.Equipment.Count);
+            Assert.AreEqual(serializedEquipment.Equipment, deserializeEquipment.Equipment);
+        }
     }
 }

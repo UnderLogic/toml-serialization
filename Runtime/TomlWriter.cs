@@ -9,11 +9,12 @@ namespace UnderLogic.Serialization.Toml
 {
     internal class TomlWriter : IDisposable
     {
+        private const string TomlIndent = "    ";
         private const string DateFormat = "yyyy-MM-dd HH:mm:ss.fffZ";
-        
+
         private readonly TextWriter _writer;
         private bool _isDisposed;
-        
+
         public TomlWriter(Stream stream, bool leaveOpen = true)
         {
             if (stream == null)
@@ -26,7 +27,7 @@ namespace UnderLogic.Serialization.Toml
         {
             _writer = writer ?? throw new ArgumentNullException(nameof(writer));
         }
-        
+
         ~TomlWriter()
         {
             Dispose(false);
@@ -66,10 +67,10 @@ namespace UnderLogic.Serialization.Toml
             }
             else
             {
-                _writer.Write($"\"\"\"\n{value}\"\"\"");   
+                _writer.Write($"\"\"\"\n{value}\"\"\"");
             }
         }
-        
+
         public void WriteLiteralStringValue(string value, bool isMultiline = false)
         {
             CheckIfDisposed();
@@ -88,7 +89,7 @@ namespace UnderLogic.Serialization.Toml
             }
             else
             {
-                _writer.Write($"'''\n{value}'''");   
+                _writer.Write($"'''\n{value}'''");
             }
         }
 
@@ -103,13 +104,13 @@ namespace UnderLogic.Serialization.Toml
             CheckIfDisposed();
             _writer.Write($"{value.ToString().ToLowerInvariant()}");
         }
-        
+
         public void WriteIntegerValue(long value)
         {
             CheckIfDisposed();
             _writer.Write(value.ToString());
         }
-        
+
         public void WriteFloatValue(double value)
         {
             CheckIfDisposed();
@@ -123,12 +124,12 @@ namespace UnderLogic.Serialization.Toml
         }
 
         public void WriteKeyValue(TomlKeyValuePair keyValuePair) => WriteKeyValue(keyValuePair.Key, keyValuePair.Value);
-        
+
         public void WriteKeyValue(string key, TomlValue value)
         {
             ValidateKey(key);
             CheckIfDisposed();
-            
+
             WriteKey(key);
             WriteValue(value);
         }
@@ -137,7 +138,7 @@ namespace UnderLogic.Serialization.Toml
         {
             ValidateKey(key);
             CheckIfDisposed();
-            
+
             _writer.Write($"{key} = ");
         }
 
@@ -163,14 +164,19 @@ namespace UnderLogic.Serialization.Toml
             else if (value is TomlDateTime dateTimeValue)
                 WriteDateTime(dateTimeValue.Value);
             else if (value is TomlArray arrayValue)
-                WriteArray(arrayValue);
+            {
+                if (arrayValue.IsMultiline)
+                    WriteArrayMultiline(arrayValue);
+                else
+                    WriteArrayInline(arrayValue);
+            }
             else if (value is TomlTable tableValue)
                 WriteTableInline(tableValue);
             else
                 throw new InvalidOperationException($"Type {value.GetType().Name} is not supported");
         }
 
-        public void WriteArray(TomlArray array)
+        public void WriteArrayInline(TomlArray array)
         {
             CheckIfDisposed();
 
@@ -185,20 +191,46 @@ namespace UnderLogic.Serialization.Toml
                 _writer.Write("[]");
                 return;
             }
-            
+
             _writer.Write("[ ");
 
-            var counter = 0;
-            foreach (var value in array)
+            for (var i = 0; i < array.Count; i++)
             {
-                WriteValue(value);
-                counter++;
-                
-                if (counter < array.Count)
+                WriteValue(array[i]);
+
+                if (i < array.Count - 1)
                     _writer.Write(", ");
             }
 
             _writer.Write(" ]");
+        }
+
+        private void WriteArrayMultiline(TomlArray array)
+        {
+            CheckIfDisposed();
+
+            if (array == null)
+            {
+                WriteNullValue();
+                return;
+            }
+
+            if (array.Count < 1)
+            {
+                _writer.Write("[]");
+                return;
+            }
+
+            _writer.WriteLine("[");
+
+            foreach (var value in array)
+            {
+                _writer.Write(TomlIndent);
+                WriteValue(value);
+                _writer.WriteLine(",");
+            }
+
+            _writer.Write("]");
         }
 
         public void WriteTableInline(TomlTable table)
@@ -245,7 +277,7 @@ namespace UnderLogic.Serialization.Toml
             {
                 var childTables = new Dictionary<string, TomlTable>();
                 var childArrays = new Dictionary<string, TomlTableArray>();
-                
+
                 foreach (var keyValuePair in table)
                 {
                     var key = keyValuePair.Key;
@@ -287,16 +319,16 @@ namespace UnderLogic.Serialization.Toml
                     var childTablePath = string.IsNullOrWhiteSpace(tableKey)
                         ? childTable.Key
                         : $"{tableKey}.{childTable.Key}";
-                    
+
                     WriteTableExpanded(childTablePath, childTable.Value);
                     isFirstItem = false;
                 }
-                
+
                 foreach (var childArray in childArrays)
                 {
                     if (!isFirstItem)
                         _writer.WriteLine();
-                    
+
                     var childArrayPath = string.IsNullOrWhiteSpace(tableKey)
                         ? childArray.Key
                         : $"{tableKey}.{childArray.Key}";
@@ -311,10 +343,10 @@ namespace UnderLogic.Serialization.Toml
         {
             ValidateKey(key);
             CheckIfDisposed();
-            
+
             _writer.WriteLine($"[{key}]");
         }
-        
+
         public void WriteTableArray(string key, TomlTableArray tableArray)
         {
             ValidateKey(key);
@@ -337,22 +369,22 @@ namespace UnderLogic.Serialization.Toml
                     _writer.WriteLine();
             }
         }
-        
+
         public void WriteTableArrayKey(string key)
         {
             ValidateKey(key);
             CheckIfDisposed();
-            
+
             _writer.WriteLine($"[[{key}]]");
         }
-        
+
         public void WriteDocument(TomlTable rootTable)
         {
             CheckIfDisposed();
 
             if (rootTable == null)
                 throw new ArgumentNullException(nameof(rootTable));
-            
+
             WriteTableExpanded(string.Empty, rootTable);
         }
 
@@ -381,13 +413,13 @@ namespace UnderLogic.Serialization.Toml
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
         }
-        
+
         private void CheckIfDisposed()
         {
             if (_isDisposed)
                 throw new ObjectDisposedException(nameof(TomlWriter), "Writer has been disposed");
         }
-        
+
         private void Dispose(bool isDisposing)
         {
             if (_isDisposed)

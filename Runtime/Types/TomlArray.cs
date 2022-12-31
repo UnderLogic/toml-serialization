@@ -13,6 +13,8 @@ namespace UnderLogic.Serialization.Toml.Types
         
         private TomlArray() { }
 
+        public bool IsMultiline { get; set; }
+
         public int Count => _values.Count;
         
         public TomlValue this[int index] => _values[index];
