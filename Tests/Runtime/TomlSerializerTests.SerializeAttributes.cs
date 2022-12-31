@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual($"renamedValue = \"{wrappedValue.Value}\"\n", toml);
         }
-        
+
         [Test]
         public void Serialize_TomlCasingAttribute_ShouldLowerCaseKey()
         {
@@ -22,10 +22,10 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(wrappedValues);
 
             var lines = toml.Split("\n");
-            
+
             Assert.Contains("lowervalue = 42", lines, "Should contain lower-cased key");
         }
-        
+
         [Test]
         public void Serialize_TomlCasingAttribute_ShouldUpperCaseKey()
         {
@@ -33,10 +33,10 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(wrappedValues);
 
             var lines = toml.Split("\n");
-            
+
             Assert.Contains("UPPERVALUE = 42", lines, "Should contain upper-cased key");
         }
-        
+
         [Test]
         public void Serialize_TomlCasingAttribute_ShouldCamelCaseKey()
         {
@@ -44,10 +44,10 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(wrappedValues);
 
             var lines = toml.Split("\n");
-            
+
             Assert.Contains("camelValue = 42", lines, "Should contain camel-cased key");
         }
-        
+
         [Test]
         public void Serialize_TomlCasingAttribute_ShouldPascalCaseKey()
         {
@@ -55,10 +55,10 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(wrappedValues);
 
             var lines = toml.Split("\n");
-            
+
             Assert.Contains("PascalValue = 42", lines, "Should contain pascal-cased key");
         }
-        
+
         [Test]
         public void Serialize_TomlCasingAttribute_ShouldSnakeCaseKey()
         {
@@ -66,10 +66,10 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(wrappedValues);
 
             var lines = toml.Split("\n");
-            
+
             Assert.Contains("snake_value = 42", lines, "Should contain snake-cased key key");
         }
-        
+
         [Test]
         public void Serialize_TomlCasingAttribute_ShouldKebabCaseKey()
         {
@@ -77,21 +77,21 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(wrappedValues);
 
             var lines = toml.Split("\n");
-            
+
             Assert.Contains("kebab-value = 42", lines, "Should contain kebab-cased key");
         }
-        
+
         [Test]
         public void Serialize_TomlMultilineAttribute_ShouldUseTripleQuotes()
         {
             var quest = new Quest();
             var toml = TomlSerializer.Serialize(quest);
-    
+
             var actualLine = GetMultilineStringKey(toml, "description");
             var expectedLine = $"description = \"\"\"\n{quest.Description}\"\"\"\n";
             Assert.AreEqual(expectedLine, actualLine, "Should contain multi-line string");
         }
-        
+
         [Test]
         public void Serialize_TomlMultilineAttribute_ShouldPreserveWhitespace()
         {
@@ -100,7 +100,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 Description = "\tThis is a quest.\n   It is indented.\n\n\nAnd has additional new lines.\n"
             };
             var toml = TomlSerializer.Serialize(quest);
-    
+
             var actualLine = GetMultilineStringKey(toml, "description");
             var expectedLine = $"description = \"\"\"\n{quest.Description}\"\"\"\n";
             Assert.AreEqual(expectedLine, actualLine, "Should contain multi-line string with whitespace");
@@ -120,7 +120,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var expectedLine = $"scriptPath = '{quest.ScriptPath}'";
             Assert.Contains(expectedLine, lines, "Should contain single-quoted literal string");
         }
-        
+
         [Test]
         public void Serialize_TomlLiteralAttribute_ShouldEscapeSingleQuote()
         {
@@ -141,12 +141,12 @@ namespace UnderLogic.Serialization.Toml.Tests
         {
             var quest = new Quest();
             var toml = TomlSerializer.Serialize(quest);
-    
+
             var actualLine = GetMultilineStringKey(toml, "summary", true);
             var expectedLine = $"summary = '''\n{quest.Summary}'''\n";
             Assert.AreEqual(expectedLine, actualLine, "Should contain multi-line literal string");
         }
-        
+
         [Test]
         public void Serialize_TomlLiteralMultilineAttribute_ShouldPreserveWhitespace()
         {
@@ -155,10 +155,40 @@ namespace UnderLogic.Serialization.Toml.Tests
                 Summary = "\tThis is a quest.\n   It is indented.\n\n\nAnd has additional new lines.\n"
             };
             var toml = TomlSerializer.Serialize(quest);
-    
+
             var actualLine = GetMultilineStringKey(toml, "summary", true);
             var expectedLine = $"summary = '''\n{quest.Summary}'''\n";
             Assert.AreEqual(expectedLine, actualLine, "Should contain multi-line literal string");
+        }
+
+        [Test]
+        public void Serialize_TomlInlineAttribute_ShouldWriteInlineTable()
+        {
+            var guard = new Guardian();
+            guard.AddWaypoint("entrance", new PlayerLocation(500, 24, 42));
+            guard.AddWaypoint("tower", new PlayerLocation(500, 42, 24));
+
+            var toml = TomlSerializer.Serialize(guard);
+            var lines = toml.Split("\n");
+
+            var expectedLine =
+                $"waypoints = {{ entrance = {{ map = 500, x = 24, y = 42, zIndex = 1 }}, tower = {{ map = 500, x = 42, y = 24, zIndex = 1 }} }}";
+            Assert.Contains(expectedLine, lines, "Should contain inline table");
+        }
+
+        [Test]
+        public void Serialize_TomlExpandAttribute_ShouldWriteInlineTable()
+        {
+            var guard = new Guardian();
+            guard.AddDialogueChoice("hail", "Hello, friend.");
+            guard.AddDialogueChoice("farewell", "Goodbye, friend.");
+
+            var toml = TomlSerializer.Serialize(guard);
+            var lines = toml.Split("\n");
+
+            Assert.Contains("[dialogueChoices]", lines, "Should contain expanded table name");
+            Assert.Contains("hail = \"Hello, friend.\"", lines);
+            Assert.Contains("farewell = \"Goodbye, friend.\"", lines);
         }
 
         private static string GetMultilineStringKey(string toml, string key, bool isLiteral = false)

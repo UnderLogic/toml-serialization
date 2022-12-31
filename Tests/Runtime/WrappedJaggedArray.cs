@@ -4,7 +4,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
     [TomlCasing(StringCasing.Default)]
-    internal class WrappedJaggedArray<T>
+    internal sealed class WrappedJaggedArray<T>
     {
         private T[][] _array;
 
