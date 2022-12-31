@@ -7,6 +7,9 @@
 
 - [Installation](installation.md)
 - [Getting Started](getting-started.md)
+  - [Define a Model](getting-started/define-a-model.md)
+  - [Serialize to File](getting-started/serialize-to-file.md)
+  - [Deserialize from File](getting-started/deserialize-from-file.md)
 - [Under the Hood](under-the-hood.md)
 
 # Serialization
