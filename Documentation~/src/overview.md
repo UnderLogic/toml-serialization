@@ -18,6 +18,7 @@ It is also designed to be easy to parse by machines.
 Unity does not have built-in support for TOML files and many existing libraries are not compatible with Unity.
 
 Wouldn't it be nice if you could serialize and deserialize TOML data in Unity, similar to the built-in `JsonUtility`?
+While also having the ability to tune the serialization process to your needs?
 
 This library is designed to be a cross between Unity's `JsonUtility` and Microsoft's `System.Text.Json` libraries in terms of functionality and ease of use.
 

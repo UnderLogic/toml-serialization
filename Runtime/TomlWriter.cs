@@ -45,7 +45,7 @@ namespace UnderLogic.Serialization.Toml
             _writer.Write($"\"{value}\"");
         }
 
-        public void WriteStringValue(string value, bool escapeChars = true)
+        public void WriteStringValue(string value, bool isMultiline = false)
         {
             CheckIfDisposed();
 
@@ -55,10 +55,41 @@ namespace UnderLogic.Serialization.Toml
                 return;
             }
 
-            if (escapeChars)
-                value = value.EscapeTomlString();
+            // Escape all backslashes and double quotes
+            value = value.EscapeChar('\\').EscapeChar('"');
 
-            _writer.Write($"\"{value}\"");
+            if (!isMultiline)
+            {
+                // Escape all whitespace characters for single-line strings
+                value = value.EscapeWhitespace();
+                _writer.Write($"\"{value}\"");
+            }
+            else
+            {
+                _writer.Write($"\"\"\"\n{value}\"\"\"");   
+            }
+        }
+        
+        public void WriteLiteralStringValue(string value, bool isMultiline = false)
+        {
+            CheckIfDisposed();
+
+            if (value == null)
+            {
+                WriteNullValue();
+                return;
+            }
+
+            if (!isMultiline)
+            {
+                // Literal strings with a single quote must be escaped with triple quotes
+                var quotes = value.Contains("'") ? "'''" : "'";
+                _writer.Write($"{quotes}{value}{quotes}");
+            }
+            else
+            {
+                _writer.Write($"'''\n{value}'''");   
+            }
         }
 
         public void WriteEnumValue<T>(T value) where T : Enum
@@ -117,7 +148,12 @@ namespace UnderLogic.Serialization.Toml
             if (value is TomlNull)
                 WriteNullValue();
             else if (value is TomlString stringValue)
-                WriteStringValue(stringValue.Value);
+            {
+                if (stringValue.IsLiteral)
+                    WriteLiteralStringValue(stringValue.Value, stringValue.IsMultiline);
+                else
+                    WriteStringValue(stringValue.Value, stringValue.IsMultiline);
+            }
             else if (value is TomlBoolean boolValue)
                 WriteBooleanValue(boolValue.Value);
             else if (value is TomlInteger intValue)

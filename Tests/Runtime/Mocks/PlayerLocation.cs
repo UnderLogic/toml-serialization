@@ -33,5 +33,13 @@ namespace UnderLogic.Serialization.Toml.Tests.Mocks
             get => _zIndex;
             set => _zIndex = value;
         }
+
+        public PlayerLocation(int map, int x, int y, int zIndex = 1) : this()
+        {
+            Map = map;
+            X = x;
+            Y = y;
+            ZIndex = zIndex;
+        }
     }
 }

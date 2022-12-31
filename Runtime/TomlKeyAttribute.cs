@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace UnderLogic.Serialization.Toml
 {
     [AttributeUsage(AttributeTargets.Field)]
-    public class TomlKeyAttribute : Attribute
+    public sealed class TomlKeyAttribute : Attribute
     {
         private static readonly Regex KeyRegex = new(@"^[a-z0-9-_]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 

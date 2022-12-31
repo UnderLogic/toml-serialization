@@ -55,7 +55,7 @@ namespace UnderLogic.Serialization.Toml
 
         #endregion
 
-        private static void SerializeObject(TomlTable table, object obj)
+        private static void SerializeObject(TomlTable table, object obj, ConvertFlags flags = ConvertFlags.None)
         {
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
@@ -80,6 +80,7 @@ namespace UnderLogic.Serialization.Toml
                 var fieldKey = field.Name.Trim('_');
                 var fieldType = field.FieldType;
                 var fieldValue = field.GetValue(obj);
+                var fieldConvertFlags = flags;
 
                 // Allow the key to be renamed via the TomlKeyAttribute
                 if (TryGetAttribute<TomlKeyAttribute>(field, out var keyAttribute))
@@ -95,7 +96,23 @@ namespace UnderLogic.Serialization.Toml
                         fieldKey = fieldKey.ToCase(fieldCasing);
                 }
 
-                var tomlValue = ConvertToTomlValue(fieldValue, fieldType);
+                // Allow literal string format
+                if (TryGetAttribute<TomlLiteralAttribute>(field, out _))
+                    fieldConvertFlags |= ConvertFlags.Literal;
+
+                // Allow multiline string format
+                if (TryGetAttribute<TomlMultilineAttribute>(field, out _))
+                    fieldConvertFlags |= ConvertFlags.Multiline;
+
+                // Allow forced inlining of tables
+                if (TryGetAttribute<TomlInlineAttribute>(field, out _))
+                    fieldConvertFlags |= ConvertFlags.ForceInline;
+
+                // Allow forced expansion of tables
+                if (TryGetAttribute<TomlExpandAttribute>(field, out _))
+                    fieldConvertFlags |= ConvertFlags.ForceExpand;
+
+                var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldConvertFlags);
 
                 if (tomlValue == null)
                     throw new InvalidOperationException($"Type {type.Name} is not serializable");
@@ -104,28 +121,31 @@ namespace UnderLogic.Serialization.Toml
             }
         }
 
-        private static TomlValue ConvertToTomlValue(object obj, Type type)
+        private static TomlValue ConvertToTomlValue(object obj, Type type, ConvertFlags flags = ConvertFlags.None)
         {
             if (obj == null)
                 return TomlNull.Value;
 
             if (obj is IDictionary dictionary)
             {
-                var shouldInline = !IsObjectDictionary(type);
-                var tomlTable = ConvertToTomlTable(dictionary, shouldInline);
+                var extraFlags = !IsObjectDictionary(type) && !flags.HasFlag(ConvertFlags.ForceExpand)
+                    ? ConvertFlags.ForceInline
+                    : ConvertFlags.None;
+                
+                var tomlTable = ConvertToTomlTable(dictionary, flags | extraFlags);
 
                 if (tomlTable != null)
                     return tomlTable;
             }
             else if (obj is IList list)
             {
-                var tomlArray = ConvertToTomlArray(list);
+                var tomlArray = ConvertToTomlArray(list, flags);
                 if (tomlArray != null)
                     return tomlArray;
             }
             else if (IsComplexType(type))
             {
-                var tomlTable = ConvertToTomlTableExpanded(obj);
+                var tomlTable = ConvertObjectToTomlTable(obj, flags);
 
                 if (tomlTable != null)
                     return tomlTable;
@@ -136,7 +156,13 @@ namespace UnderLogic.Serialization.Toml
             if (type == typeof(char) && obj is char charValue)
                 return new TomlString(charValue.ToString());
             if (type == typeof(string) && obj is string stringValue)
-                return new TomlString(stringValue);
+            {
+                return new TomlString(stringValue)
+                {
+                    IsLiteral = flags.HasFlag(ConvertFlags.Literal),
+                    IsMultiline = flags.HasFlag(ConvertFlags.Multiline)
+                };
+            }
             if (type.IsEnum && obj is Enum enumValue)
                 return new TomlString(enumValue.ToString("F"));
             if (type == typeof(sbyte) && obj is sbyte int8Value)
@@ -163,7 +189,7 @@ namespace UnderLogic.Serialization.Toml
             return null;
         }
 
-        private static TomlValue ConvertToTomlArray(IEnumerable values)
+        private static TomlValue ConvertToTomlArray(IEnumerable values, ConvertFlags flags = ConvertFlags.None)
         {
             IList<object> collection;
 
@@ -194,16 +220,17 @@ namespace UnderLogic.Serialization.Toml
             return new TomlArray(tomlValues);
         }
 
-        private static TomlTable ConvertToTomlTable(IDictionary dictionary, bool isInline = false)
+        private static TomlTable ConvertToTomlTable(IDictionary dictionary, ConvertFlags flags = ConvertFlags.None)
         {
-            var tomlTable = new TomlTable { IsInline = isInline };
+            var tomlTable = new TomlTable { IsInline = flags.HasFlag(ConvertFlags.ForceInline) };
+
             foreach (var innerKey in dictionary.Keys)
             {
                 var innerKeyString = innerKey.ToString();
                 var value = dictionary[innerKey];
                 var valueType = value?.GetType();
 
-                var tomlValue = ConvertToTomlValue(value, value?.GetType());
+                var tomlValue = ConvertToTomlValue(value, value?.GetType(), flags);
 
                 if (tomlValue == null)
                     throw new InvalidOperationException($"Type {valueType?.Name} is not serializable");
@@ -214,10 +241,10 @@ namespace UnderLogic.Serialization.Toml
             return tomlTable;
         }
 
-        private static TomlTable ConvertToTomlTableExpanded(object obj)
+        private static TomlTable ConvertObjectToTomlTable(object obj, ConvertFlags flags = ConvertFlags.None)
         {
             var tomlTable = new TomlTable();
-            SerializeObject(tomlTable, obj);
+            SerializeObject(tomlTable, obj, flags);
 
             return tomlTable;
         }

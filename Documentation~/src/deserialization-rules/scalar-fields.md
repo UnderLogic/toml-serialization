@@ -135,6 +135,8 @@ Integer fields are deserialized from a [TOML integer](https://toml.io/en/v1.0.0#
 - `ushort` - unsigned 16-bit integer
 - `uint` - unsigned 32-bit integer
 
+Any fractional part of the value is discarded.
+
 **NOTE:** Unsigned 64-bit integers (`ulong`) are not supported by TOML.
 
 ### Example

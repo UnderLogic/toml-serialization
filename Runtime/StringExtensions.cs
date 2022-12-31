@@ -15,14 +15,20 @@ namespace UnderLogic.Serialization.Toml
                 RegexOptions.Compiled);
         private static readonly Regex WordRegex = new(@"^[a-zA-Z0-9]+$", RegexOptions.Compiled);
 
-        public static string EscapeTomlString(this string text)
+        public static string EscapeChar(this string text, char escapeChar)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            return text.Replace(escapeChar.ToString(), $"\\{escapeChar}");
+        }
+
+        public static string EscapeWhitespace(this string text)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return text;
 
             return text
-                .Replace("\\", "\\\\")
-                .Replace("\"", "\\\"")
                 .Replace("\t", "\\t")
                 .Replace("\r", "\\r")
                 .Replace("\n", "\\n");

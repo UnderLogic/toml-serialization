@@ -27,6 +27,8 @@ Mixed types are allowed, but will be boxed to `object` and serialized as their T
 
 If the dictionary contains scalar types, it is serialized as an [inline TOML table](https://toml.io/en/v1.0.0#inline-table).
 
+You can override this behavior by using the [`TomlExpandAttribute`](../attributes/toml-expand-attribute.md) attribute to serialize the dictionary as a [standard TOML table](https://toml.io/en/v1.0.0#table).
+
 ```toml
 scores = { math = 100, science = 90, english = 80 }
 ```
@@ -35,6 +37,8 @@ scores = { math = 100, science = 90, english = 80 }
 
 If the dictionary contains complex object types, it is serialized as a [standard TOML table](https://toml.io/en/v1.0.0#table).
 Each key is a child table, using dot (`.`) notation to represent nested tables.
+
+You can override this behavior by using the [`TomlInlineAttribute`](../attributes/toml-inline-attribute.md) attribute to serialize the dictionary as an [inline TOML table](https://toml.io/en/v1.0.0#inline-table).
 
 ```toml
 [loot.common]
@@ -59,6 +63,8 @@ rolls = 1
 
 If the dictionary contains array or list types, it is serialized as a [TOML table array](https://toml.io/en/v1.0.0#array-of-tables).
 Each key is a child table, using dot (`.`) notation to represent nested table arrays.
+
+These cannot be inlined.
 
 ```toml
 [[weather.readings]]

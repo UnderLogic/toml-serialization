@@ -4,7 +4,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
     [TomlCasing(StringCasing.Default)]
-    public class WrappedCasedValues<T>
+    internal sealed class WrappedCasedValues<T>
     {
         [TomlCasing(StringCasing.LowerCase)]
         private T _lowerValue;
