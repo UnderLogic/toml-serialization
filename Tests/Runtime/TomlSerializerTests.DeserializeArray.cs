@@ -391,5 +391,40 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.IsTrue(wrappedArray[2].SequenceEqual(new[] { "Goodbye", "World" }));
             Assert.IsTrue(wrappedArray[3].SequenceEqual(new[] { "Baz", "Qux" }));
         }
+        
+        [Test]
+        public void Deserialize_MultilineArrayJaggedVerbose_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [",
+                "  [",
+                "    \"Hello\",",
+                "    \"World\"",
+                "  ],",
+                "  [",
+                "    \"Foo\",",
+                "    \"Bar\"",
+                "  ],",
+                "  [",
+                "    \"Goodbye\",",
+                "    \"World\"",
+                "  ],",
+                "  [",
+                "    \"Baz\",",
+                "    \"Qux\"",
+                "  ],",
+                "]"
+            });
+
+            var wrappedArray = WrappedJaggedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 4);
+            Assert.IsTrue(wrappedArray[0].SequenceEqual(new[] { "Hello", "World" }));
+            Assert.IsTrue(wrappedArray[1].SequenceEqual(new[] { "Foo", "Bar" }));
+            Assert.IsTrue(wrappedArray[2].SequenceEqual(new[] { "Goodbye", "World" }));
+            Assert.IsTrue(wrappedArray[3].SequenceEqual(new[] { "Baz", "Qux" }));
+        }
     }
 }
