@@ -175,6 +175,8 @@ It is recommended to use the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) 
 timestamp = 2020-01-01 12:34:56.789Z
 ```
 
+**NOTE:** DateTime values are **not** enclosed in double quotes. This is a TOML requirement to distinguish between a date and time and a string.
+
 ## Object
 
 Boxed `object` fields are mapped to their underlying type and deserialized based on the native underlying type.

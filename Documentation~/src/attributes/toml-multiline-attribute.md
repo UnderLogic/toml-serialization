@@ -14,7 +14,7 @@ This attribute has no effect on deserialization.
 
 The `TomlMultilineAttribute` attribute can only be applied to fields.
 
-It has no effect when applied to fields that would not be serialized as a string or array (including lists).
+It has no effect when applied to fields that would not be serialized as a string or collection of strings (arrays, lists, dictionaries).
 
 ## Usage
 

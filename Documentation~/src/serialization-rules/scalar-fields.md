@@ -103,6 +103,8 @@ By default, the date and time are serialized in UTC and using the ISO 8601 forma
 timestamp = 2020-01-01 12:34:56.789Z
 ```
 
+**NOTE:** DateTime values are **not** enclosed in double quotes. This is a TOML requirement to distinguish between a date and time and a string.
+
 ## Object
 
 Boxed `object` fields are mapped to their underlying type and serialized based on the type of the boxed value.
