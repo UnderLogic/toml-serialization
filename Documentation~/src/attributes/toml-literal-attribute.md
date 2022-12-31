@@ -9,7 +9,7 @@ It can be combined with the [`TomlMultilineAttribute`](toml-multiline-attribute.
 
 This attribute has no effect on deserialization.
 
-**NOTE:** If the string contains a single quote character, it will be serialized as a multi-line literal string using triple single quotes (`'''`).
+**NOTE:** If the string contains a single quote character, it will be escaped as a multi-line literal string using triple single quotes (`'''`) on a single line.
 
 ## Limitations
 
@@ -18,7 +18,7 @@ The `TomlLiteralAttribute` attribute can only be applied to fields.
 It has no effect when applied to fields that would not be serialized as a string.
 
 However, it can be used with arrays, lists, and dictionaries to serialize the elements as literal strings.
-In this case, the `TomlMultilineAttribute` cannot be used to serialize the elements as literal multi-line strings.
+In this case, the [`TomlMultilineAttribute`](toml-multiline-attribute.md) cannot be used to serialize the elements as literal multi-line strings.
 
 ## Usage
 
