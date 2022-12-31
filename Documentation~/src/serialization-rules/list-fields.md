@@ -56,3 +56,33 @@ If the list contains mixed types using boxed `object` values, each value is seri
 ```toml
 metadata = [ 100, "Player 1", true ]
 ```
+
+### Multiline Example
+
+You can separate the elements of a list field into multiple lines.
+Trailing commas are allowed and will be safely ignored.
+
+```toml
+scores = [
+    100,
+    50,
+    25,
+]
+```
+
+You can nest tables and arrays in a list field.
+
+```toml
+waypoints = [
+    { x = 1, y = 2 },
+    { x = 3, y = 4 },
+]
+```
+
+```toml
+map = [
+    [ 1, 2, 3 ],
+    [ 4, 5, 6 ],
+    [ 7, 8, 9 ],
+]
+```
