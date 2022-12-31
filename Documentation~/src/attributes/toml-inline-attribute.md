@@ -5,7 +5,9 @@
 The `TomlInlineAttribute` attribute can be used to serialize a field as an inline table.
 It acts as a hint to the serializer to write the dictionary of key-value pairs into an inline table.
 
-It acts as the inverse of the [`TomlExpandAttribute`](toml-expand-attribute.md) attribute.
+It is the inverse of the [`TomlExpandAttribute`](toml-expand-attribute.md) attribute.
+
+This attribute has no effect on deserialization.
 
 ## Limitations
 

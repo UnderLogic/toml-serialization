@@ -5,7 +5,9 @@
 The `TomlExpandAttribute` attribute can be used to serialize a field as a standard table.
 It acts as a hint to the serializer to expand the dictionary of key-value pairs into a standard table.
 
-It acts as the inverse of the [`TomlInlineAttribute`](toml-inline-attribute.md) attribute.
+It is the inverse of the [`TomlInlineAttribute`](toml-inline-attribute.md) attribute.
+
+This attribute has no effect on deserialization.
 
 ## Limitations
 

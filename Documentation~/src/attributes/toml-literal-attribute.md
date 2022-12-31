@@ -7,6 +7,8 @@ It acts as a hint to the serializer to write the field as a literal string, whic
 
 It can be combined with the [`TomlMultilineAttribute`](toml-multiline-attribute.md) attribute to serialize a field as a literal multi-line string.
 
+This attribute has no effect on deserialization.
+
 **NOTE:** If the string contains a single quote character, it will be serialized as a multi-line literal string using triple single quotes (`'''`).
 
 ## Limitations
