@@ -272,7 +272,27 @@ namespace UnderLogic.Serialization.Toml.Tests
                 "    \"Ward Undead\",",
                 "]",
             });
+            Assert.AreEqual($"{expectedString}\n", toml);
+        }
+        
+        [Test]
+        public void Serialize_LiteralStringArray_ShouldSerializeLiteral()
+        {
+            var questLog = new QuestLog();
+            questLog.AddCompletedQuest("Find the Holy Grail");
+            questLog.AddCompletedQuest("The \"Lost\" Ring");
+            questLog.AddCompletedQuest("Where's My Cow?");
             
+            var toml = TomlSerializer.Serialize(questLog);
+
+            var expectedString = string.Join("\n", new[]
+            {
+                "completedQuests = [",
+                "    'Find the Holy Grail',",
+                "    'The \"Lost\" Ring',",
+                "    '''Where's My Cow?''',",
+                "]",
+            });
             Assert.AreEqual($"{expectedString}\n", toml);
         }
     }

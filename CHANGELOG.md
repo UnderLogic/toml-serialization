@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `TomlMultilineAttribute` can be applied to arrays and lists to serialize them as multiline TOML arrays
+- `TomlLiteralAttribute` can be applied to lists of strings to serialize them as TOML literal strings
+- `TomlLiteralAttribute` can be applied to dictionaries of strings to serialize them as TOML literal strings
 
 ## [0.4.2] - 2022-12-31
 

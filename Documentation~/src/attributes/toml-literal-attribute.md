@@ -19,7 +19,7 @@ It has no effect when applied to fields that would not be serialized as a string
 
 ## Usage
 
-### Example
+### Scalar Example
 
 ```csharp
 [Serializable]
@@ -45,3 +45,25 @@ repeatable = true
 ```
 
 Here the `_description` field has been serialized as a literal string, which means that the quotes around "Old Choppy" are not escaped.
+
+### List Example
+
+```csharp
+[Serializable]
+public class QuestLog
+{
+    [TomlLiteral]
+    private List<string> _completedQuests;
+}
+```
+
+Would serialize into...
+
+```toml
+completed_quests = [ 'Gathering Wood', 'The "Lost" Ring', '''Where's My Cow?''' ]
+```
+
+Here the `_completedQuests` field has been serialized as a literal array, which means that the quotes around "Lost" are not escaped.
+The third element in the array is a literal multi-line string, which is serialized using triple single quotes (`'''`) to escape the single quote character.
+
+This can be combined with the [`TomlMultilineAttribute`](toml-multiline-attribute.md) attribute to serialize the list as a multi-line array.
