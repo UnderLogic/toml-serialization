@@ -13,6 +13,8 @@ In order to serialize a model to a TOML file, you need to use the [`TomlSerializ
 
 To do this in Unity, we can create a simple `MonoBehaviour` that does this on the `Start` method.
 
+Alternatively, you can use the [`TomlExporter`](../serialization/toml-exporter.md) which does this for you, assuming your data is a `ScriptableObject`.
+
 ```csharp
 using System.IO;
 using UnityEngine;

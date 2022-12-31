@@ -14,6 +14,8 @@ In order to deserialize a model from a TOML file, you need to use the [`TomlSeri
 
 To do this in Unity, we can create a simple `MonoBehaviour` that does this on the `Start` method.
 
+Alternatively, you can use the [`TomlImporter`](../deserialization/toml-importer.md) which does this for you, assuming your data is a `ScriptableObject`.
+
 ```csharp
 using System.IO;
 using UnityEngine;
@@ -44,7 +46,7 @@ As you can see, we are creating a new instance of the `PlayerSettings` class and
 
 Obviously, you would want to do this on application load but for the sake of this example, we are doing it on the `Start` method.
 
-## Deserialize vs. DesrializeInto
+## Deserialize vs. DeserializeInto
 
 There are two ways to deserialize a model from a TOML file, and they behave the same way.
 
