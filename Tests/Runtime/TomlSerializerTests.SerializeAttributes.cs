@@ -91,6 +91,20 @@ namespace UnderLogic.Serialization.Toml.Tests
             var expectedLine = $"description = \"\"\"\n{quest.Description}\"\"\"\n";
             Assert.AreEqual(expectedLine, actualLine, "Should contain multi-line string");
         }
+        
+        [Test]
+        public void Serialize_TomlMultilineAttribute_ShouldPreserveWhitespace()
+        {
+            var quest = new Quest
+            {
+                Description = "\tThis is a quest.\n   It is indented.\n\n\nAnd has additional new lines.\n"
+            };
+            var toml = TomlSerializer.Serialize(quest);
+    
+            var actualLine = GetMultilineStringKey(toml, "description");
+            var expectedLine = $"description = \"\"\"\n{quest.Description}\"\"\"\n";
+            Assert.AreEqual(expectedLine, actualLine, "Should contain multi-line string with whitespace");
+        }
 
         [Test]
         public void Serialize_TomlLiteralAttribute_ShouldUseSingleQuotes()
@@ -126,6 +140,20 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Serialize_TomlLiteralMultilineAttribute_ShouldUseTripleQuotes()
         {
             var quest = new Quest();
+            var toml = TomlSerializer.Serialize(quest);
+    
+            var actualLine = GetMultilineStringKey(toml, "summary", true);
+            var expectedLine = $"summary = '''\n{quest.Summary}'''\n";
+            Assert.AreEqual(expectedLine, actualLine, "Should contain multi-line literal string");
+        }
+        
+        [Test]
+        public void Serialize_TomlLiteralMultilineAttribute_ShouldPreserveWhitespace()
+        {
+            var quest = new Quest
+            {
+                Summary = "\tThis is a quest.\n   It is indented.\n\n\nAnd has additional new lines.\n"
+            };
             var toml = TomlSerializer.Serialize(quest);
     
             var actualLine = GetMultilineStringKey(toml, "summary", true);
