@@ -28,6 +28,7 @@ namespace UnderLogic.Serialization.Toml
                                                          t.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
                                                          t.GetGenericArguments()[0] == typeof(string) &&
                                                          t.GetGenericArguments()[1] == typeof(object);
+        
         private static bool IsObjectDictionary(Type t) => t.IsGenericType &&
                                                           t.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
                                                           t.GetGenericArguments()[0] == typeof(string) &&
