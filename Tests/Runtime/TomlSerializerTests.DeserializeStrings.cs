@@ -15,7 +15,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual(expectedString, wrappedValue.Value);
         }
-        
+
         [TestCase(@"This is a ""quoted"" string")]
         public void Deserialize_BasicQuotedString_ShouldSetValue(string expectedString)
         {
@@ -58,7 +58,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual(expectedString, wrappedValue.Value);
         }
-        
+
         [Test]
         public void Deserialize_BasicUnicodeString_ShouldSetValue()
         {
@@ -70,7 +70,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual(expectedString, wrappedValue.Value);
         }
-        
+
         [TestCase("Roses are red\nViolets are blue")]
         public void Deserialize_BasicMultilineString_ShouldSetValue(string expectedString)
         {
@@ -81,7 +81,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual(expectedString, wrappedValue.Value);
         }
-        
+
         [Test]
         public void Deserialize_BasicMultilineContinuedString_ShouldSetValue()
         {
@@ -93,7 +93,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual(expectedString, wrappedValue.Value);
         }
-        
+
         [Test]
         public void Deserialize_BasicMultilineQuotedString_ShouldSetValue()
         {
@@ -105,7 +105,19 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual(expectedString, wrappedValue.Value);
         }
-        
+
+        [TestCase("\tThis has some tabs\n\t\tAnd some more tabs\t\teven between the lines\t\t")]
+        [TestCase("  This string\n  Is indented on each line\n    even indented further\n")]
+        [TestCase(" First section.  \n\nFollowed by another.  \n\n\nNow with trailing whitespace\n   ")]
+        public void Deserialize_BasicMultilineString_ShouldPreserveWhitespace(string expectedString)
+        {
+            var toml = $"value = \"\"\"\n{expectedString}\"\"\"\n";
+            var wrappedValue = new WrappedValue<string>(string.Empty);
+            TomlSerializer.DeserializeInto(toml, wrappedValue);
+
+            Assert.AreEqual(expectedString, wrappedValue.Value);
+        }
+
         [TestCase(@"C:\Windows\System32")]
         [TestCase(@"\\Network\\Share\\Folder")]
         [TestCase(@"This is a ""quoted"" string")]
@@ -118,12 +130,24 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             Assert.AreEqual(expectedString, wrappedValue.Value);
         }
-        
+
         [TestCase(@"I [dw]on't need \d{2} apples")]
         [TestCase(@"The first newline is\ntrimmed in raw strings.\n   All other whitespace\n   is preserved.\n")]
         [TestCase(@"Here are two quotation marks: """". Simple enough.")]
         [TestCase(@"'That, ' she said, 'is not true.'")]
         public void Deserialize_LiteralMultilineString_ShouldSetValue(string expectedString)
+        {
+            var toml = $"value = '''\n{expectedString}'''\n";
+            var wrappedValue = new WrappedValue<string>(string.Empty);
+            TomlSerializer.DeserializeInto(toml, wrappedValue);
+
+            Assert.AreEqual(expectedString, wrappedValue.Value);
+        }
+
+        [TestCase("\tThis has some tabs\n\t\tAnd some more tabs\t\teven between the lines\t\t")]
+        [TestCase("  This string\n  Is indented on each line\n    even indented further\n")]
+        [TestCase(" First section.  \n\nFollowed by another.  \n\n\nNow with trailing whitespace\n   ")]
+        public void Deserialize_LiteralMultilineString_ShouldPreserveWhitespace(string expectedString)
         {
             var toml = $"value = '''\n{expectedString}'''\n";
             var wrappedValue = new WrappedValue<string>(string.Empty);
