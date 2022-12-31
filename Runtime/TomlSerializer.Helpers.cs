@@ -40,11 +40,13 @@ namespace UnderLogic.Serialization.Toml
         {
             attribute = null;
 
-            if (Attribute.GetCustomAttribute(memberInfo, typeof(T), false) is not T attr)
-                return false;
-            
-            attribute = attr;
-            return true;
+            if (Attribute.GetCustomAttribute(memberInfo, typeof(T), false) is T attr)
+            {
+                attribute = attr;
+                return true;
+            }
+
+            return false;
         }
     }
 }
