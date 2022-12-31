@@ -11,8 +11,10 @@ namespace UnderLogic.Serialization.Toml
 {
     internal class TomlReader : IDisposable
     {
-        private static readonly Regex KeyValueRegex = new(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Singleline | RegexOptions.Compiled);
-        private static readonly Regex ArrayRegex = new(@"^\s*\[\s*(.*)\s*\]", RegexOptions.Compiled);
+        private static readonly Regex KeyValueRegex =
+            new(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly Regex ArrayRegex = new(@"^\s*\[\s*(.*)\s*\]",
+            RegexOptions.Singleline | RegexOptions.Compiled);
         private static readonly Regex TableInlineRegex = new(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
         private static readonly Regex TableRegex = new(@"^\s*\[(.+?)\]", RegexOptions.Compiled);
         private static readonly Regex TableArrayRegex = new(@"^\s*\[\[(.+?)\]\]", RegexOptions.Compiled);
@@ -202,12 +204,14 @@ namespace UnderLogic.Serialization.Toml
         private static bool TryParseArray(string text, out TomlArray tomlArray)
         {
             tomlArray = null;
-
+            
             var arrayMatch = ArrayRegex.Match(text.Trim());
             if (!arrayMatch.Success)
                 return false;
 
-            var contentString = arrayMatch.Groups[1].Value.Trim();
+            // Remove any excess whitespace and trailing commas
+            var contentString = arrayMatch.Groups[1].Value.Trim().TrimEnd(',');
+            
             if (string.IsNullOrWhiteSpace(contentString))
             {
                 tomlArray = TomlArray.Empty;

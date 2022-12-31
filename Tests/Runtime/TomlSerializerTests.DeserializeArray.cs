@@ -26,6 +26,19 @@ namespace UnderLogic.Serialization.Toml.Tests
             TomlSerializer.DeserializeInto(toml, wrappedArray);
             Assert.IsTrue(wrappedArray.IsEmpty, "Array should be empty");
         }
+        
+        [Test]
+        public void Deserialize_Array_ShouldAllowTrailingComma()
+        {
+            var wrappedArray = WrappedArray<string>.Empty();
+            const string toml = "array = [ \"Trailing\", \"Comma\", ]\n";
+
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+            Assert.IsFalse(wrappedArray.IsEmpty, "Array should not be empty");
+
+            Assert.AreEqual("Trailing", wrappedArray[0]);
+            Assert.AreEqual("Comma", wrappedArray[1]);
+        }
 
         [Test]
         public void Deserialize_ArrayOfNulls_ShouldSetNulls()
@@ -280,6 +293,138 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.AreEqual(3.14, wrappedArray[2]);
             Assert.AreEqual(true, wrappedArray[3]);
             Assert.AreEqual(new DateTime(1979, 5, 27), wrappedArray[4]);
+        }
+
+        [Test]
+        public void Deserialize_MultilineArray_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [",
+                "  \"John\",",
+                "  \"Paul\",",
+                "  \"George\",",
+                "  \"Ringo\"",
+                "]",
+            });
+
+            var wrappedArray = WrappedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 4);
+            Assert.AreEqual("John", wrappedArray[0]);
+            Assert.AreEqual("Paul", wrappedArray[1]);
+            Assert.AreEqual("George", wrappedArray[2]);
+            Assert.AreEqual("Ringo", wrappedArray[3]);
+        }
+        
+        [Test]
+        public void Deserialize_MultilineArrayMessy_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [\n   ",
+                "\n\"John\",    ",
+                "    \n\"Paul\",   ",
+                "\t\t\"George\",   ",
+                "\r\"Ringo\"   ",
+                "\n   ]",
+            });
+
+            var wrappedArray = WrappedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 4);
+            Assert.AreEqual("John", wrappedArray[0]);
+            Assert.AreEqual("Paul", wrappedArray[1]);
+            Assert.AreEqual("George", wrappedArray[2]);
+            Assert.AreEqual("Ringo", wrappedArray[3]);
+        }
+        
+        [Test]
+        public void Deserialize_MultilineArraySymbolStrings_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [",
+                "  \"Should allow {braces} too\",",
+                "  \"Should allow {{double braces}} too\",",
+                "  \"Should allow [brackets] too\",",
+                "  \"Should allow [[double brackets]] too\",",
+                "  \"Should allow 'single quoted' strings too\",",
+                "  \"Should allow \\\"double quoted\\\" strings too\",",
+                "  \"Should allow # symbol too\"",
+                "]",
+            });
+            var wrappedArray = WrappedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 7);
+            Assert.AreEqual("Should allow {braces} too", wrappedArray[0]);
+            Assert.AreEqual("Should allow {{double braces}} too", wrappedArray[1]);
+            Assert.AreEqual("Should allow [brackets] too", wrappedArray[2]);
+            Assert.AreEqual("Should allow [[double brackets]] too", wrappedArray[3]);
+            Assert.AreEqual("Should allow 'single quoted' strings too", wrappedArray[4]);
+            Assert.AreEqual("Should allow \"double quoted\" strings too", wrappedArray[5]);
+            Assert.AreEqual("Should allow # symbol too", wrappedArray[6]);
+        }
+        
+        [Test]
+        public void Deserialize_MultilineArrayJagged_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [",
+                "  [ \"Hello\", \"World\" ],",
+                "  [ \"Foo\", \"Bar\" ],",
+                "  [ \"Goodbye\", \"World\" ],",
+                "  [ \"Baz\", \"Qux\" ],",
+                "]"
+            });
+
+            var wrappedArray = WrappedJaggedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 4);
+            Assert.IsTrue(wrappedArray[0].SequenceEqual(new[] { "Hello", "World" }));
+            Assert.IsTrue(wrappedArray[1].SequenceEqual(new[] { "Foo", "Bar" }));
+            Assert.IsTrue(wrappedArray[2].SequenceEqual(new[] { "Goodbye", "World" }));
+            Assert.IsTrue(wrappedArray[3].SequenceEqual(new[] { "Baz", "Qux" }));
+        }
+        
+        [Test]
+        public void Deserialize_MultilineArrayJaggedVerbose_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [",
+                "  [",
+                "    \"Hello\",",
+                "    \"World\"",
+                "  ],",
+                "  [",
+                "    \"Foo\",",
+                "    \"Bar\"",
+                "  ],",
+                "  [",
+                "    \"Goodbye\",",
+                "    \"World\"",
+                "  ],",
+                "  [",
+                "    \"Baz\",",
+                "    \"Qux\"",
+                "  ],",
+                "]"
+            });
+
+            var wrappedArray = WrappedJaggedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 4);
+            Assert.IsTrue(wrappedArray[0].SequenceEqual(new[] { "Hello", "World" }));
+            Assert.IsTrue(wrappedArray[1].SequenceEqual(new[] { "Foo", "Bar" }));
+            Assert.IsTrue(wrappedArray[2].SequenceEqual(new[] { "Goodbye", "World" }));
+            Assert.IsTrue(wrappedArray[3].SequenceEqual(new[] { "Baz", "Qux" }));
         }
     }
 }

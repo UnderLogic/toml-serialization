@@ -28,6 +28,7 @@ namespace UnderLogic.Serialization.Toml
         {
             _tempBuffer.Clear();
 
+            var arrayLevel = 0;
             var singleQuoteCount = 0;
             var doubleQuoteCount = 0;
             var inMultiLineString = false;
@@ -40,6 +41,8 @@ namespace UnderLogic.Serialization.Toml
                 var currentChar = _lineBuffer[charIndex];
                 var nextChar = charIndex + 1 < _lineBuffer.Length ? _lineBuffer[charIndex + 1] : '\0';
 
+                var isOpenBracket = currentChar == '[';
+                var isCloseBracket = currentChar == ']';
                 var isBackslash = currentChar == '\\';
                 var isSingleQuote = currentChar == '\'';
                 var isDoubleQuote = currentChar == '"';
@@ -81,6 +84,12 @@ namespace UnderLogic.Serialization.Toml
                         charIndex++;
                 }
                 
+                // Increase or decrease the array level when encountering an open or close bracket
+                if (isOpenBracket && !inMultiLineString)
+                    arrayLevel++;
+                else if (isCloseBracket && !inMultiLineString)
+                    arrayLevel--;
+                
                 // Unescaped backslash in a multiline string will ignore all whitespace until the next non-whitespace character
                 // This does not apply to literal strings
                 if (!inLiteralString && isBackslash && inMultiLineString)
@@ -93,7 +102,9 @@ namespace UnderLogic.Serialization.Toml
                     }
                 }
 
-                if (isNewLine && !inMultiLineString)
+                // If we encounter a newline character, we need to check if we are in a multiline string
+                // And we also need to ensure we aren't in a multiline array
+                if (isNewLine && !inMultiLineString && arrayLevel == 0)
                 {
                     var line = _tempBuffer.ToString();
                     _lineBuffer.Remove(0, charIndex + 1);
