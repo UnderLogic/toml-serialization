@@ -59,30 +59,14 @@ metadata = [ 100, "Player 1", true ]
 
 ### Multiline Example
 
-You can separate the elements of a list field into multiple lines.
-Trailing commas are allowed and will be safely ignored.
+You can use the [`TomlMultilineAttribute`](../attributes/toml-multiline-attribute.md) to serialize a list as a multiline TOML array.
 
 ```toml
-scores = [
+metadata = [
     100,
-    50,
-    25,
+    "Player 1",
+    true,
 ]
 ```
 
-You can nest tables and arrays in a list field.
-
-```toml
-waypoints = [
-    { x = 1, y = 2 },
-    { x = 3, y = 4 },
-]
-```
-
-```toml
-map = [
-    [ 1, 2, 3 ],
-    [ 4, 5, 6 ],
-    [ 7, 8, 9 ],
-]
-```
+This will output each element on a new line, including a trailing comma.

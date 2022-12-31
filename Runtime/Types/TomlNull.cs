@@ -6,6 +6,6 @@ namespace UnderLogic.Serialization.Toml.Types
         
         private TomlNull() { }
 
-        public override string ToString() => "<null>";
+        public override string ToString() => "null";
     }
 }

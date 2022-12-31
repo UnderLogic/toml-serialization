@@ -217,7 +217,7 @@ namespace UnderLogic.Serialization.Toml
             var tomlValues = collection.Select(value =>
                 ConvertToTomlValue(value, value?.GetType()));
 
-            return new TomlArray(tomlValues);
+            return new TomlArray(tomlValues) { IsMultiline = flags.HasFlag(ConvertFlags.Multiline) };
         }
 
         private static TomlTable ConvertToTomlTable(IDictionary dictionary, ConvertFlags flags = ConvertFlags.None)

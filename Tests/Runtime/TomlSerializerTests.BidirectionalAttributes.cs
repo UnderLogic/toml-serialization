@@ -1,3 +1,4 @@
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Mocks;
 
@@ -87,6 +88,28 @@ namespace UnderLogic.Serialization.Toml.Tests
             TomlSerializer.DeserializeInto(tomlString, deserializedQuest);
 
             Assert.AreEqual(serializedQuest.Summary, deserializedQuest.Summary);
+        }
+        
+        [Test]
+        public void SerializeDeserialize_MultilineArray_ShouldSetEqual()
+        {
+            var serializedSpellbook = new Spellbook { Name = "Wizard Spells" };
+            serializedSpellbook.LearnSpell("Magic Missile");
+            serializedSpellbook.LearnSpell("Fireball");
+            serializedSpellbook.LearnSpell("Lightning Bolt");
+            serializedSpellbook.LearnSpell("Polymorph");
+            
+            serializedSpellbook.MemorizeSpell("Magic Missile");
+            serializedSpellbook.MemorizeSpell("Polymorph");
+            
+            var tomlString = TomlSerializer.Serialize(serializedSpellbook);
+
+            var deserializedSpellbook = new Spellbook();
+            TomlSerializer.DeserializeInto(tomlString, deserializedSpellbook);
+
+            Assert.AreEqual(serializedSpellbook.Name, deserializedSpellbook.Name);
+            Assert.IsTrue(serializedSpellbook.LearnedSpells.SequenceEqual(deserializedSpellbook.LearnedSpells));
+            Assert.IsTrue(serializedSpellbook.MemorizedSpells.SequenceEqual(deserializedSpellbook.MemorizedSpells));
         }
 
         [Test]

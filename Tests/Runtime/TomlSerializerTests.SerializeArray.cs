@@ -239,5 +239,41 @@ namespace UnderLogic.Serialization.Toml.Tests
                 "array = [ \"Player\", true, 42, [ 3.14, 1.412 ], { map = 500, x = 24, y = 42, zIndex = 1 }, \"Left\" ]\n",
                 toml);
         }
+        
+        [Test]
+        public void Serialize_MultilineArray_ShouldSerializeMultilineIndented()
+        {
+            var spellbook = new Spellbook { Name = "Cleric Spells" };
+            spellbook.LearnSpell("Cure Light Wounds");
+            spellbook.LearnSpell("Cure Moderate Wounds");
+            spellbook.LearnSpell("Raise Dead");
+            spellbook.LearnSpell("Protection from Evil");
+            spellbook.LearnSpell("Ward Undead");
+            
+            spellbook.MemorizeSpell("Cure Light Wounds");
+            spellbook.MemorizeSpell("Protection from Evil");
+            spellbook.MemorizeSpell("Ward Undead");
+
+            var toml = TomlSerializer.Serialize(spellbook);
+            
+            var expectedString = string.Join("\n", new[]
+            {
+                "name = \"Cleric Spells\"",
+                "learnedSpells = [",
+                "    \"Cure Light Wounds\",",
+                "    \"Cure Moderate Wounds\",",
+                "    \"Raise Dead\",",
+                "    \"Protection from Evil\",",
+                "    \"Ward Undead\",",
+                "]",
+                "memorizedSpells = [",
+                "    \"Cure Light Wounds\",",
+                "    \"Protection from Evil\",",
+                "    \"Ward Undead\",",
+                "]",
+            });
+            
+            Assert.AreEqual($"{expectedString}\n", toml);
+        }
     }
 }
