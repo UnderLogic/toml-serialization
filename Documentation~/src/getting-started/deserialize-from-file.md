@@ -54,7 +54,7 @@ The `Deserialize<T>` method will create a new instance of the model and return i
 The requirement is that the `T` being passed in is a class or struct that has a parameterless constructor.
 
 In some cases, you may want to deserialize a model into an existing instance.
-You can use the `DesrializeInto<T>` method for this.
+You can use the `DeserializeInto<T>` method for this.
 
 This is common when you are loading a model from a file and then updating it with new values.
 Or the type you are deserializing does not have a parameterless constructor.
