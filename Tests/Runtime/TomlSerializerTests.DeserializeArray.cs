@@ -319,23 +319,77 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
         
         [Test]
+        public void Deserialize_MultilineArrayMessy_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [\n   ",
+                "\n\"John\",    ",
+                "    \n\"Paul\",   ",
+                "\t\t\"George\",   ",
+                "\r\"Ringo\"   ",
+                "\n   ]",
+            });
+
+            var wrappedArray = WrappedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 4);
+            Assert.AreEqual("John", wrappedArray[0]);
+            Assert.AreEqual("Paul", wrappedArray[1]);
+            Assert.AreEqual("George", wrappedArray[2]);
+            Assert.AreEqual("Ringo", wrappedArray[3]);
+        }
+        
+        [Test]
+        public void Deserialize_MultilineArraySymbolStrings_ShouldSetElements()
+        {
+            var toml = string.Join("\n", new[]
+            {
+                "array = [",
+                "  \"Should allow {braces} too\",",
+                "  \"Should allow {{double braces}} too\",",
+                "  \"Should allow [brackets] too\",",
+                "  \"Should allow [[double brackets]] too\",",
+                "  \"Should allow 'single quoted' strings too\",",
+                "  \"Should allow \\\"double quoted\\\" strings too\",",
+                "  \"Should allow # symbol too\"",
+                "]",
+            });
+            var wrappedArray = WrappedArray<string>.Empty();
+            TomlSerializer.DeserializeInto(toml, wrappedArray);
+
+            Assert.AreEqual(wrappedArray.Count, 7);
+            Assert.AreEqual("Should allow {braces} too", wrappedArray[0]);
+            Assert.AreEqual("Should allow {{double braces}} too", wrappedArray[1]);
+            Assert.AreEqual("Should allow [brackets] too", wrappedArray[2]);
+            Assert.AreEqual("Should allow [[double brackets]] too", wrappedArray[3]);
+            Assert.AreEqual("Should allow 'single quoted' strings too", wrappedArray[4]);
+            Assert.AreEqual("Should allow \"double quoted\" strings too", wrappedArray[5]);
+            Assert.AreEqual("Should allow # symbol too", wrappedArray[6]);
+        }
+        
+        [Test]
         public void Deserialize_MultilineArrayJagged_ShouldSetElements()
         {
             var toml = string.Join("\n", new[]
             {
                 "array = [",
-                "  [ \"Hello\", \"World\" ]",
-                "  [ \"Foo\", \"Bar\" ]",
-                "], [",
-                "  [ \"Goodbye\", \"World\" ]",
-                "  [ \"Baz\", \"Qux\" ]",
+                "  [ \"Hello\", \"World\" ],",
+                "  [ \"Foo\", \"Bar\" ],",
+                "  [ \"Goodbye\", \"World\" ],",
+                "  [ \"Baz\", \"Qux\" ],",
                 "]"
             });
 
             var wrappedArray = WrappedJaggedArray<string>.Empty();
             TomlSerializer.DeserializeInto(toml, wrappedArray);
 
-            Assert.AreEqual(wrappedArray.Count, 2);
+            Assert.AreEqual(wrappedArray.Count, 4);
+            Assert.IsTrue(wrappedArray[0].SequenceEqual(new[] { "Hello", "World" }));
+            Assert.IsTrue(wrappedArray[1].SequenceEqual(new[] { "Foo", "Bar" }));
+            Assert.IsTrue(wrappedArray[2].SequenceEqual(new[] { "Goodbye", "World" }));
+            Assert.IsTrue(wrappedArray[3].SequenceEqual(new[] { "Baz", "Qux" }));
         }
     }
 }
