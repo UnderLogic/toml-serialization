@@ -31,7 +31,7 @@ This is usually not a problem, as you should not have two fields with the same n
 ### Workarounds
 
 1. Rename one of the fields.
-2. Use the [`TomlKeyAttribute`](../attributes/toml-key-attribute.md) attribute to specify a different key name for the field.
+2. Use the [`TomlKeyAttribute`](attributes/toml-key-attribute.md) attribute to specify a different key name for the field.
 3. Use the `NonSerializedAttribute` to exclude one of the fields from serialization.
 
 ## Key Names
