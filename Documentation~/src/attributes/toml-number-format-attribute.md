@@ -53,4 +53,4 @@ flags = 0x2c04
 permissions = 0o644
 ```
 
-Here you can see that the `flags` and `permissions` fields are serialized in their respective formats.
+Here you can see that the `_flags` and `_permissions` fields are serialized in their respective formats.
