@@ -316,11 +316,30 @@ namespace UnderLogic.Serialization.Toml
         private static bool TryParseFloatValue(string text, out TomlFloat tomlValue)
         {
             tomlValue = null;
-
+            
             var sanitizedText = text.Replace("_", "").ToLowerInvariant();
+            
+            if (sanitizedText == "inf" || sanitizedText == "+inf")
+            {
+                tomlValue = new TomlFloat(double.PositiveInfinity);
+                return true;
+            }
+
+            if (sanitizedText == "-inf")
+            {
+                tomlValue = new TomlFloat(double.NegativeInfinity);
+                return true;
+            }
+
+            if (sanitizedText == "nan" || sanitizedText == "+nan" || sanitizedText == "-nan")
+            {
+                tomlValue = new TomlFloat(double.NaN);
+                return true;
+            }
+            
             if (!sanitizedText.Contains('.') && !sanitizedText.Contains('e'))
                 return false;
-
+            
             if (!double.TryParse(sanitizedText, out var doubleValue))
                 return false;
 
