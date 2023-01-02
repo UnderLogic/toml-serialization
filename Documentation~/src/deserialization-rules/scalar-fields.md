@@ -163,7 +163,7 @@ bin_value = 0b1101010
 The underscore (`_`) character can be used as a digit separator in numeric values.
 It is ignored when parsing the value.
 
-####Example
+#### Example
 
 ```toml
 positive = 1_000_000
