@@ -4,6 +4,18 @@ All notable changes to this library will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.4] - 2023-01-02
+
+### Added
+
+- Serialization support for `PositiveInfinity`, `NegativeInfinity` and `NaN` values
+- Deserialization support for `PositiveInfinity`, `NegativeInfinity` and `NaN` values
+- `TomlNumberFormatAttribute` for serializing integer values in different formats
+- Deserialize `hex` integer values (e.g. `0xdead_beef`)
+- Deserialize `oct` integer values (e.g. `0o755`)
+- Deserialize `bin` integer values (e.g. `0b1101010`)
+- Unit tests for number formats and digit separators (e.g. `1_000_000`)
+
 ## [0.4.3] - 2022-12-31
 
 ### Added

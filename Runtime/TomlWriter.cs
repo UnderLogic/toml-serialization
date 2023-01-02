@@ -105,16 +105,34 @@ namespace UnderLogic.Serialization.Toml
             _writer.Write($"{value.ToString().ToLowerInvariant()}");
         }
 
-        public void WriteIntegerValue(long value)
+        public void WriteIntegerValue(long value, NumberFormat numberFormat = NumberFormat.Decimal)
         {
             CheckIfDisposed();
-            _writer.Write(value.ToString());
+
+            if (numberFormat == NumberFormat.HexLowerCase)
+                _writer.Write(value.ToHexLowerCaseString());
+            else if (numberFormat == NumberFormat.HexUpperCase)
+                _writer.Write(value.ToHexUpperCaseString());
+            else if (numberFormat == NumberFormat.Octal)
+                _writer.Write(value.ToOctalString());
+            else if (numberFormat == NumberFormat.Binary)
+                _writer.Write(value.ToBinaryString());
+            else
+                _writer.Write(value.ToString());
         }
 
         public void WriteFloatValue(double value)
         {
             CheckIfDisposed();
-            _writer.Write(value.ToString(CultureInfo.InvariantCulture));
+
+            if (double.IsPositiveInfinity(value))
+                _writer.Write("+inf");
+            else if (double.IsNegativeInfinity(value))
+                _writer.Write("-inf");
+            else if (double.IsNaN(value))
+                _writer.Write("nan");
+            else
+                _writer.Write(value.ToString(CultureInfo.InvariantCulture));
         }
 
         public void WriteDateTime(DateTime value, string format = DateFormat)
@@ -158,7 +176,7 @@ namespace UnderLogic.Serialization.Toml
             else if (value is TomlBoolean boolValue)
                 WriteBooleanValue(boolValue.Value);
             else if (value is TomlInteger intValue)
-                WriteIntegerValue(intValue.Value);
+                WriteIntegerValue(intValue.Value, intValue.NumberFormat);
             else if (value is TomlFloat floatValue)
                 WriteFloatValue(floatValue.Value);
             else if (value is TomlDateTime dateTimeValue)

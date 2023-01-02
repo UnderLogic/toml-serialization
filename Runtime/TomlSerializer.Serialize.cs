@@ -111,6 +111,21 @@ namespace UnderLogic.Serialization.Toml
                 // Allow forced expansion of tables
                 if (TryGetAttribute<TomlExpandAttribute>(field, out _))
                     fieldConvertFlags |= ConvertFlags.ForceExpand;
+                
+                // Allow number formats
+                if (TryGetAttribute<TomlNumberFormatAttribute>(field, out var numberFormatAttribute))
+                {
+                    var numberFormat = numberFormatAttribute.NumberFormat;
+
+                    if (numberFormat == NumberFormat.HexLowerCase)
+                        fieldConvertFlags |= ConvertFlags.HexNumberLowerCase;
+                    else if (numberFormat == NumberFormat.HexUpperCase)
+                        fieldConvertFlags |= ConvertFlags.HexNumberUpperCase;
+                    else if (numberFormat == NumberFormat.Octal)
+                        fieldConvertFlags |= ConvertFlags.OctalNumber;
+                    else if (numberFormat == NumberFormat.Binary)
+                        fieldConvertFlags |= ConvertFlags.BinaryNumber;
+                }
 
                 var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldConvertFlags);
 
@@ -126,6 +141,16 @@ namespace UnderLogic.Serialization.Toml
             if (obj == null)
                 return TomlNull.Value;
 
+            var numberFormat = NumberFormat.Decimal;
+            if (flags.HasFlag(ConvertFlags.HexNumberLowerCase))
+                numberFormat = NumberFormat.HexLowerCase;
+            else if (flags.HasFlag(ConvertFlags.HexNumberUpperCase))
+                numberFormat = NumberFormat.HexUpperCase;
+            else if (flags.HasFlag(ConvertFlags.OctalNumber))
+                numberFormat = NumberFormat.Octal;
+            else if (flags.HasFlag(ConvertFlags.BinaryNumber))
+                numberFormat = NumberFormat.Binary;
+                
             if (obj is IDictionary dictionary)
             {
                 var extraFlags = !IsObjectDictionary(type) && !flags.HasFlag(ConvertFlags.ForceExpand)
@@ -166,19 +191,19 @@ namespace UnderLogic.Serialization.Toml
             if (type.IsEnum && obj is Enum enumValue)
                 return new TomlString(enumValue.ToString("F"));
             if (type == typeof(sbyte) && obj is sbyte int8Value)
-                return new TomlInteger(int8Value);
+                return new TomlInteger(int8Value, numberFormat);
             if (type == typeof(short) && obj is short int16Value)
-                return new TomlInteger(int16Value);
+                return new TomlInteger(int16Value, numberFormat);
             if (type == typeof(int) && obj is int int32Value)
-                return new TomlInteger(int32Value);
+                return new TomlInteger(int32Value, numberFormat);
             if (type == typeof(long) && obj is long int64Value)
-                return new TomlInteger(int64Value);
+                return new TomlInteger(int64Value, numberFormat);
             if (type == typeof(byte) && obj is byte uint8Value)
-                return new TomlInteger(uint8Value);
+                return new TomlInteger(uint8Value, numberFormat);
             if (type == typeof(ushort) && obj is ushort uint16Value)
-                return new TomlInteger(uint16Value);
+                return new TomlInteger(uint16Value, numberFormat);
             if (type == typeof(uint) && obj is uint uint32Value)
-                return new TomlInteger(uint32Value);
+                return new TomlInteger(uint32Value, numberFormat);
             if (type == typeof(float) && obj is float floatValue)
                 return new TomlFloat(floatValue);
             if (type == typeof(double) && obj is double doubleValue)
