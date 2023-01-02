@@ -47,3 +47,4 @@
   - [TomlKeyAttribute](attributes/toml-key-attribute.md)
   - [TomlLiteralAttribute](attributes/toml-literal-attribute.md)
   - [TomlMultilineAttribute](attributes/toml-multiline-attribute.md)
+  - [TomlNumberFormatAttribute](attributes/toml-number-format-attribute.md)

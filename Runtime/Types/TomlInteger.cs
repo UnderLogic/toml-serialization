@@ -6,7 +6,13 @@ namespace UnderLogic.Serialization.Toml.Types
     {
         public long Value { get; }
 
-        public TomlInteger(long value) => Value = value;
+        public NumberFormat NumberFormat { get; }
+
+        public TomlInteger(long value, NumberFormat numberFormat = NumberFormat.Decimal)
+        {
+            Value = value;
+            NumberFormat = numberFormat;
+        }
 
         public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
     }

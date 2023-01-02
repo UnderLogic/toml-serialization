@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Serialization support for `PositiveInfinity`, `NegativeInfinity` and `NaN` values
 - Deserialization support for `PositiveInfinity`, `NegativeInfinity` and `NaN` values
+- `TomlNumberFormatAttribute` for serializing integer values in different formats
+- Deserialize `hex` integer values (e.g. `0xdead_beef`)
+- Deserialize `oct` integer values (e.g. `0o755`)
+- Deserialize `bin` integer values (e.g. `0b1101010`)
+- Unit tests for number formats and digit separators (e.g. `1_000_000`)
 
 ## [0.4.3] - 2022-12-31
 

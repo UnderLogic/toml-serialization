@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -11,7 +12,7 @@ namespace UnderLogic.Serialization.Toml
             new(@"^0o([0-7]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex BinNumberRegex =
             new(@"^0b([0-1]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        
+
         public static bool TryParseHexNumber(string hexString, out long value)
         {
             value = 0;
@@ -38,17 +39,15 @@ namespace UnderLogic.Serialization.Toml
             if (!octalMatch.Success)
                 return false;
 
-            if (!long.TryParse(octalMatch.Groups[1].Value, out var octalValue))
-                return false;
-            
+            var digits = octalMatch.Groups[1].Value;
+
             var decValue = 0L;
             var baseValue = 1L;
 
-            while (octalValue > 0)
+            for (var i = digits.Length - 1; i >= 0; i--)
             {
-                var lastDigit = octalValue % 10;
-                octalValue /= 10;
-                
+                var lastDigit = int.Parse(digits[i].ToString());
+
                 decValue += lastDigit * baseValue;
                 baseValue *= 8;
             }
@@ -56,7 +55,7 @@ namespace UnderLogic.Serialization.Toml
             value = decValue;
             return true;
         }
-        
+
         public static bool TryParseBinaryNumber(string binaryString, out long value)
         {
             value = 0;
@@ -68,16 +67,14 @@ namespace UnderLogic.Serialization.Toml
             if (!binaryMatch.Success)
                 return false;
 
-            if (!long.TryParse(binaryMatch.Groups[1].Value, out var binaryValue))
-                return false;
-            
+            var digits = binaryMatch.Groups[1].Value;
+
             var decValue = 0L;
             var baseValue = 1L;
 
-            while (binaryValue > 0)
+            for (var i = digits.Length - 1; i >= 0; i--)
             {
-                var lastDigit = binaryValue % 10;
-                binaryValue /= 10;
+                var lastDigit = digits[i] == '1' ? 1 : 0;
 
                 decValue += lastDigit * baseValue;
                 baseValue <<= 1;
@@ -86,5 +83,10 @@ namespace UnderLogic.Serialization.Toml
             value = decValue;
             return true;
         }
+
+        public static string ToHexLowerCaseString(this long value) => $"0x{value:x}";
+        public static string ToHexUpperCaseString(this long value) => $"0x{value:X}";
+        public static string ToOctalString(this long value) => $"0o{Convert.ToString(value, 8)}";
+        public static string ToBinaryString(this long value) => $"0b{Convert.ToString(value, 2)}";
     }
 }

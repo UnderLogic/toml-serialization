@@ -70,6 +70,9 @@ directions = "North, East"
 
 Integer fields are mapped to a [TOML integer](https://toml.io/en/v1.0.0#integer) value and serialized as a sequence of digits.
 
+By default the integer is serialized as a decimal integer (base 10).
+This can be overriden using the [`TomlNumberFormatAttribute`](../attributes/toml-number-format-attribute.md) attribute to serialize the integer as a hexadecimal, octal, or binary integer.
+
 ### Example
 
 ```toml
