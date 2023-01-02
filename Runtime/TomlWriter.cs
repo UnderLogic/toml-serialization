@@ -114,7 +114,15 @@ namespace UnderLogic.Serialization.Toml
         public void WriteFloatValue(double value)
         {
             CheckIfDisposed();
-            _writer.Write(value.ToString(CultureInfo.InvariantCulture));
+
+            if (double.IsPositiveInfinity(value))
+                _writer.Write("+inf");
+            else if (double.IsNegativeInfinity(value))
+                _writer.Write("-inf");
+            else if (double.IsNaN(value))
+                _writer.Write("nan");
+            else
+                _writer.Write(value.ToString(CultureInfo.InvariantCulture));
         }
 
         public void WriteDateTime(DateTime value, string format = DateFormat)

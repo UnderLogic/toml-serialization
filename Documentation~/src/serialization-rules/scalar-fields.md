@@ -92,6 +92,15 @@ multiplier = -1.0e6
 
 **NOTE:** Scientific notation is supported.
 
+### Special Values
+
+The following special values are supported:
+
+- `+inf` - positive infinity
+- `-inf` - negative infinity
+- `+nan` - positive not-a-number
+- `-nan` - negative not-a-number
+
 ## DateTime
 
 DateTime fields are mapped to a [TOML datetime](https://toml.io/en/v1.0.0#local-date-time) value and serialized as a date and time.

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6182691a0a984956b75bf536fc7ce6be, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  displayName: Slade
-  level: 7
+  displayName: Mike
+  level: 20
   health: 25
   maxHealth: 50
   mana: 10

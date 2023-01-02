@@ -139,11 +139,36 @@ Any fractional part of the value is discarded.
 
 **NOTE:** Unsigned 64-bit integers (`ulong`) are not supported by TOML.
 
+### Number Formats
+
+The following number formats are allowed:
+
+- Base 10 (`dec`)
+- Base 16 (`hex`)
+- Base 8 (`oct`)
+- Base 2 (`bin`)
+
 ### Example
 
 ```toml
 positive = 42
 negative = -42
+flags = 0x1CFF
+file_permissions = 0o755
+bin_value = 0b1101010
+```
+
+### Digit Separators
+
+The underscore (`_`) character can be used as a digit separator in numeric values.
+It is ignored when parsing the value.
+
+####Example
+
+```toml
+positive = 1_000_000
+negative = -1_000_000
+flags = 0xdead_beef
 ```
 
 ## Floating Point
@@ -161,6 +186,15 @@ multiplier = -1.0e6
 ```
 
 **NOTE:** Scientific notation is supported.
+
+### Special Values
+
+The following special values are supported:
+
+- `+inf` - positive infinity
+- `-inf` - negative infinity
+- `+nan` - positive not-a-number
+- `-nan` - negative not-a-number
 
 ## DateTime
 
