@@ -324,13 +324,11 @@ namespace UnderLogic.Serialization.Toml
                 tomlValue = new TomlFloat(double.PositiveInfinity);
                 return true;
             }
-
             if (sanitizedText == "-inf")
             {
                 tomlValue = new TomlFloat(double.NegativeInfinity);
                 return true;
             }
-
             if (sanitizedText == "nan" || sanitizedText == "+nan" || sanitizedText == "-nan")
             {
                 tomlValue = new TomlFloat(double.NaN);
@@ -352,6 +350,22 @@ namespace UnderLogic.Serialization.Toml
             tomlValue = null;
 
             var sanitizedText = text.Replace("_", "");
+
+            if (IntegerExtensions.TryParseHexNumber(sanitizedText, out var hexValue))
+            {
+                tomlValue = new TomlInteger(hexValue);
+                return true;
+            }
+            if (IntegerExtensions.TryParseOctalNumber(sanitizedText, out var octalValue))
+            {
+                tomlValue = new TomlInteger(octalValue);
+                return true;
+            }
+            if (IntegerExtensions.TryParseBinaryNumber(sanitizedText, out var binaryValue))
+            {
+                tomlValue = new TomlInteger(binaryValue);
+                return true;
+            }
 
             if (!long.TryParse(sanitizedText, out var int64Value))
                 return false;
