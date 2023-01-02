@@ -13,13 +13,13 @@ It has no effect on floating point number fields.
 
 The following cases are supported via the `NumberFormat` enum value:
 
-| Casing       | Decimal Value | Output String |
-|--------------|---------------|---------------|
-| Decimal      | `42`          | `42`          |
-| HexLowerCase | `42`          | `0x2a`        |
-| HexUpperCase | `42`          | `0x2A`        |
-| Octal        | `42`          | `0o52`        |
-| Binary       | `42`          | `0b101010`    |
+| Number Format | Decimal Value | Output String |
+|---------------|---------------|---------------|
+| Decimal       | `42`          | `42`          |
+| HexLowerCase  | `42`          | `0x2a`        |
+| HexUpperCase  | `42`          | `0x2A`        |
+| Octal         | `42`          | `0o52`        |
+| Binary        | `42`          | `0b101010`    |
 
 The `Decimal` format is the default for all integer fields.
 
