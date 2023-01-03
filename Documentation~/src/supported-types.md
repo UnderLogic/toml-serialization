@@ -2,7 +2,7 @@
 
 This package library aims to support the most common use cases for serializing and deserializing data.
 
-To see more information how these are serialized into TOML, see the [Serialization Rules](serialization-rules.md) page.
+To see more information how these are serialized into TOML, see the [Serialization Rules](serialization-rules.md) page sections.
 
 ## Scalars
 
@@ -26,7 +26,7 @@ The following scalar types are supported:
 
 ## Enum Values
 
-Enum values are supported including bitflags marked with the `Flags` attribute.
+Enum values are supported including bitflags marked with the [FlagsAttribute](https://learn.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-7.0).
 
 ## Object Values
 
@@ -35,13 +35,13 @@ This can be useful when used in conjunction with arrays, lists, and dictionaries
 
 ## Structs
 
-Custom struct types are supported and must be marked with the `Serializable` attribute.
+Custom struct types are supported and must be marked with the [`SerializableAttribute`](https://learn.microsoft.com/en-us/dotnet/api/system.serializableattribute?view=net-6.0) attribute.
 
 ## Classes
 
-Custom class types are supported and must be marked with the `Serializable` attribute.
+Custom class types are supported and must be marked with the [`SerializableAttribute`](https://learn.microsoft.com/en-us/dotnet/api/system.serializableattribute?view=net-6.0) attribute.
 
-Unity's `ScriptableObject` and `MonoBehaviour` types are supported, but must also be marked with the `Serializable` attribute.
+Unity's `ScriptableObject` and `MonoBehaviour` types are supported.
 
 ## Arrays
 

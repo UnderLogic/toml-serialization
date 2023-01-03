@@ -3,11 +3,13 @@
 ## Overview
 
 The `TomlCasingAttribute` can be used to override the case of the key in the TOML document.
-It can be applied on the entire class, struct, or an individual field.
+It can be applied on the entire `class`, `struct`, or an individual `field`.
 
-When applied to a class or struct, it will set the default case for all fields. It is **not** recursively applied to all child objects.
+## Effect 
 
-When applied to a field, it will override the case of the key for that field only.
+- When applied to a `class` or `struct`, it will set the default case for all fields.
+  - It is **not** recursively applied to all child objects.
+- When applied to a `field`, it will override the case of the key for that field only.
 
 **NOTE**: The `TomlCasingAttribute` is ignored when the [`TomlKeyAttribute`](../attributes/toml-key-attribute.md) is used on a field.
 
@@ -64,7 +66,7 @@ gold = 1250
 stat_points = 12
 ```
 
-As you can see, the keys are all snake cased in the output TOML.
+Notice that **all** of the fields of the class are serialized using snake case.
 
 ### Field Example
 
@@ -96,4 +98,4 @@ statPoints = 12
 last-login-date = 2020-01-01T00:00:00Z
 ```
 
-As you can see, the `_lastLoginDate` field is kebab cased in the output TOML, while the other fields are not.
+Notice that **only** the `_lastLoginDate` field is serialized using kebab case.

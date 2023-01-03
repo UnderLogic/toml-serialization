@@ -2,23 +2,20 @@
 
 ## Overview
 
-The `TomlLiteralAttribute` attribute can be used to serialize a field as a literal string.
+The `TomlLiteralAttribute` attribute can be used to serialize a `field` as a literal string.
 It acts as a hint to the serializer to write the field as a literal string, which will not escape any values.
 
 It can be combined with the [`TomlMultilineAttribute`](toml-multiline-attribute.md) attribute to serialize a field as a literal multi-line string.
 
-This attribute has no effect on deserialization.
+**NOTE:** This attribute has no effect on deserialization.
 
-**NOTE:** If the string contains a single quote character, it will be escaped as a multi-line literal string using triple single quotes (`'''`) on a single line.
+## Effect
 
-## Limitations
+- When applied to a `field` that would be serialized as a string, it will instead be serialized as a literal string using the single quote character (`'`).
+- When applied to a `field` that would be serialized as a multi-line string, it will instead be serialized as a literal multi-line string using the triple single quote character (`'''`).
+- When applied to a `field` that would be serialized as a string array, it will instead be serialized as a literal string array using the single quote character (`'`).
 
-The `TomlLiteralAttribute` attribute can only be applied to fields.
-
-It has no effect when applied to fields that would not be serialized as a string.
-
-However, it can be used with arrays, lists, and dictionaries to serialize the elements as literal strings.
-In this case, the [`TomlMultilineAttribute`](toml-multiline-attribute.md) cannot be used to serialize the elements as literal multi-line strings.
+If the string value contains a single quote character, the string will be escaped with triple single quotes (`'''`).
 
 ## Usage
 

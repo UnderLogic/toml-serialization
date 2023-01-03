@@ -2,46 +2,12 @@
 
 ## Overview
 
-By default, the name of the field is used as the key in the TOML document.
-Any underscores (`_`) at the beginning of the field name are removed.
+This library uses reflection to determine the name of each field to serialize and deserialize within an object.
 
-This can be overridden by using the [`TomlKeyAttribute`](../attributes/toml-key-attribute.md) attribute.
+By default, the name of each field is used as the key in the TOML document.
+This can be overridden by using the [`TomlKeyAttribute`](attributes/toml-key-attribute.md) or [`TomlCasingAttribute`](attributes/toml-casing-attribute.md).
 
-The case of the key can be overriden by using the [`TomlCasingAttribute`](../attributes/toml-casing-attribute.md) attribute.
-It can be applied on the entire class, struct, or an individual field.
-
-### Example
-
-```csharp
-[Serializable]
-public class PlayerCharacter
-{
-    private string _name;
-    private int _level;
-    private int _health;
-    private int _maxHealth;
-    private int _gold;
-}
-```
-
-Would serialize into...
-
-```toml
-name = "Player 1"
-level = 7
-health = 160
-maxHealth = 200
-gold = 1250
-```
-
-In the above example, the `_name`, `_level`, `_health`, `_maxHealth`, and `_gold` fields are serialized and will appear in the output TOML:
-
-## Nested Fields
-
-Nested fields are serialized using the same rules as the top-level object.
-Nested tables are named using the dot (`.`) notation, if nested more than one level deep.
-
-**NOTE:** Nested objects must also be marked with the `Serializable` attribute.
+Any leading underscores (`_`) are removed from the field name before it is used as the key in the TOML document, unless explicitly named.
 
 ### Example
 
@@ -51,41 +17,16 @@ public class PlayerCharacter
 {
     private string _name;
     private int _level;
-    private int _health;
-    private int _maxHealth;
-    private int _gold;
-    
-    private PlayerStats _stats;
-}
-
-[Serializable]
-public class PlayerStats
-{
-    private int _strength;
-    private int _dexterity;
-    private int _intelligence;
-    private int _wisdom;
-    private int _constitution;
-    private int _charisma;
+    private int _experience;
 }
 ```
 
-Would serialize into...
+This object will be serialized to the following TOML document:
 
 ```toml
-name = "Player 1"
+name = "Hero"
 level = 7
-health = 160
-maxHealth = 200
-gold = 1250
-
-[stats]
-strength = 6
-dexterity = 4
-intelligence = 3
-wisdom = 2
-constitution = 8
-charisma = 1
+experience = 1250
 ```
 
-In the above example, the `_name`, `_level`, `_health`, `_maxHealth`, `_gold`, and `_stats` fields are serialized and will appear in the output TOML:
+Notice that the leading underscore (`_`) was removed from the field names in the TOML document.

@@ -2,59 +2,21 @@
 
 ## Overview
 
-By default, the fields of an object are serialized in the order they are declared in the source code.
-For key-value pairs, the key is serialized first, followed by the value.
+This library uses reflection to determine the order of each field to serialize and deserialize within an object.
 
-## Serialization Order
+By default, the fields are serialized and deserialized in the order they are declared in the object.
 
-1. Any key-value pairs are serialized first, including inline arrays, lists, and dictionaries.
-2. Any nested tables are serialized next.
-3. Any nested table arrays are serialized last.
+## Table Order
 
-## Nested Objects
+When writing the object as a TOML table, the fields are written in the following way:
 
-A nested complex type is serialized after the parent object's fields.
+1. All key-value pairs of the table are written.
+2. All nested tables are written.
+3. All nested table arrays are written.
 
-### Example
+This is done recursively for each nested table.
 
-```csharp
-[Serializable]
-public class PlayerCharacter
-{
-    private string _name;
-    private int _level;
-    private int _health;
-    private int _maxHealth;
-    private int _gold;
-
-    private PlayerStats _stats;
-}
-```
-
-Would serialize into...
-
-```toml
-name = "Player 1"
-level = 7
-health = 160
-maxHealth = 200
-gold = 1250
-
-[stats]
-strength = 10
-dexterity = 8
-intelligence = 5
-wisdom = 7
-charisma = 6
-```
-
-Here, the `stats` table is serialized after the parent object's fields.
-
-## Nested Object Arrays
-
-A nested complex type array is serialized after the parent object's fields, and after any nested objects.
-
-### Example
+## Example
 
 ```csharp
 [Serializable]
@@ -62,38 +24,32 @@ public class PlayerCharacter
 {
     private string _name;
     private int _level;
-    private int _health;
-    private int _maxHealth;
-    private int _gold;
-
+    private int _experience;
     private PlayerStats _stats;
-    private InventoryItem[] _inventory;
+    private List<InventoryItem> _inventory;
 }
 ```
 
-Would serialize into...
+This object will be serialized to the following TOML document:
 
 ```toml
-name = "Player 1"
+name = "Hero"
 level = 7
-health = 160
-maxHealth = 200
-gold = 1250
+experience = 1250
 
 [stats]
-strength = 10
-dexterity = 8
-intelligence = 5
-wisdom = 7
-charisma = 6
+health = 100
+mana = 50
 
 [[inventory]]
-name = "Health Potion"
-quantity = 3
+name = "Sword"
+durability = 84
 
 [[inventory]]
-name = "Mana Potion"
-quantity = 2
+name = "Shield"
+durability = 99
 ```
 
-Here, the `inventory` table array is serialized after the `stats` table.
+Notice that fields are written in the order they are declared in the object, and nested tables are written after the key-value pairs of the parent table.
+
+Even if the `_stats` and `_inventory` fields were declared before the `_name`, `_level`, and `_experience` fields, they would still be written after them.
