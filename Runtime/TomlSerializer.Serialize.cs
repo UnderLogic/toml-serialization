@@ -67,9 +67,7 @@ namespace UnderLogic.Serialization.Toml
                 throw new InvalidOperationException($"Type {type.Name} is not serializable");
 
             // Allow the top-level object to specify a default field casing
-            var objectFieldCasing = StringCasing.Default;
-            if (TryGetAttribute<TomlCasingAttribute>(type, out var objectCasingAttribute))
-                objectFieldCasing = objectCasingAttribute.Casing;
+            var objectFieldCasing = GetStringCasing(type);
 
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -90,8 +88,7 @@ namespace UnderLogic.Serialization.Toml
                 else
                 {
                     // Allow the field to specify a custom field casing
-                    if (TryGetAttribute<TomlCasingAttribute>(field, out var fieldCasingAttribute))
-                        fieldCasing = fieldCasingAttribute.Casing;
+                    fieldCasing = GetStringCasing(field, objectFieldCasing);
 
                     // Apply the field casing to the key
                     if (fieldCasing != StringCasing.Default)
@@ -114,16 +111,7 @@ namespace UnderLogic.Serialization.Toml
                     fieldConvertOptions.ForceExpand = true;
                 
                 // Allow number formats
-                if (TryGetAttribute<TomlHexNumberAttribute>(field, out var hexNumberAttribute))
-                {
-                    fieldConvertOptions.NumberFormat = hexNumberAttribute.IsUpperCase
-                        ? NumberFormat.HexUpperCase
-                        : NumberFormat.HexLowerCase;
-                }
-                else if (TryGetAttribute<TomlOctalNumberAttribute>(field, out _))
-                    fieldConvertOptions.NumberFormat = NumberFormat.Octal;
-                else if (TryGetAttribute<TomlBinaryNumberAttribute>(field, out _))
-                    fieldConvertOptions.NumberFormat = NumberFormat.Binary;
+                fieldConvertOptions.NumberFormat = GetNumberFormat(field);
 
                 // Allow date-time formats
                 if (TryGetAttribute<TomlDateTimeFormatAttribute>(field, out var dateTimeFormatAttribute))

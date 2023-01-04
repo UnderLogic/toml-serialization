@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    [TomlCasing(StringCasing.Default)]
     internal sealed class WrappedDictionary<TValue> : IEnumerable<KeyValuePair<string, TValue>>
     {
         private Dictionary<string, TValue> _dictionary = new();

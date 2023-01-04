@@ -3,7 +3,6 @@ using System;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    [TomlCasing(StringCasing.Default)]
     internal sealed class WrappedJaggedArray<T>
     {
         private T[][] _array;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 
 namespace UnderLogic.Serialization.Toml
@@ -35,6 +36,32 @@ namespace UnderLogic.Serialization.Toml
                                                           IsComplexType(t.GetGenericArguments()[1]);
         
         private static bool HasDefaultConstructor(Type t) => t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
+
+        private static StringCasing GetStringCasing(MemberInfo memberInfo, StringCasing defaultCasing = StringCasing.Default)
+        {
+            if (TryGetAttribute<TomlCamelCaseAttribute>(memberInfo, out _))
+                return StringCasing.CamelCase;
+            if (TryGetAttribute<TomlPascalCaseAttribute>(memberInfo, out _))
+                return StringCasing.PascalCase;
+            if (TryGetAttribute<TomlSnakeCaseAttribute>(memberInfo, out var snakeCaseAttribute))
+                return snakeCaseAttribute.IsUpperCase ? StringCasing.UpperSnakeCase : StringCasing.SnakeCase;
+            if (TryGetAttribute<TomlKebabCaseAttribute>(memberInfo, out _))
+                return StringCasing.KebabCase;
+
+            return defaultCasing;
+        }
+
+        private static NumberFormat GetNumberFormat(MemberInfo memberInfo, NumberFormat defaultFormat = NumberFormat.Decimal)
+        {
+            if (TryGetAttribute<TomlHexNumberAttribute>(memberInfo, out var hexNumberAttribute))
+                return hexNumberAttribute.IsUpperCase ? NumberFormat.HexUpperCase : NumberFormat.HexLowerCase;
+            if (TryGetAttribute<TomlOctalNumberAttribute>(memberInfo, out _))
+                return NumberFormat.Octal;
+            if (TryGetAttribute<TomlBinaryNumberAttribute>(memberInfo, out _))
+                return NumberFormat.Binary;
+
+            return defaultFormat;
+        }
 
         private static bool TryGetAttribute<T>(MemberInfo memberInfo, out T attribute) where T : Attribute
         {
