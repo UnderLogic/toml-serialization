@@ -6,7 +6,7 @@ This library supports serializing and deserializing `bool` value fields.
 
 ## Serialization
 
-Boolean values are serialized as either `true` or `false` in TOML.
+Boolean values are serialized as either `true` or `false` as a [TOML boolean](https://toml.io/en/v1.0.0#boolean).
 These are always lowercase.
 
 ## Deserialization

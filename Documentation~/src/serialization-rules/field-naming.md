@@ -2,7 +2,7 @@
 
 ## Overview
 
-This library uses reflection to determine the name of each field to serialize and deserialize within an object.
+This library uses reflection to determine the name of each field when serializing an object into TOML.
 
 By default, the name of each field is used as the key in the TOML document.
 This can be overridden by using the [`TomlKeyAttribute`](attributes/toml-key-attribute.md) or [`TomlCasingAttribute`](attributes/toml-casing-attribute.md).

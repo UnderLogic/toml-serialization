@@ -25,9 +25,14 @@
 # Type Serialization
 
 - [Boolean](type-serialization/boolean.md)
+- [Character](type-serialization/character.md)
+- [String](type-serialization/string.md)
+- [Enum](type-serialization/enum.md)
+- [Integer](type-serialization/integer.md)
+- [Floating Point](type-serialization/floating-point.md)
+- [DateTime](type-serialization/datetime.md)
 
 # Library Reference
-
 
 - [Serialization](serialization.md)
   - [TomlSerializer](serialization/toml-serializer.md)
