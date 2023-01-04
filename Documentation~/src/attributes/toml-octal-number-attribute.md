@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `TomlOctalNumberAttribute` can be applied to any integer type `field` to serialize them as octal numbers.
+The `TomlOctalNumberAttribute` can be applied to any integer type `field` to serialize it as octal numbers.
 
 **NOTE:** This attribute has no effect on deserialization, as the number format is inferred from the TOML document.
 

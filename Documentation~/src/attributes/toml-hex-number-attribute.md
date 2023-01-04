@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `TomlHexNumberAttribute` can be applied to any integer type `field` to serialize them as hexadecimal numbers.
+The `TomlHexNumberAttribute` can be applied to any integer type `field` to serialize it as hexadecimal numbers.
 
 **NOTE:** This attribute has no effect on deserialization, as the number format is inferred from the TOML document.
 
