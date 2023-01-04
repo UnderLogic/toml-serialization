@@ -80,4 +80,4 @@ minLevel = 1
 isRepeatable = true
 ```
 
-Notice that the key of the `_questId` field is serialized using `snake_case` while the other fields are serialized using the default `camelCase`.
+Notice that the key of the `_questId` field is serialized using `snake_case` while the other fields are serialized using the default casing.

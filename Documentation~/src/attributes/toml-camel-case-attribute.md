@@ -5,8 +5,6 @@
 The `TomlCamelCaseAttribute` can be applied to any `class`, `struct`, or `field`.
 It will cause the serializer to use `camelCase` when serializing the value or values to TOML.
 
-This is the default string casing so applying this attribute has no effect unless you have changed the default string casing for a `class` or `struct`.
-
 ## Effect
 
 - When applied to a `class` or `struct`, it will cause the serializer to use `camelCase` when writing each field of the class or struct to TOML.
