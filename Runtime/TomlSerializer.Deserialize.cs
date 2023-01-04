@@ -137,9 +137,9 @@ namespace UnderLogic.Serialization.Toml
         }
 
         private static bool TryConvertFromTomlValue(TomlValue tomlValue, Type type, out object result)
-            => TryConvertFromTomlValue(tomlValue, type, ConvertFlags.None, out result);
+            => TryConvertFromTomlValue(tomlValue, type, ConvertOptions.Default, out result);
 
-        private static bool TryConvertFromTomlValue(TomlValue tomlValue, Type type, ConvertFlags flags,
+        private static bool TryConvertFromTomlValue(TomlValue tomlValue, Type type, ConvertOptions options,
             out object result)
         {
             result = null;
@@ -183,7 +183,7 @@ namespace UnderLogic.Serialization.Toml
             }
             else if (tomlValue is TomlTableArray tomlTableArray)
             {
-                if (type.IsArray || flags.HasFlag(ConvertFlags.ForceArray))
+                if (type.IsArray || options.ForceArray)
                 {
                     var elementType = type.IsArray ? type.GetElementType() : typeof(object);
                     if (!TryConvertToObjectArray(tomlTableArray, elementType, out var arrayResult))
@@ -193,7 +193,7 @@ namespace UnderLogic.Serialization.Toml
                     return true;
                 }
 
-                if (IsGenericList(type) || flags.HasFlag(ConvertFlags.ForceList))
+                if (IsGenericList(type) || options.ForceList)
                 {
                     var elementType = IsGenericList(type) ? type.GetGenericArguments()[0] : typeof(object);
                     if (!TryConvertToObjectList(tomlTableArray, elementType, out var listResult))
@@ -205,7 +205,7 @@ namespace UnderLogic.Serialization.Toml
             }
             else if (tomlValue is TomlArray tomlArray)
             {
-                if (type.IsArray || flags.HasFlag(ConvertFlags.ForceArray))
+                if (type.IsArray || options.ForceArray)
                 {
                     var elementType = type.IsArray ? type.GetElementType() : typeof(object);
                     if (!TryConvertToArray(tomlArray, elementType, out var arrayResult))
@@ -215,7 +215,7 @@ namespace UnderLogic.Serialization.Toml
                     return true;
                 }
 
-                if (IsGenericList(type) || flags.HasFlag(ConvertFlags.ForceList))
+                if (IsGenericList(type) || options.ForceList)
                 {
                     var elementType = IsGenericList(type) ? type.GetGenericArguments()[0] : typeof(object);
                     if (!TryConvertToList(tomlArray, elementType, out var listResult))
@@ -315,13 +315,15 @@ namespace UnderLogic.Serialization.Toml
         private static bool TryConvertToList(TomlArray tomlArray, Type elementType, out IList listResult)
         {
             listResult = null;
-
+            
+            var options = new ConvertOptions { ForceList = true };
+            
             var constructedListType = ListType.MakeGenericType(elementType);
             var list = (IList)Activator.CreateInstance(constructedListType);
 
             foreach (var tomlValue in tomlArray)
             {
-                if (TryConvertFromTomlValue(tomlValue, elementType, ConvertFlags.ForceList, out var convertedValue))
+                if (TryConvertFromTomlValue(tomlValue, elementType, options, out var convertedValue))
                     list.Add(convertedValue);
                 else
                     return false;
@@ -359,12 +361,14 @@ namespace UnderLogic.Serialization.Toml
         {
             arrayResult = null;
 
+            var options = new ConvertOptions { ForceArray = true };
+            
             var array = Array.CreateInstance(elementType, tomlArray.Count);
 
             for (var index = 0; index < tomlArray.Count; index++)
             {
                 var tomlValue = tomlArray[index];
-                if (TryConvertFromTomlValue(tomlValue, elementType, ConvertFlags.ForceArray, out var convertedValue))
+                if (TryConvertFromTomlValue(tomlValue, elementType, options, out var convertedValue))
                     array.SetValue(convertedValue, index);
                 else
                     return false;

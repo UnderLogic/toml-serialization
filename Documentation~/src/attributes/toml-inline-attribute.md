@@ -45,7 +45,7 @@ Would serialize into...
 ```toml
 name = "Gather 10 Wood"
 description = "Gather 10 pieces of wood."
-min_level = 1
+minLevel = 1
 repeatable = true
 waypoints = { "start" = { x = 0, y = 0 }, "end" = { x = 10, y = 10 } }
 ```

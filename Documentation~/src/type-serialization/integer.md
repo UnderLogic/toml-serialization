@@ -25,14 +25,21 @@ By default, integer values are serialized in the decimal (base 10) format.
 
 ## Serialization
 
-Integer values are serialized as a [TOML integer](https://toml.io/en/v1.0.0#integer).
+Integer values are serialized as a [TOML integer](https://toml.io/en/v1.0.0#integer), in decimal (base 16) by default.
 
-The number format can be changed by specifying the [`TomlNumberFormatAttribute`](../attributes/number-format.md) on the field.
+The number format can be changed by specifying one of the following attributes:
+
+- [`TomlHexNumberAttribute`](../attributes/toml-hex-number-attribute.md) (base 16)
+- [`TomlOctalNumberAttribute`](../attributes/toml-octal-number-attribute.md) (base 8)
+- [`TomlBinaryNumberAttribute`](../attributes/toml-binary-number-attribute.md) (base 2)
 
 ## Deserialization
 
 Integer values are deserialized from TOML as a [TOML integer](https://toml.io/en/v1.0.0#integer).
-Any number format is supported.
+
+Underscores (`_`) can be used as digit separators for clarity.
+
+Any valid number format is supported, including: decimal, hexadecimal, octal, and binary. These are specified with `0x`, `0o`, and `0b` prefixes.
 
 ## Example
 

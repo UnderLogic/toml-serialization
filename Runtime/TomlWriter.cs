@@ -10,7 +10,6 @@ namespace UnderLogic.Serialization.Toml
     internal class TomlWriter : IDisposable
     {
         private const string TomlIndent = "    ";
-        private const string DateFormat = "yyyy-MM-dd HH:mm:ss.fffZ";
 
         private readonly TextWriter _writer;
         private bool _isDisposed;
@@ -33,131 +32,15 @@ namespace UnderLogic.Serialization.Toml
             Dispose(false);
             GC.SuppressFinalize(this);
         }
-
-        public void WriteNullValue()
-        {
-            CheckIfDisposed();
-            _writer.Write("null");
-        }
-
-        public void WriteCharValue(char value)
-        {
-            CheckIfDisposed();
-            _writer.Write($"\"{value}\"");
-        }
-
-        public void WriteStringValue(string value, bool isMultiline = false)
+        
+        public void WriteDocument(TomlTable rootTable)
         {
             CheckIfDisposed();
 
-            if (value == null)
-            {
-                WriteNullValue();
-                return;
-            }
+            if (rootTable == null)
+                throw new ArgumentNullException(nameof(rootTable));
 
-            // Escape all backslashes and double quotes
-            value = value.EscapeChar('\\').EscapeChar('"');
-
-            if (!isMultiline)
-            {
-                // Escape all whitespace characters for single-line strings
-                value = value.EscapeWhitespace();
-                _writer.Write($"\"{value}\"");
-            }
-            else
-            {
-                _writer.Write($"\"\"\"\n{value}\"\"\"");
-            }
-        }
-
-        public void WriteLiteralStringValue(string value, bool isMultiline = false)
-        {
-            CheckIfDisposed();
-
-            if (value == null)
-            {
-                WriteNullValue();
-                return;
-            }
-
-            if (!isMultiline)
-            {
-                // Literal strings with a single quote must be escaped with triple quotes
-                var quotes = value.Contains("'") ? "'''" : "'";
-                _writer.Write($"{quotes}{value}{quotes}");
-            }
-            else
-            {
-                _writer.Write($"'''\n{value}'''");
-            }
-        }
-
-        public void WriteEnumValue<T>(T value) where T : Enum
-        {
-            CheckIfDisposed();
-            _writer.Write($"\"{value:F}\"");
-        }
-
-        public void WriteBooleanValue(bool value)
-        {
-            CheckIfDisposed();
-            _writer.Write($"{value.ToString().ToLowerInvariant()}");
-        }
-
-        public void WriteIntegerValue(long value, NumberFormat numberFormat = NumberFormat.Decimal)
-        {
-            CheckIfDisposed();
-
-            if (numberFormat == NumberFormat.HexLowerCase)
-                _writer.Write(value.ToHexLowerCaseString());
-            else if (numberFormat == NumberFormat.HexUpperCase)
-                _writer.Write(value.ToHexUpperCaseString());
-            else if (numberFormat == NumberFormat.Octal)
-                _writer.Write(value.ToOctalString());
-            else if (numberFormat == NumberFormat.Binary)
-                _writer.Write(value.ToBinaryString());
-            else
-                _writer.Write(value.ToString());
-        }
-
-        public void WriteFloatValue(double value)
-        {
-            CheckIfDisposed();
-
-            if (double.IsPositiveInfinity(value))
-                _writer.Write("+inf");
-            else if (double.IsNegativeInfinity(value))
-                _writer.Write("-inf");
-            else if (double.IsNaN(value))
-                _writer.Write("nan");
-            else
-                _writer.Write(value.ToString(CultureInfo.InvariantCulture));
-        }
-
-        public void WriteDateTime(DateTime value, string format = DateFormat)
-        {
-            CheckIfDisposed();
-            _writer.Write(value.ToString(format));
-        }
-
-        public void WriteKeyValue(TomlKeyValuePair keyValuePair) => WriteKeyValue(keyValuePair.Key, keyValuePair.Value);
-
-        public void WriteKeyValue(string key, TomlValue value)
-        {
-            ValidateKey(key);
-            CheckIfDisposed();
-
-            WriteKey(key);
-            WriteValue(value);
-        }
-
-        public void WriteKey(string key)
-        {
-            ValidateKey(key);
-            CheckIfDisposed();
-
-            _writer.Write($"{key} = ");
+            WriteTableExpanded(string.Empty, rootTable);
         }
 
         public void WriteValue(TomlValue value)
@@ -180,7 +63,7 @@ namespace UnderLogic.Serialization.Toml
             else if (value is TomlFloat floatValue)
                 WriteFloatValue(floatValue.Value);
             else if (value is TomlDateTime dateTimeValue)
-                WriteDateTime(dateTimeValue.Value);
+                WriteDateTime(dateTimeValue.Value, dateTimeValue.DateTimeFormat);
             else if (value is TomlArray arrayValue)
             {
                 if (arrayValue.IsMultiline)
@@ -395,15 +278,131 @@ namespace UnderLogic.Serialization.Toml
 
             _writer.WriteLine($"[[{key}]]");
         }
+        
+        public void WriteKeyValue(TomlKeyValuePair keyValuePair) => WriteKeyValue(keyValuePair.Key, keyValuePair.Value);
 
-        public void WriteDocument(TomlTable rootTable)
+        public void WriteKeyValue(string key, TomlValue value)
+        {
+            ValidateKey(key);
+            CheckIfDisposed();
+
+            WriteKey(key);
+            WriteValue(value);
+        }
+
+        public void WriteKey(string key)
+        {
+            ValidateKey(key);
+            CheckIfDisposed();
+
+            _writer.Write($"{key} = ");
+        }
+        
+        public void WriteNullValue()
+        {
+            CheckIfDisposed();
+            _writer.Write("null");
+        }
+
+        public void WriteCharValue(char value)
+        {
+            CheckIfDisposed();
+            _writer.Write($"\"{value}\"");
+        }
+
+        public void WriteStringValue(string value, bool isMultiline = false)
         {
             CheckIfDisposed();
 
-            if (rootTable == null)
-                throw new ArgumentNullException(nameof(rootTable));
+            if (value == null)
+            {
+                WriteNullValue();
+                return;
+            }
 
-            WriteTableExpanded(string.Empty, rootTable);
+            // Escape all backslashes and double quotes
+            value = value.EscapeChar('\\').EscapeChar('"');
+
+            if (!isMultiline)
+            {
+                // Escape all whitespace characters for single-line strings
+                value = value.EscapeWhitespace();
+                _writer.Write($"\"{value}\"");
+            }
+            else
+            {
+                _writer.Write($"\"\"\"\n{value}\"\"\"");
+            }
+        }
+
+        public void WriteLiteralStringValue(string value, bool isMultiline = false)
+        {
+            CheckIfDisposed();
+
+            if (value == null)
+            {
+                WriteNullValue();
+                return;
+            }
+
+            if (!isMultiline)
+            {
+                // Literal strings with a single quote must be escaped with triple quotes
+                var quotes = value.Contains("'") ? "'''" : "'";
+                _writer.Write($"{quotes}{value}{quotes}");
+            }
+            else
+            {
+                _writer.Write($"'''\n{value}'''");
+            }
+        }
+
+        public void WriteEnumValue<T>(T value) where T : Enum
+        {
+            CheckIfDisposed();
+            _writer.Write($"\"{value:F}\"");
+        }
+
+        public void WriteBooleanValue(bool value)
+        {
+            CheckIfDisposed();
+            _writer.Write($"{value.ToString().ToLowerInvariant()}");
+        }
+
+        public void WriteIntegerValue(long value, NumberFormat numberFormat = NumberFormat.Decimal)
+        {
+            CheckIfDisposed();
+
+            if (numberFormat == NumberFormat.HexLowerCase)
+                _writer.Write(value.ToHexLowerCaseString());
+            else if (numberFormat == NumberFormat.HexUpperCase)
+                _writer.Write(value.ToHexUpperCaseString());
+            else if (numberFormat == NumberFormat.Octal)
+                _writer.Write(value.ToOctalString());
+            else if (numberFormat == NumberFormat.Binary)
+                _writer.Write(value.ToBinaryString());
+            else
+                _writer.Write(value.ToString());
+        }
+
+        public void WriteFloatValue(double value)
+        {
+            CheckIfDisposed();
+
+            if (double.IsPositiveInfinity(value))
+                _writer.Write("+inf");
+            else if (double.IsNegativeInfinity(value))
+                _writer.Write("-inf");
+            else if (double.IsNaN(value))
+                _writer.Write("nan");
+            else
+                _writer.Write(value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        public void WriteDateTime(DateTime value, string format)
+        {
+            CheckIfDisposed();
+            _writer.Write(value.ToString(format));
         }
 
         public void WriteLine()

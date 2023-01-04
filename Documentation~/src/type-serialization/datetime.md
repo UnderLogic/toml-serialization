@@ -8,9 +8,11 @@ This library supports serializing and deserializing `DateTime` value fields.
 
 DateTime values are serialized as a [TOML date-time](https://toml.io/en/v1.0.0#local-date-time).
 
-They are serialized in ISO 8601 format, with the following format: `yyyy-MM-dd HH:mm:ss.FFFZ`.
+They are serialized in ISO 8601 format, with the following format: `yyyy-MM-dd HH:mm:ss.FFFZ` by default.
 
 The `Z` at the end indicates that the time is in UTC, and the `T` separator is omitted for clarity.
+
+The format can be changed by specifying the [`TomlDateTimeFormatAttribute`](../attributes/toml-datetime-format-attribute.md).
 
 ## Deserialization
 

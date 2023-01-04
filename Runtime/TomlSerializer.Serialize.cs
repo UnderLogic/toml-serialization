@@ -52,10 +52,12 @@ namespace UnderLogic.Serialization.Toml
             using (var tomlWriter = new TomlWriter(writer))
                 tomlWriter.WriteDocument(rootTable);
         }
-
         #endregion
 
-        private static void SerializeObject(TomlTable table, object obj, ConvertFlags flags = ConvertFlags.None)
+        private static void SerializeObject(TomlTable table, object obj) =>
+            SerializeObject(table, obj, ConvertOptions.Default);
+        
+        private static void SerializeObject(TomlTable table, object obj, ConvertOptions options)
         {
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
@@ -80,7 +82,7 @@ namespace UnderLogic.Serialization.Toml
                 var fieldKey = field.Name.Trim('_');
                 var fieldType = field.FieldType;
                 var fieldValue = field.GetValue(obj);
-                var fieldConvertFlags = flags;
+                var fieldConvertOptions = options;
 
                 // Allow the key to be renamed via the TomlKeyAttribute
                 if (TryGetAttribute<TomlKeyAttribute>(field, out var keyAttribute))
@@ -98,36 +100,36 @@ namespace UnderLogic.Serialization.Toml
 
                 // Allow literal string format
                 if (TryGetAttribute<TomlLiteralAttribute>(field, out _))
-                    fieldConvertFlags |= ConvertFlags.Literal;
+                    fieldConvertOptions.IsLiteral = true;
 
                 // Allow multiline string format
                 if (TryGetAttribute<TomlMultilineAttribute>(field, out _))
-                    fieldConvertFlags |= ConvertFlags.Multiline;
+                    fieldConvertOptions.IsMultiline = true;
 
                 // Allow forced inlining of tables
                 if (TryGetAttribute<TomlInlineAttribute>(field, out _))
-                    fieldConvertFlags |= ConvertFlags.ForceInline;
-
+                    fieldConvertOptions.ForceInline = true;
                 // Allow forced expansion of tables
-                if (TryGetAttribute<TomlExpandAttribute>(field, out _))
-                    fieldConvertFlags |= ConvertFlags.ForceExpand;
+                else if (TryGetAttribute<TomlExpandAttribute>(field, out _))
+                    fieldConvertOptions.ForceExpand = true;
                 
                 // Allow number formats
-                if (TryGetAttribute<TomlNumberFormatAttribute>(field, out var numberFormatAttribute))
+                if (TryGetAttribute<TomlHexNumberAttribute>(field, out var hexNumberAttribute))
                 {
-                    var numberFormat = numberFormatAttribute.NumberFormat;
-
-                    if (numberFormat == NumberFormat.HexLowerCase)
-                        fieldConvertFlags |= ConvertFlags.HexNumberLowerCase;
-                    else if (numberFormat == NumberFormat.HexUpperCase)
-                        fieldConvertFlags |= ConvertFlags.HexNumberUpperCase;
-                    else if (numberFormat == NumberFormat.Octal)
-                        fieldConvertFlags |= ConvertFlags.OctalNumber;
-                    else if (numberFormat == NumberFormat.Binary)
-                        fieldConvertFlags |= ConvertFlags.BinaryNumber;
+                    fieldConvertOptions.NumberFormat = hexNumberAttribute.IsUpperCase
+                        ? NumberFormat.HexUpperCase
+                        : NumberFormat.HexLowerCase;
                 }
+                else if (TryGetAttribute<TomlOctalNumberAttribute>(field, out _))
+                    fieldConvertOptions.NumberFormat = NumberFormat.Octal;
+                else if (TryGetAttribute<TomlBinaryNumberAttribute>(field, out _))
+                    fieldConvertOptions.NumberFormat = NumberFormat.Binary;
 
-                var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldConvertFlags);
+                // Allow date-time formats
+                if (TryGetAttribute<TomlDateTimeFormatAttribute>(field, out var dateTimeFormatAttribute))
+                    fieldConvertOptions.DateTimeFormat = dateTimeFormatAttribute.DateTimeFormat;
+                    
+                var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldConvertOptions);
 
                 if (tomlValue == null)
                     throw new InvalidOperationException($"Type {type.Name} is not serializable");
@@ -136,41 +138,34 @@ namespace UnderLogic.Serialization.Toml
             }
         }
 
-        private static TomlValue ConvertToTomlValue(object obj, Type type, ConvertFlags flags = ConvertFlags.None)
+        private static TomlValue ConvertToTomlValue(object obj, Type type, ConvertOptions options)
         {
             if (obj == null)
                 return TomlNull.Value;
 
-            var numberFormat = NumberFormat.Decimal;
-            if (flags.HasFlag(ConvertFlags.HexNumberLowerCase))
-                numberFormat = NumberFormat.HexLowerCase;
-            else if (flags.HasFlag(ConvertFlags.HexNumberUpperCase))
-                numberFormat = NumberFormat.HexUpperCase;
-            else if (flags.HasFlag(ConvertFlags.OctalNumber))
-                numberFormat = NumberFormat.Octal;
-            else if (flags.HasFlag(ConvertFlags.BinaryNumber))
-                numberFormat = NumberFormat.Binary;
-                
+            var numberFormat = options.NumberFormat;
+
             if (obj is IDictionary dictionary)
             {
-                var extraFlags = !IsObjectDictionary(type) && !flags.HasFlag(ConvertFlags.ForceExpand)
-                    ? ConvertFlags.ForceInline
-                    : ConvertFlags.None;
+                var dictionaryConvertOptions = options;
                 
-                var tomlTable = ConvertToTomlTable(dictionary, flags | extraFlags);
+                if (!IsObjectDictionary(type) && !options.ForceExpand)
+                    dictionaryConvertOptions.ForceInline = true;
+                
+                var tomlTable = ConvertToTomlTable(dictionary, dictionaryConvertOptions);
 
                 if (tomlTable != null)
                     return tomlTable;
             }
             else if (obj is IList list)
             {
-                var tomlArray = ConvertToTomlArray(list, flags);
+                var tomlArray = ConvertToTomlArray(list, options);
                 if (tomlArray != null)
                     return tomlArray;
             }
             else if (IsComplexType(type))
             {
-                var tomlTable = ConvertObjectToTomlTable(obj, flags);
+                var tomlTable = ConvertObjectToTomlTable(obj, options);
 
                 if (tomlTable != null)
                     return tomlTable;
@@ -184,8 +179,8 @@ namespace UnderLogic.Serialization.Toml
             {
                 return new TomlString(stringValue)
                 {
-                    IsLiteral = flags.HasFlag(ConvertFlags.Literal),
-                    IsMultiline = flags.HasFlag(ConvertFlags.Multiline)
+                    IsLiteral = options.IsLiteral,
+                    IsMultiline = options.IsMultiline
                 };
             }
             if (type.IsEnum && obj is Enum enumValue)
@@ -209,12 +204,12 @@ namespace UnderLogic.Serialization.Toml
             if (type == typeof(double) && obj is double doubleValue)
                 return new TomlFloat(doubleValue);
             if (type == typeof(DateTime) && obj is DateTime dateTimeValue)
-                return new TomlDateTime(dateTimeValue);
+                return new TomlDateTime(dateTimeValue) { DateTimeFormat = options.DateTimeFormat };
 
             return null;
         }
 
-        private static TomlValue ConvertToTomlArray(IEnumerable values, ConvertFlags flags = ConvertFlags.None)
+        private static TomlValue ConvertToTomlArray(IEnumerable values, ConvertOptions options)
         {
             IList<object> collection;
 
@@ -240,17 +235,18 @@ namespace UnderLogic.Serialization.Toml
             }
 
             // Do not propagate the multiline flag to the array elements
-            var elementFlags = flags & ~ConvertFlags.Multiline;
+            var elementConvertOptions = options;
+            elementConvertOptions.IsMultiline = false;
             
             var tomlValues = collection.Select(value =>
-                ConvertToTomlValue(value, value?.GetType(), elementFlags));
+                ConvertToTomlValue(value, value?.GetType(), elementConvertOptions));
 
-            return new TomlArray(tomlValues) { IsMultiline = flags.HasFlag(ConvertFlags.Multiline) };
+            return new TomlArray(tomlValues) { IsMultiline = options.IsMultiline };
         }
 
-        private static TomlTable ConvertToTomlTable(IDictionary dictionary, ConvertFlags flags = ConvertFlags.None)
+        private static TomlTable ConvertToTomlTable(IDictionary dictionary, ConvertOptions options)
         {
-            var tomlTable = new TomlTable { IsInline = flags.HasFlag(ConvertFlags.ForceInline) };
+            var tomlTable = new TomlTable { IsInline = options.ForceInline };
 
             foreach (var innerKey in dictionary.Keys)
             {
@@ -258,7 +254,7 @@ namespace UnderLogic.Serialization.Toml
                 var value = dictionary[innerKey];
                 var valueType = value?.GetType();
 
-                var tomlValue = ConvertToTomlValue(value, value?.GetType(), flags);
+                var tomlValue = ConvertToTomlValue(value, value?.GetType(), options);
 
                 if (tomlValue == null)
                     throw new InvalidOperationException($"Type {valueType?.Name} is not serializable");
@@ -269,10 +265,10 @@ namespace UnderLogic.Serialization.Toml
             return tomlTable;
         }
 
-        private static TomlTable ConvertObjectToTomlTable(object obj, ConvertFlags flags = ConvertFlags.None)
+        private static TomlTable ConvertObjectToTomlTable(object obj, ConvertOptions options)
         {
             var tomlTable = new TomlTable();
-            SerializeObject(tomlTable, obj, flags);
+            SerializeObject(tomlTable, obj, options);
 
             return tomlTable;
         }
