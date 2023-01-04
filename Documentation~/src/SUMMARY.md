@@ -51,4 +51,6 @@
   - [TomlKeyAttribute](attributes/toml-key-attribute.md)
   - [TomlLiteralAttribute](attributes/toml-literal-attribute.md)
   - [TomlMultilineAttribute](attributes/toml-multiline-attribute.md)
-  - [TomlNumberFormatAttribute](attributes/toml-number-format-attribute.md)
+  - [TomlHexNumberAttribute](attributes/toml-hex-number-attribute.md)
+  - [TomlOctalNumberAttribute](attributes/toml-octal-number-attribute.md)
+  - [TomlBinaryNumberAttribute](attributes/toml-binary-number-attribute.md)

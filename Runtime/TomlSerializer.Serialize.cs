@@ -113,20 +113,17 @@ namespace UnderLogic.Serialization.Toml
                     fieldConvertFlags |= ConvertFlags.ForceExpand;
                 
                 // Allow number formats
-                if (TryGetAttribute<TomlNumberFormatAttribute>(field, out var numberFormatAttribute))
-                {
-                    var numberFormat = numberFormatAttribute.NumberFormat;
-
-                    if (numberFormat == NumberFormat.HexLowerCase)
-                        fieldConvertFlags |= ConvertFlags.HexNumberLowerCase;
-                    else if (numberFormat == NumberFormat.HexUpperCase)
-                        fieldConvertFlags |= ConvertFlags.HexNumberUpperCase;
-                    else if (numberFormat == NumberFormat.Octal)
-                        fieldConvertFlags |= ConvertFlags.OctalNumber;
-                    else if (numberFormat == NumberFormat.Binary)
-                        fieldConvertFlags |= ConvertFlags.BinaryNumber;
-                }
-
+                if (TryGetAttribute<TomlHexNumberAttribute>(field, out var hexNumberAttribute))
+                    fieldConvertFlags |= hexNumberAttribute.IsUpperCase
+                        ? ConvertFlags.HexNumberUpperCase
+                        : ConvertFlags.HexNumberLowerCase;
+                
+                if (TryGetAttribute<TomlOctalNumberAttribute>(field, out _))
+                    fieldConvertFlags |= ConvertFlags.OctalNumber;
+                
+                if (TryGetAttribute<TomlBinaryNumberAttribute>(field, out _))
+                    fieldConvertFlags |= ConvertFlags.BinaryNumber;
+                    
                 var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldConvertFlags);
 
                 if (tomlValue == null)

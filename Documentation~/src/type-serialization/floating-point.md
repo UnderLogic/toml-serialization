@@ -22,9 +22,9 @@ Floating point values are serialized as a [TOML float](https://toml.io/en/v1.0.0
 
 Floating point values are deserialized from TOML as a [TOML float](https://toml.io/en/v1.0.0#float).
 
-Scientific notation is supported using the `e` character.
+Underscores (`_`) can be used as digit separators for clarity.
 
-Any of the special values are supported.
+Scientific notation is supported using the `e` character. Any of the special values are supported.
 
 ## Example
 

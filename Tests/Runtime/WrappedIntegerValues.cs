@@ -5,19 +5,18 @@ namespace UnderLogic.Serialization.Toml.Tests
     [Serializable]
     internal sealed class WrappedIntegerValues
     {
-        [TomlNumberFormat(NumberFormat.Decimal)]
         private long _decimalValue;
         
-        [TomlNumberFormat(NumberFormat.HexLowerCase)]
+        [TomlHexNumber]
         private long _hexLowerCaseValue;
         
-        [TomlNumberFormat(NumberFormat.HexUpperCase)]
+        [TomlHexNumber(true)]
         private long _hexUpperCaseValue;
         
-        [TomlNumberFormat(NumberFormat.Octal)]
+        [TomlOctalNumber]
         private long _octalValue;
         
-        [TomlNumberFormat(NumberFormat.Binary)]
+        [TomlBinaryNumber]
         private long _binaryValue;
 
         public long DecimalValue => _decimalValue;
