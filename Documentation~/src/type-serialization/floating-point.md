@@ -4,6 +4,8 @@
 
 This library supports serializing and deserializing `float` and `double` value fields.
 
+**NOTE:** The `decimal` type is not supported because TOML does not support it.
+
 ## Special Values
 
 The following special values are supported:

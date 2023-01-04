@@ -31,6 +31,12 @@
 - [Integer](type-serialization/integer.md)
 - [Floating Point](type-serialization/floating-point.md)
 - [DateTime](type-serialization/datetime.md)
+- [Array](type-serialization/array.md)
+- [List](type-serialization/list.md)
+- [Dictionary](type-serialization/dictionary.md)
+- [Complex Type](type-serialization/complex-type.md)
+- [ScriptableObject](type-serialization/scriptable-object.md)
+- [MonoBehaviour](type-serialization/mono-behaviour.md)
 
 # Library Reference
 
