@@ -2,12 +2,13 @@
 
 ## Overview
 
-The `TomlNumberFormatAttribute` can be used to specify the format of an integer number field when serializing to TOML.
+The `TomlNumberFormatAttribute` can be used to specify the format of an integer number `field` when serializing to TOML.
 
-## Limitations
+**NOTE:** This attribute has no effect on deserialization, as the number format is inferred from the TOML document.
 
-The `TomlNumberFormatAttribute` can only be applied to integer number fields.
-It has no effect on floating point number fields.
+## Effect
+
+- When applied to a `field`, it will override the format of the integer number when serializing to TOML.
 
 ## Number Formats
 
@@ -53,4 +54,4 @@ flags = 0x2c04
 permissions = 0o644
 ```
 
-Here you can see that the `_flags` and `_permissions` fields are serialized in their respective formats.
+Notice that the `flags` field is serialized as a hex number, and the `permissions` field is serialized as an octal number.

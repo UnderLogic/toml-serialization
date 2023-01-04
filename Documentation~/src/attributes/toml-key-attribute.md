@@ -8,13 +8,13 @@ It is also used when deserializing from TOML to map the TOML key to the field.
 
 **NOTE:** The key can only contain alphanumeric characters, underscores (`_`), and hyphens (`-`).
 
-## Limitations
+## Effect
 
-The `TomlKeyAttribute` attribute can only be applied to fields.
-This is because the attribute is used to customize the name of a field when serializing to TOML.
+When applied to a `field`, it will override the key of the field when serializing to TOML.
 
-The key should not collide with any other keys in the same table, otherwise an exception will be thrown.
-See [Limitations](../limitations.md) for more information.
+When deserializing from TOML, it will map the TOML key to the field.
+
+**NOTE:** Two fields cannot have the same key within the same object.
 
 ## Public Properties
 
@@ -51,5 +51,4 @@ quest_completed = true
 quest_completed_date = 2020-01-01T00:00:00Z
 ```
 
-You can see that the `_name`, `_description`, `_completed`, and `_completedDate` fields are serialized and will appear in the output TOML.
-They are serialized using the keys specified in the `TomlKeyAttribute` attribute.
+Notice that the class fields have all been renamed to their corresponding TOML keys, prefixed with `quest_`.

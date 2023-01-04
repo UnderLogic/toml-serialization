@@ -2,19 +2,15 @@
 
 ## Overview
 
-The `TomlMultilineAttribute` attribute can be used to serialize a field as multi-line.
-For strings, it acts as a hint to the serializer to write the field as a multi-line string.
-For arrays, it acts as a hint to the serializer to write the array as a multi-line array.
+The `TomlMultilineAttribute` attribute can be used to serialize a `field` as multi-line.
 
-It can be combined with the [`TomlLiteralAttribute`](toml-literal-attribute.md) attribute to serialize a field as a literal multi-line string.
+**NOTE:** This attribute has no effect on deserialization.
 
-This attribute has no effect on deserialization.
+## Effect
 
-## Limitations
-
-The `TomlMultilineAttribute` attribute can only be applied to fields.
-
-It has no effect when applied to fields that would not be serialized as a string or collection of strings (arrays, lists, dictionaries).
+- When applied to a `field` that would be serialized as a string, it will instead be serialized as a multi-line string using the triple double quote character (`"""`).
+- When applied to a `field` that would be serialized as a literal string, it will instead be serialized as a literal multi-line string using the triple single quote character (`'''`).
+- When applied to a `field` that would be serialized as an array or list, it will instead be serialized as a multi-line array with each element on a new line.
 
 ## Usage
 
@@ -51,8 +47,8 @@ I need you to gather 10 pieces of wood for me, "Old Choppy".
 I'll pay you 10 gold for your troubles.'''
 ```
 
-Here the `_questText` field has been serialized as a literal multi-line string, which means that the quotes around "Old Choppy" are not escaped.
-All whitespace is also preserved for the multi-line string.
+Notice that the `_questText` field has been serialized as a literal multi-line string, which means that the quotes around "Old Choppy" are not escaped.
+All whitespace will be preserved after the first newline after the triple quotes.
 
 ### Array Example
 
@@ -80,7 +76,6 @@ dialogueOptions = [
 ]
 ```
 
-Here the `_dialogueOptions` field has been serialized as a multi-line array, which means that the array is written on multiple lines.
-It will include the trailing comma on the last element, which is valid TOML.
+Notice that the `_dialogueOptions` field has been serialized as a multi-line array, with each element on a new line.
 
 Each item will be indent with 4 spaces, which is the default indentation for TOML.

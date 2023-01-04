@@ -1,14 +1,9 @@
 # Field Selection
 
-## Overview
+## Overview 
+This library uses reflection to determine which fields to serialize and deserialize within an object.
 
-By default, all public **and** non-public instance fields of an object are serialized.
+By default, all public **and** private instance fields are serialized and deserialized unless they are marked with the [`NonSerializedAttribute`](https://docs.microsoft.com/en-us/dotnet/api/system.nonserializedattribute?view=net-6.0).
 
-This does **not** include properties, only member fields.
-
-This is because properties are not guaranteed to be backed by a field, and the backing field may not be accessible.
-
-## Excluding Fields
-
-If you wish to exclude a field from being serialized, you can mark it with the `NonSerialized` attribute.
-It will not be serialized, and will not appear in the output TOML.
+Properties are **not** serialized or deserialized.
+This is because properties may not have a backing field, or may be read-only.

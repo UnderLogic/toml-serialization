@@ -275,10 +275,12 @@ namespace UnderLogic.Serialization.Toml
         {
             tomlValue = null;
 
-            if (text != "true" && text != "false")
+            var sanitizedText = text.Trim().ToLowerInvariant();
+
+            if (sanitizedText != "true" && sanitizedText != "false")
                 return false;
 
-            tomlValue = new TomlBoolean(text == "true");
+            tomlValue = new TomlBoolean(sanitizedText == "true");
             return true;
         }
 
