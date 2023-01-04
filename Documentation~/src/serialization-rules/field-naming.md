@@ -9,7 +9,7 @@ This can be overridden by using the [`TomlKeyAttribute`](../attributes/toml-key-
 
 Any leading underscores (`_`) are removed from the field name before it is used as the key in the TOML document, unless explicitly named.
 
-## String Casing
+## Name Casing
 
 By default, each field is named as-is using the same casing as the field name.
 
