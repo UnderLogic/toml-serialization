@@ -37,7 +37,7 @@ Would serialize into...
 ```toml
 name = "Gather 10 Wood"
 description = "Gather 10 pieces of wood."
-min_level = 1
+minLevel = 1
 repeatable = true
 quest_text = '''
 Hello adventurer!
@@ -68,7 +68,7 @@ Would serialize into...
 
 ```toml
 name = "Guardian"
-aggro_radius = 10.0
+aggroRadius = 10.0
 dialogueOptions = [
     "Hello adventurer!",
     "Are you interested in a quest?",

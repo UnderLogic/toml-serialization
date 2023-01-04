@@ -38,13 +38,13 @@ Would serialize into...
 ```toml
 name = "Gather 10 Wood"
 description = "Gather 10 pieces of wood."
-min_level = 1
+minLevel = 1
 repeatable = true
 
 [rewards]
 experience = 100
 gold = 50
-oak_stick = 1
+oakStick = 1
 apples = 5
 ```
 

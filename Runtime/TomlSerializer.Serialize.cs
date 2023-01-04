@@ -52,7 +52,6 @@ namespace UnderLogic.Serialization.Toml
             using (var tomlWriter = new TomlWriter(writer))
                 tomlWriter.WriteDocument(rootTable);
         }
-
         #endregion
 
         private static void SerializeObject(TomlTable table, object obj) =>
@@ -110,9 +109,8 @@ namespace UnderLogic.Serialization.Toml
                 // Allow forced inlining of tables
                 if (TryGetAttribute<TomlInlineAttribute>(field, out _))
                     fieldConvertOptions.ForceInline = true;
-
                 // Allow forced expansion of tables
-                if (TryGetAttribute<TomlExpandAttribute>(field, out _))
+                else if (TryGetAttribute<TomlExpandAttribute>(field, out _))
                     fieldConvertOptions.ForceExpand = true;
                 
                 // Allow number formats
@@ -126,6 +124,10 @@ namespace UnderLogic.Serialization.Toml
                     fieldConvertOptions.NumberFormat = NumberFormat.Octal;
                 else if (TryGetAttribute<TomlBinaryNumberAttribute>(field, out _))
                     fieldConvertOptions.NumberFormat = NumberFormat.Binary;
+
+                // Allow date-time formats
+                if (TryGetAttribute<TomlDateTimeFormatAttribute>(field, out var dateTimeFormatAttribute))
+                    fieldConvertOptions.DateTimeFormat = dateTimeFormatAttribute.DateTimeFormat;
                     
                 var tomlValue = ConvertToTomlValue(fieldValue, fieldType, fieldConvertOptions);
 
@@ -202,7 +204,7 @@ namespace UnderLogic.Serialization.Toml
             if (type == typeof(double) && obj is double doubleValue)
                 return new TomlFloat(doubleValue);
             if (type == typeof(DateTime) && obj is DateTime dateTimeValue)
-                return new TomlDateTime(dateTimeValue);
+                return new TomlDateTime(dateTimeValue) { DateTimeFormat = options.DateTimeFormat };
 
             return null;
         }

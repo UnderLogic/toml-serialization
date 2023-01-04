@@ -40,7 +40,7 @@ Would serialize into...
 ```toml
 name = "Gather 10 Wood"
 description = 'Gather 10 pieces of wood for "Old Choppy".'
-min_level = 1
+minLevel = 1
 repeatable = true
 ```
 
@@ -60,7 +60,7 @@ public class QuestLog
 Would serialize into...
 
 ```toml
-completed_quests = [ 'Gathering Wood', 'The "Lost" Ring', '''Where's My Cow?''' ]
+completedQuests = [ 'Gathering Wood', 'The "Lost" Ring', '''Where's My Cow?''' ]
 ```
 
 Here the `_completedQuests` field has been serialized as a literal array, which means that the quotes around "Lost" are not escaped.

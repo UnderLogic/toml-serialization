@@ -12,6 +12,8 @@ namespace UnderLogic.Serialization.Toml
         public bool IsMultiline { get; set; }
         public StringCasing Casing { get; set; }
         public NumberFormat NumberFormat { get; set; }
+        public string DateTimeFormat { get; set; }
+        public int Indent { get; set; }
 
         private static ConvertOptions MakeDefaults()
         {
@@ -20,7 +22,9 @@ namespace UnderLogic.Serialization.Toml
                 ForceArray = false,
                 ForceList = false,
                 Casing = StringCasing.Default,
-                NumberFormat = NumberFormat.Decimal
+                NumberFormat = NumberFormat.Decimal,
+                DateTimeFormat = "yyyy-MM-dd HH:mm:ss.fffZ",
+                Indent = 4
             };
         }
     }

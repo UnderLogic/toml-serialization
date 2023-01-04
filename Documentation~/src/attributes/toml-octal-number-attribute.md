@@ -32,7 +32,7 @@ Would serialize into...
 
 ```toml
 name = "file.txt"
-size_in_bytes = 1024
+sizeInBytes = 1024
 permissions = 0o644
 ```
 
