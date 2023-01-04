@@ -19,13 +19,9 @@ This library supports serializing and deserializing the following integer value 
 
 **NOTE:** 64-bit unsigned integers (`ulong`) is not supported because TOML does not support them.
 
-## Number Styles
-
-By default, integer values are serialized in the decimal (base 10) format.
-
 ## Serialization
 
-Integer values are serialized as a [TOML integer](https://toml.io/en/v1.0.0#integer), in decimal (base 16) by default.
+Integer values are serialized as a [TOML integer](https://toml.io/en/v1.0.0#integer), in decimal (base 10) by default.
 
 The number format can be changed by specifying one of the following attributes:
 
