@@ -95,7 +95,7 @@ currentHealth = 160
 maxHealth = 200
 gold = 1250
 statPoints = 12
-last-login-date = 2020-01-01T00:00:00Z
+last-login-date = 2020-01-01 00:00:00Z
 ```
 
 Notice that **only** the `_lastLoginDate` field is serialized using kebab case.
