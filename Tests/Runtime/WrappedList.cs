@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    [TomlCasing(StringCasing.Default)]
     internal sealed class WrappedList<T> : IList<T>
     {
         private List<T> _list;

@@ -19,23 +19,6 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [Test]
-        public void SerializeDeserialize_TomlCasingAttribute_ShouldSetEqual()
-        {
-            var serializedValues = new WrappedCasedValues<int>(42);
-            var tomlString = TomlSerializer.Serialize(serializedValues);
-
-            var deserializedValues = new WrappedCasedValues<int>();
-            TomlSerializer.DeserializeInto(tomlString, deserializedValues);
-
-            Assert.AreEqual(serializedValues.LowerValue, deserializedValues.LowerValue);
-            Assert.AreEqual(serializedValues.UpperValue, deserializedValues.UpperValue);
-            Assert.AreEqual(serializedValues.CamelValue, deserializedValues.CamelValue);
-            Assert.AreEqual(serializedValues.PascalValue, deserializedValues.PascalValue);
-            Assert.AreEqual(serializedValues.SnakeValue, deserializedValues.SnakeValue);
-            Assert.AreEqual(serializedValues.KebabValue, deserializedValues.KebabValue);
-        }
-
-        [Test]
         public void SerializeDeserialize_TomlInlineAttribute_ShouldSetEqual()
         {
             var serializedGuard = new Guardian

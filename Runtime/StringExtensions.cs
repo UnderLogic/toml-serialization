@@ -54,16 +54,14 @@ namespace UnderLogic.Serialization.Toml
 
             switch (casing)
             {
-                case StringCasing.LowerCase:
-                    return text.ToLowerInvariant();
-                case StringCasing.UpperCase:
-                    return text.ToUpperInvariant();
                 case StringCasing.CamelCase:
                     return text.ToCamelCase();
                 case StringCasing.PascalCase:
                     return text.ToPascalCase();
                 case StringCasing.SnakeCase:
                     return text.ToSnakeCase();
+                case StringCasing.UpperSnakeCase:
+                    return text.ToSnakeCase().ToUpperInvariant();
                 case StringCasing.KebabCase:
                     return text.ToKebabCase();
                 default:

@@ -3,7 +3,6 @@ using System;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    [TomlCasing(StringCasing.Default)]
     internal sealed class WrappedRenamedValue<T>
     {
         [TomlKey("renamedValue")]

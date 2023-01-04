@@ -3,39 +3,23 @@ using System;
 namespace UnderLogic.Serialization.Toml.Tests
 {
     [Serializable]
-    [TomlCasing(StringCasing.Default)]
     internal sealed class WrappedCasedValues<T>
     {
-        [TomlCasing(StringCasing.LowerCase)]
-        private T _lowerValue;
-        
-        [TomlCasing(StringCasing.UpperCase)]
-        private T _upperValue;
-        
-        [TomlCasing(StringCasing.CamelCase)]
+        [TomlCamelCase]
         private T _CamelValue;
         
-        [TomlCasing(StringCasing.PascalCase)]
+        [TomlPascalCase]
         private T _pascalValue;
         
-        [TomlCasing(StringCasing.SnakeCase)]
+        [TomlSnakeCase(false)]
         private T _snakeValue;
         
-        [TomlCasing(StringCasing.KebabCase)]
+        [TomlSnakeCase(true)]
+        private T _upperSnakeValue;
+        
+        [TomlKebabCase]
         private T _kebabValue;
-        
-        public T LowerValue
-        {
-            get => _lowerValue;
-            set => _lowerValue = value;
-        }
-        
-        public T UpperValue
-        {
-            get => _upperValue;
-            set => _upperValue = value;
-        }
-        
+
         public T CamelValue
         {
             get => _CamelValue;
@@ -54,6 +38,12 @@ namespace UnderLogic.Serialization.Toml.Tests
             set => _snakeValue = value;
         }
         
+        public T UpperSnakeValue
+        {
+            get => _upperSnakeValue;
+            set => _upperSnakeValue = value;
+        }
+        
         public T KebabValue
         {
             get => _kebabValue;
@@ -64,11 +54,10 @@ namespace UnderLogic.Serialization.Toml.Tests
 
         public WrappedCasedValues(T value)
         {
-            _lowerValue = value;
-            _upperValue = value;
             _CamelValue = value;
             _pascalValue = value;
             _snakeValue = value;
+            _upperSnakeValue = value;
             _kebabValue = value;
         }
     }
