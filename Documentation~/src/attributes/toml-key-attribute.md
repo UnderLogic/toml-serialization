@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `TomlKeyAttribute` attribute is used to customize the name of a field when serializing to TOML.
+The `TomlKeyAttribute` is used to customize the name of a field when serializing to TOML.
 
 It is also used when deserializing from TOML to map the TOML key to the field.
 

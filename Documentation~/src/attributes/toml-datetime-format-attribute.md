@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `TomlDateTimeFormatAttribute` attribute can be applied to any `DateTime` `field` to serialize them as a specific date-time format.
+The `TomlDateTimeFormatAttribute` can be applied to any `DateTime` `field` to serialize them as a specific date-time format.
 
 **NOTE:** This attribute has no effect on deserialization, as the date-time format is inferred from the TOML document.
 

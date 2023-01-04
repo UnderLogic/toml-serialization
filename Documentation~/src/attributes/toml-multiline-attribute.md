@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `TomlMultilineAttribute` attribute can be used to serialize a `field` as multi-line.
+The `TomlMultilineAttribute` can be used to serialize a `field` as multi-line.
 
 **NOTE:** This attribute has no effect on deserialization.
 

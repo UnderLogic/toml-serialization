@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `TomlLiteralAttribute` attribute can be used to serialize a `field` as a literal string.
+The `TomlLiteralAttribute` can be used to serialize a `field` as a literal string.
 It acts as a hint to the serializer to write the field as a literal string, which will not escape any values.
 
 It can be combined with the [`TomlMultilineAttribute`](toml-multiline-attribute.md) attribute to serialize a field as a literal multi-line string.
