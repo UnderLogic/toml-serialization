@@ -42,8 +42,9 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<string>.WithValues(
                 "This string has a \\ backslash character",
                 "This string has a \t tab character",
-                "This string has a \r newline character",
-                "This string has a \n newline character",
+                "This string has a \r carriage return character",
+                "This string has a \n line feed character",
+                "This string has a \f form feed character",
                 "This is a \"quoted\" string");
             
             var toml = TomlSerializer.Serialize(list);
@@ -52,8 +53,9 @@ namespace UnderLogic.Serialization.Toml.Tests
             {
                 "This string has a \\\\ backslash character",
                 "This string has a \\t tab character",
-                "This string has a \\r newline character",
-                "This string has a \\n newline character",
+                "This string has a \\r carriage return character",
+                "This string has a \\n line feed character",
+                "This string has a \\f form feed character",
                 "This is a \\\"quoted\\\" string"
             };
             

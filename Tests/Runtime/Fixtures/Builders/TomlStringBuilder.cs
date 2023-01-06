@@ -119,7 +119,61 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
 
         #endregion
 
+        #region Append Inline Table Methods
+
+        public TomlStringBuilder AppendEmptyInlineTable(string key) => AppendKey(key).Append("{}");
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, bool> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendBoolean(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, char> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendChar(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, string> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendString(value));
+
+        public TomlStringBuilder AppendInlineTable<T>(string key, IReadOnlyDictionary<string, T> collection)
+            where T : Enum
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendEnum(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, sbyte> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, short> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, int> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, long> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, byte> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, ushort> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, uint> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, float> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendFloat(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, double> collection)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendFloat(value));
+
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, DateTime> collection,
+            string dateFormat = IsoDateFormat)
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendDateTime(value, dateFormat));
+
+        #endregion
+
         public TomlStringBuilder AppendKey(string key) => Append($"{key} = ");
+
+        public TomlStringBuilder AppendTableHeader(string key) => AppendLine($"[{key}]");
+
+        public TomlStringBuilder AppendTableArrayHeader(string key) => AppendLine($"[[{key}]]");
 
         public TomlStringBuilder Append(string value)
         {
@@ -148,13 +202,38 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
             var counter = 0;
             foreach (var item in collection)
             {
-                appendItem(item);
+                appendItem?.Invoke(item);
 
                 if (counter++ < collection.Count - 1)
                     Append(", ");
             }
 
             Append(" ]");
+            return this;
+        }
+
+        private TomlStringBuilder AppendInlineTableInternal<T>(IReadOnlyDictionary<string, T> dictionary,
+            Action<T> appendItem)
+        {
+            if (dictionary == null)
+                return Append("null");
+
+            if (dictionary.Count < 1)
+                return Append("{}");
+
+            Append("{ ");
+
+            var counter = 0;
+            foreach (var kv in dictionary)
+            {
+                AppendKey(kv.Key);
+                appendItem?.Invoke(kv.Value);
+
+                if (counter++ < dictionary.Count - 1)
+                    Append(", ");
+            }
+
+            Append(" }");
             return this;
         }
     }

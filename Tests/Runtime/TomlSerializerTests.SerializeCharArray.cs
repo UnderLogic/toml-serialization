@@ -39,10 +39,10 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_CharArray_ShouldBeEscaped()
         {
-            var array = SerializableArray<char>.WithValues('\\', '\t', '\r', '\n', '\"');
+            var array = SerializableArray<char>.WithValues('\\', '\t', '\r', '\n', '\f', '\"');
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedValues = new[] { "\\\\", "\\t", "\\r", "\\n", "\\\"" };
+            var expectedValues = new[] { "\\\\", "\\t", "\\r", "\\n", "\\f", "\\\"" };
             var expectedToml = new TomlStringBuilder().AppendArray("array", expectedValues).AppendLine().ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
