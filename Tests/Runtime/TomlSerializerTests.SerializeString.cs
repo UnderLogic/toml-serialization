@@ -20,8 +20,8 @@ namespace UnderLogic.Serialization.Toml.Tests
 
         [TestCase("This string has a \\ backslash character", "This string has a \\\\ backslash character")]
         [TestCase("This string has a \t tab character", "This string has a \\t tab character")]
-        [TestCase("This string has a \r newline character", "This string has a \\r tab character")]
-        [TestCase("This string has a \n newline character", "This string has a \\n tab character")]
+        [TestCase("This string has a \r newline character", "This string has a \\r newline character")]
+        [TestCase("This string has a \n newline character", "This string has a \\n newline character")]
         [TestCase("This is a \"quoted\" string", "This is a \\\"quoted\\\" string")]
         public void Serialize_StringValue_ShouldEscapeString(string stringValue, string expectedValue)
         {
