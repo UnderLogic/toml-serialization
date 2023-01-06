@@ -20,7 +20,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<DayOfWeek>(enumValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", enumValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", enumValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -32,7 +32,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<FileAttributes>(flagsValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", flagsValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", flagsValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

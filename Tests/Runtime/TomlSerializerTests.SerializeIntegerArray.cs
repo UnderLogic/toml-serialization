@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<long>.Null();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -22,7 +22,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<long>.Empty();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -32,7 +32,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<sbyte>.WithValues(-42, 0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -42,7 +42,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<short>.WithValues(-42, 0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -52,7 +52,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<int>.WithValues(-42, 0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -62,7 +62,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<long>.WithValues(-42, 0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -72,7 +72,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<byte>.WithValues(0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -82,7 +82,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<ushort>.WithValues(0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -92,7 +92,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<uint>.WithValues(0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

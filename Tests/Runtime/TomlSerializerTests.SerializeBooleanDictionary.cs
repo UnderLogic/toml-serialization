@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var dictionary = SerializableDictionary<bool>.Null();
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("dictionary").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("dictionary").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -22,7 +22,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var dictionary = SerializableDictionary<bool>.Empty();
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyInlineTable("dictionary").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyInlineTable("dictionary").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -36,7 +36,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             };
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendInlineTable("dictionary", dictionary).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendInlineTable("dictionary", dictionary).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

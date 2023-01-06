@@ -30,6 +30,8 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
             foreach(var value in _array)
                 yield return value;
         }
+        
+        public override string ToString() => $"Count = {Count}";
 
         public static SerializableArray<T> Null() => new SerializableArray<T> { _array = null };
 

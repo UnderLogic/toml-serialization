@@ -38,6 +38,8 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
         public IEnumerator<KeyValuePair<string, TValue>> GetEnumerator() => _dictionary.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        
+        public override string ToString() => $"Count = {Count}";
 
         public static SerializableDictionary<TValue> Null() =>
             new SerializableDictionary<TValue>() { _dictionary = null };

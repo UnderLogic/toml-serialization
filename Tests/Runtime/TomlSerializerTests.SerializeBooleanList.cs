@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<bool>.Null();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("list").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("list").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -22,7 +22,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<bool>.Empty();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -32,7 +32,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<bool>.WithValues(true, false, true);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

@@ -13,7 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<DateTime>.Null();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -23,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<DateTime>.Empty();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -36,7 +36,7 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

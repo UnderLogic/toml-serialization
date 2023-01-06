@@ -29,6 +29,8 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
 
         public IEnumerator<T> GetEnumerator() => _list.GetEnumerator();
 
+        public override string ToString() => $"Count = {Count}";
+
         public static SerializableList<T> Null() => new SerializableList<T> { _list = null };
 
         public static SerializableList<T> Empty() => new SerializableList<T>();

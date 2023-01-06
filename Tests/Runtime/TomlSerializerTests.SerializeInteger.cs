@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<sbyte>(integerValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -26,7 +26,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<short>(integerValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -38,7 +38,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<int>(integerValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -50,7 +50,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<long>(integerValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -61,7 +61,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<byte>(integerValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -72,7 +72,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<ushort>(integerValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -83,7 +83,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<uint>(integerValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", integerValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

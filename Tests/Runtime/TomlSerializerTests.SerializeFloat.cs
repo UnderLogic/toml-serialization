@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<float>(floatValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", floatValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", floatValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -56,7 +56,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<double>(floatValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", floatValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", floatValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 

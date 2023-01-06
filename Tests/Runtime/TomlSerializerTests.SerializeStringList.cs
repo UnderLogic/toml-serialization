@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<string>.Null();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("list").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("list").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -22,7 +22,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<string>.Empty();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -32,7 +32,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<string>.WithValues("Hello", "World");
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -59,7 +59,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 "This is a \\\"quoted\\\" string"
             };
             
-            var expectedToml = new TomlStringBuilder().AppendArray("list", expectedValues).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("list", expectedValues).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -69,7 +69,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<string>.WithValues("#1 Thing", "The #2 Thing");
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

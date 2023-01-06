@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<DayOfWeek>.Null();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -24,7 +24,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<DayOfWeek>.Empty();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -35,7 +35,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -46,7 +46,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 FileAttributes.Compressed | FileAttributes.Encrypted);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

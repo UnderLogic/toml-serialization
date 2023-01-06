@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<float>.Null();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -22,7 +22,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<float>.Empty();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -32,7 +32,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<float>.WithValues(-3.14f, 0f, 3.14f);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -42,7 +42,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<float>.WithValues(float.NaN, float.NegativeInfinity, float.PositiveInfinity);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -52,7 +52,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<double>.Null();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -62,7 +62,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<double>.Empty();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -72,7 +72,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<double>.WithValues(-3.14, 0, 3.14);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -83,7 +83,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 double.PositiveInfinity);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

@@ -29,19 +29,30 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
 
         #region Append KeyValue Methods
 
-        public TomlStringBuilder AppendKeyValue(string key, bool value) => AppendKey(key).AppendBoolean(value);
-        public TomlStringBuilder AppendKeyValue(string key, char value) => AppendKey(key).AppendChar(value);
-        public TomlStringBuilder AppendKeyValue(string key, string value) => AppendKey(key).AppendString(value);
+        public TomlStringBuilder AppendNullKeyValue(string key)
+            => AppendNullValue(key).AppendLine();
+
+        public TomlStringBuilder AppendKeyValue(string key, bool value) =>
+            AppendKey(key).AppendBoolean(value).AppendLine();
+
+        public TomlStringBuilder AppendKeyValue(string key, char value) =>
+            AppendKey(key).AppendChar(value).AppendLine();
+
+        public TomlStringBuilder AppendKeyValue(string key, string value) =>
+            AppendKey(key).AppendString(value).AppendLine();
 
         public TomlStringBuilder AppendKeyValue<T>(string key, T value) where T : Enum =>
-            AppendKey(key).AppendEnum(value);
+            AppendKey(key).AppendEnum(value).AppendLine();
 
-        public TomlStringBuilder AppendKeyValue(string key, long value) => AppendKey(key).AppendInteger(value);
-        public TomlStringBuilder AppendKeyValue(string key, double value) => AppendKey(key).AppendFloat(value);
+        public TomlStringBuilder AppendKeyValue(string key, long value) =>
+            AppendKey(key).AppendInteger(value).AppendLine();
+
+        public TomlStringBuilder AppendKeyValue(string key, double value) =>
+            AppendKey(key).AppendFloat(value).AppendLine();
 
         public TomlStringBuilder AppendKeyValue(string key, DateTime value,
             string dateFormat = IsoDateFormat)
-            => AppendKey(key).AppendDateTime(value, dateFormat);
+            => AppendKey(key).AppendDateTime(value, dateFormat).AppendLine();
 
         #endregion
 
@@ -72,100 +83,101 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
 
         #region Append Array Methods
 
-        public TomlStringBuilder AppendEmptyArray(string key) => AppendKey(key).Append("[]");
+        public TomlStringBuilder AppendEmptyArray(string key) => AppendKey(key).AppendLine("[]");
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<bool> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendBoolean(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendBoolean(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<char> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendChar(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendChar(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<string> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendString(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendString(value)).AppendLine();
 
         public TomlStringBuilder AppendArray<T>(string key, IReadOnlyList<T> collection) where T : Enum
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendEnum(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendEnum(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<sbyte> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<short> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<int> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<long> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<byte> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<ushort> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<uint> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<float> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendFloat(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendFloat(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<double> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendFloat(value));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendFloat(value)).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<DateTime> collection,
             string dateFormat = IsoDateFormat)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendDateTime(value, dateFormat));
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendDateTime(value, dateFormat)).AppendLine();
 
         #endregion
 
         #region Append Inline Table Methods
 
-        public TomlStringBuilder AppendEmptyInlineTable(string key) => AppendKey(key).Append("{}");
+        public TomlStringBuilder AppendEmptyInlineTable(string key) => AppendKey(key).AppendLine("{}");
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, bool> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendBoolean(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendBoolean(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, char> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendChar(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendChar(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, string> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendString(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendString(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable<T>(string key, IReadOnlyDictionary<string, T> collection)
             where T : Enum
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendEnum(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendEnum(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, sbyte> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, short> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, int> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, long> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, byte> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, ushort> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, uint> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, float> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendFloat(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendFloat(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, double> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendFloat(value));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendFloat(value)).AppendLine();
 
         public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, DateTime> collection,
             string dateFormat = IsoDateFormat)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendDateTime(value, dateFormat));
+            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendDateTime(value, dateFormat))
+                .AppendLine();
 
         #endregion
 

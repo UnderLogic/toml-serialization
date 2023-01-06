@@ -13,7 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<DateTime>(new DateTime(1979, 5, 27));
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", value.Value).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", value.Value).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

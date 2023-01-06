@@ -6,6 +6,16 @@ namespace UnderLogic.Serialization.Toml.Tests
 {
     internal partial class TomlSerializerTests
     {
+        [Test]
+        public void Serialize_NullStringValue_ShouldBeNull()
+        {
+            var value = new SerializableValue<string>(null);
+            var toml = TomlSerializer.Serialize(value);
+
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("value").ToString();
+            Assert.That(toml, Is.EqualTo(expectedToml));
+        }
+        
         [TestCase("Hello, World!")]
         [TestCase("Bird's the word!")]
         [TestCase("The quick brown fox jumps over the lazy dog.")]
@@ -14,7 +24,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<string>(stringValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", stringValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", stringValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -29,7 +39,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<string>(stringValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", expectedValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", expectedValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -40,7 +50,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<string>(stringValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", stringValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", stringValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

@@ -13,7 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<bool>(boolValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", boolValue).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", boolValue).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<float>.Null();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("list").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("list").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -22,7 +22,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<float>.Empty();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -32,7 +32,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<float>.WithValues(-3.14f, 0f, 3.14f);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -42,7 +42,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<float>.WithValues(float.NaN, float.NegativeInfinity, float.PositiveInfinity);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -52,7 +52,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<double>.Null();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendNullValue("list").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("list").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -62,7 +62,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<double>.Empty();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -72,7 +72,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<double>.WithValues(-3.14, 0, 3.14);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -83,7 +83,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 double.PositiveInfinity);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).AppendLine().ToString();
+            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }
