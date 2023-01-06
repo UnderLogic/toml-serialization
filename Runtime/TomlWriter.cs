@@ -304,11 +304,7 @@ namespace UnderLogic.Serialization.Toml
             _writer.Write("null");
         }
 
-        public void WriteCharValue(char value)
-        {
-            CheckIfDisposed();
-            _writer.Write($"\"{value}\"");
-        }
+        public void WriteCharValue(char value) => WriteStringValue(value.ToString());
 
         public void WriteStringValue(string value, bool isMultiline = false)
         {
@@ -321,7 +317,7 @@ namespace UnderLogic.Serialization.Toml
             }
 
             // Escape all backslashes and double quotes
-            value = value.EscapeChar('\\').EscapeChar('"');
+            value = value.EscapeBackslashes().EscapeQuotes();
 
             if (!isMultiline)
             {

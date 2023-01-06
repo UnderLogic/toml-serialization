@@ -27,6 +27,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
+        [TestCase('\\', "\\\\")]
         [TestCase('\t', "\\t")]
         [TestCase('\r', "\\r")]
         [TestCase('\n', "\\n")]

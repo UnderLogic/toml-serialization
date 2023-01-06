@@ -6,12 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.7] - 2023-01-06
 
-### Changed
-
-- Refactored all unit tests
-
 ### Fixed
 
+- Escape whitespace strings in non-multiline strings
+- Escape `\f` form-feed character in strings
 - All code is now C# 7.3 and .NET Framework 4.6 compatible for Unity 2019.1+
 
 ## [0.4.6] - 2023-01-04

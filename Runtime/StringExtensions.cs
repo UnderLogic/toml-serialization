@@ -16,23 +16,22 @@ namespace UnderLogic.Serialization.Toml
         private static readonly Regex WordRegex =
             new Regex(@"^[a-z0-9]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public static string EscapeChar(this string text, char escapeChar)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return text;
-
-            return text.Replace(escapeChar.ToString(), $"\\{escapeChar}");
-        }
+        public static string EscapeBackslashes(this string text)
+            => string.IsNullOrWhiteSpace(text) ? text : text.Replace("\\", "\\\\");
+        
+        public static string EscapeQuotes(this string text)
+            => string.IsNullOrWhiteSpace(text) ? text : text.Replace("\"", "\\\"");
 
         public static string EscapeWhitespace(this string text)
         {
-            if (string.IsNullOrWhiteSpace(text))
+            if (text == null)
                 return text;
 
             return text
                 .Replace("\t", "\\t")
                 .Replace("\r", "\\r")
-                .Replace("\n", "\\n");
+                .Replace("\n", "\\n")
+                .Replace("\f", "\\f");
         }
 
         public static string UnescapeTomlString(this string text)
@@ -45,7 +44,8 @@ namespace UnderLogic.Serialization.Toml
                 .Replace("\\\"", "\"")
                 .Replace("\\t", "\t")
                 .Replace("\\r", "\r")
-                .Replace("\\n", "\n");
+                .Replace("\\n", "\n")
+                .Replace("\\f", "\f");
         }
 
         public static string ToCase(this string text, StringCasing casing)
