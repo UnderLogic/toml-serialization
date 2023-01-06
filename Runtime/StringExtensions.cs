@@ -9,11 +9,12 @@ namespace UnderLogic.Serialization.Toml
     internal static class StringExtensions
     {
         private static readonly Regex UnicodeCharRegex =
-            new(@"\\u([0-9a-f]{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            new Regex(@"\\u([0-9a-f]{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex WordSplitRegex =
-            new(@"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=\W)(?=\w)|(?<=\w)(?=\W)|(?<=_)(?=\w)|(?<=\w)(?=_)",
+            new Regex(@"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=\W)(?=\w)|(?<=\w)(?=\W)|(?<=_)(?=\w)|(?<=\w)(?=_)",
                 RegexOptions.Compiled);
-        private static readonly Regex WordRegex = new(@"^[a-z0-9]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex WordRegex =
+            new Regex(@"^[a-z0-9]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public static string EscapeChar(this string text, char escapeChar)
         {

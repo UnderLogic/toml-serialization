@@ -7,9 +7,9 @@ namespace UnderLogic.Serialization.Toml.Types
 {
     internal sealed class TomlArray : TomlValue, IReadOnlyList<TomlValue>
     {
-        private readonly List<TomlValue> _values = new();
+        private readonly List<TomlValue> _values = new List<TomlValue>();
 
-        public static TomlArray Empty => new();
+        public static TomlArray Empty => new TomlArray();
         
         private TomlArray() { }
 

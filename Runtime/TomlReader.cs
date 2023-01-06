@@ -12,12 +12,12 @@ namespace UnderLogic.Serialization.Toml
     internal class TomlReader : IDisposable
     {
         private static readonly Regex KeyValueRegex =
-            new(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Singleline | RegexOptions.Compiled);
-        private static readonly Regex ArrayRegex = new(@"^\s*\[\s*(.*)\s*\]",
+            new Regex(@"^\s*([\w.-]+)\s*=\s*(.*)", RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly Regex ArrayRegex = new Regex(@"^\s*\[\s*(.*)\s*\]",
             RegexOptions.Singleline | RegexOptions.Compiled);
-        private static readonly Regex TableInlineRegex = new(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
-        private static readonly Regex TableRegex = new(@"^\s*\[(.+?)\]", RegexOptions.Compiled);
-        private static readonly Regex TableArrayRegex = new(@"^\s*\[\[(.+?)\]\]", RegexOptions.Compiled);
+        private static readonly Regex TableInlineRegex = new Regex(@"^\s*\{\s*(.*)\s*\}", RegexOptions.Compiled);
+        private static readonly Regex TableRegex = new Regex(@"^\s*\[(.+?)\]", RegexOptions.Compiled);
+        private static readonly Regex TableArrayRegex = new Regex(@"^\s*\[\[(.+?)\]\]", RegexOptions.Compiled);
         
         private readonly TextReader _reader;
         private bool _isDisposed;

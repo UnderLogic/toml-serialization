@@ -7,11 +7,11 @@ namespace UnderLogic.Serialization.Toml
     internal static class IntegerExtensions
     {
         private static readonly Regex HexNumberRegex =
-            new(@"^0x([0-9a-f]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            new Regex(@"^0x([0-9a-f]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex OctNumberRegex =
-            new(@"^0o([0-7]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            new Regex(@"^0o([0-7]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex BinNumberRegex =
-            new(@"^0b([0-1]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            new Regex(@"^0b([0-1]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public static bool TryParseHexNumber(string hexString, out long value)
         {
