@@ -8,7 +8,7 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
     [Serializable]
     internal class SerializableArray<T> : IReadOnlyList<T>
     {
-        private readonly T[] _array;
+        private T[] _array;
 
         public int Count => _array.Length;
         public T this[int index] => _array[index];
@@ -30,7 +30,11 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
             foreach(var value in _array)
                 yield return value;
         }
-        
+
+        public static SerializableArray<T> Null() => new SerializableArray<T> { _array = null };
+
+        public static SerializableArray<T> Empty() => new SerializableArray<T>();
+
         public static SerializableArray<T> WithValues(params T[] values) => new SerializableArray<T>(values);
     }
 }

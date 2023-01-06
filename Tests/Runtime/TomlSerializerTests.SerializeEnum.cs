@@ -24,12 +24,12 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
-        [TestCase(FileAccess.Read)]
-        [TestCase(FileAccess.Write)]
-        [TestCase(FileAccess.ReadWrite)]
-        public void Serialize_EnumFlagsValue_ShouldQuoteString(FileAccess flagsValue)
+        [TestCase(FileAttributes.Normal)]
+        [TestCase(FileAttributes.System)]
+        [TestCase(FileAttributes.Compressed | FileAttributes.Encrypted)]
+        public void Serialize_EnumFlagsValue_ShouldQuoteString(FileAttributes flagsValue)
         {
-            var value = new SerializableValue<FileAccess>(flagsValue);
+            var value = new SerializableValue<FileAttributes>(flagsValue);
             var toml = TomlSerializer.Serialize(value);
 
             var expectedToml = new TomlStringBuilder().AppendKeyValue("value", flagsValue).AppendLine().ToString();

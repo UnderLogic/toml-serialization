@@ -33,7 +33,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [TestCase("#1 Thing")]
-        [TestCase("The #1 Thing")]
+        [TestCase("The #2 Thing")]
         public void Serialize_StringValue_ShouldAllowCommentChar(string stringValue)
         {
             var value = new SerializableValue<string>(stringValue);

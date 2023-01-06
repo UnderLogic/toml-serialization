@@ -18,7 +18,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase('_')]
         [TestCase('+')]
         [TestCase('-')]
-        public void Serialize_CharacterValue_ShouldQuoteChars(char charValue)
+        public void Serialize_CharValue_ShouldQuoteChars(char charValue)
         {
             var value = new SerializableValue<char>(charValue);
             var toml = TomlSerializer.Serialize(value);
@@ -31,7 +31,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase('\r', "\\r")]
         [TestCase('\n', "\\n")]
         [TestCase('"', "\\\"")]
-        public void Serialize_CharacterValue_ShouldEscapeChars(char charValue, string expectedValue)
+        public void Serialize_CharValue_ShouldEscapeChars(char charValue, string expectedValue)
         {
             var value = new SerializableValue<char>(charValue);
             var toml = TomlSerializer.Serialize(value);
@@ -41,7 +41,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
         
         [TestCase('#')]
-        public void Serialize_CharacterValue_ShouldAllowCommentChar(char charValue)
+        public void Serialize_CharValue_ShouldAllowCommentChar(char charValue)
         {
             var value = new SerializableValue<char>(charValue);
             var toml = TomlSerializer.Serialize(value);
