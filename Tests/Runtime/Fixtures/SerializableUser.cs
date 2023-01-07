@@ -9,6 +9,7 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
         private string _lastName = "Doe";
         private int _age = 42;
         private float _weight = 180.25f;
+        private bool _isAdmin;
         private DateTime _createdDate = DateTime.Now;
 
         public string FirstName
@@ -35,6 +36,12 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
             set => _weight = value;
         }
 
+        public bool IsAdmin
+        {
+            get => _isAdmin;
+            set => _isAdmin = value;
+        }
+
         public DateTime CreatedDate
         {
             get => _createdDate;
@@ -42,6 +49,6 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
         }
 
         public override string ToString() =>
-            $"FirstName = {FirstName}, LastName = {LastName}, Age = {Age}, Weight = {Weight}, CreatedDate = {CreatedDate}";
+            $"FirstName = {FirstName}, LastName = {LastName}, Age = {Age}, Weight = {Weight}, IsAdmin = {IsAdmin}, CreatedDate = {CreatedDate}";
     }
 }
