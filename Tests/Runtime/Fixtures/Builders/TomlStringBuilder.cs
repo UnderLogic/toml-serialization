@@ -76,8 +76,47 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
             return Append(value.ToString(CultureInfo.InvariantCulture));
         }
 
-        public TomlStringBuilder AppendDateTime(DateTime value, string dateFormat = "yyyy-MM-dd HH:mm:ss.fffZ") =>
+        public TomlStringBuilder AppendDateTime(DateTime value, string dateFormat = IsoDateFormat) =>
             Append(value.ToString(dateFormat));
+
+        public TomlStringBuilder AppendObject(object obj, string dateFormat = IsoDateFormat)
+        {
+            if (obj == null)
+                return Append("null");
+
+            var t = obj.GetType();
+
+            if (obj is bool boolValue)
+                return AppendBoolean(boolValue);
+            if (obj is char charValue)
+                return AppendChar(charValue);
+            if (obj is string stringValue)
+                return AppendString(stringValue);
+            if (t.IsEnum)
+                return AppendEnum((Enum)obj);
+            if (t == typeof(DateTime))
+                return AppendDateTime((DateTime)obj, dateFormat);
+            if (t == typeof(sbyte))
+                return AppendInteger((sbyte)obj);
+            if (t == typeof(short))
+                return AppendInteger((short)obj);
+            if (t == typeof(int))
+                return AppendInteger((int)obj);
+            if (t == typeof(long))
+                return AppendInteger((long)obj);
+            if (t == typeof(byte))
+                return AppendInteger((byte)obj);
+            if (t == typeof(ushort))
+                return AppendInteger((ushort)obj);
+            if (t == typeof(uint))
+                return AppendInteger((uint)obj);
+            if (t == typeof(float))
+                return AppendFloat((float)obj);
+            if (t == typeof(double))
+                return AppendFloat((double)obj);
+
+            throw new InvalidOperationException($"Type {t.Name} is not supported");
+        }
 
         #endregion
 
@@ -129,6 +168,11 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
             string dateFormat = IsoDateFormat, bool multiline = false)
             => AppendKey(key).AppendArrayInternal(collection, value => AppendDateTime(value, dateFormat), multiline)
                 .AppendLine();
+        
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<object> collection,
+            string dateFormat = IsoDateFormat, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendObject(value, dateFormat), multiline)
+                .AppendLine();
 
         #endregion
 
@@ -136,49 +180,54 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
 
         public TomlStringBuilder AppendEmptyInlineTable(string key) => AppendKey(key).AppendLine("{}");
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, bool> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendBoolean(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, bool> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendBoolean(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, char> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendChar(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, char> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendChar(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, string> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendString(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, string> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendString(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable<T>(string key, IReadOnlyDictionary<string, T> collection)
+        public TomlStringBuilder AppendInlineTable<T>(string key, IReadOnlyDictionary<string, T> dictionary)
             where T : Enum
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendEnum(value)).AppendLine();
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendEnum(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, sbyte> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, sbyte> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendInteger(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, short> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, short> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendInteger(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, int> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, int> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendInteger(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, long> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, long> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendInteger(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, byte> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, byte> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendInteger(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, ushort> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, ushort> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendInteger(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, uint> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, uint> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendInteger(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, float> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendFloat(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, float> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendFloat(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, double> collection)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendFloat(value)).AppendLine();
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, double> dictionary)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendFloat(value)).AppendLine();
 
-        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, DateTime> collection,
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, DateTime> dictionary,
             string dateFormat = IsoDateFormat)
-            => AppendKey(key).AppendInlineTableInternal(collection, value => AppendDateTime(value, dateFormat))
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendDateTime(value, dateFormat))
+                .AppendLine();
+        
+        public TomlStringBuilder AppendInlineTable(string key, IReadOnlyDictionary<string, object> dictionary,
+            string dateFormat = IsoDateFormat)
+            => AppendKey(key).AppendInlineTableInternal(dictionary, value => AppendObject(value, dateFormat))
                 .AppendLine();
 
         #endregion

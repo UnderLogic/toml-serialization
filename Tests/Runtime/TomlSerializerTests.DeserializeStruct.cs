@@ -10,7 +10,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(2, 4, 6)]
         [TestCase(3.14f,  3.14f, 3.14f)]
         [TestCase(-42e10f, 0, 42e10f)]
-        public void Deserialize_StructObject_ShouldParseStandardTable(float x, float y, float z)
+        public void Deserialize_StructFromTable_ShouldSetFields(float x, float y, float z)
         {
             var toml = new TomlStringBuilder()
                 .AppendTableHeader("value")
@@ -28,7 +28,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(2, 4, 6)]
         [TestCase(3.14f, 3.14f, 3.14f)]
         [TestCase(-42e10f, 0, 42e10f)]
-        public void Deserialize_StructObject_ShouldParseInlineTable(float x, float y, float z)
+        public void Deserialize_StructFromInlineTable_ShouldSetFields(float x, float y, float z)
         {
             var inlineDict = new Dictionary<string, float>
             {
