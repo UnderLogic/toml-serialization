@@ -143,6 +143,7 @@ namespace UnderLogic.Serialization.Toml
                 if (eachChar == '\\' && !escaped)
                 {
                     escaped = true;
+                    currentString.Append(eachChar);
                     continue;
                 }
 

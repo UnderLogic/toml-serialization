@@ -60,7 +60,7 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
 
         public TomlStringBuilder AppendBoolean(bool value) => Append(value.ToString().ToLowerInvariant());
         public TomlStringBuilder AppendChar(char value) => Append($"\"{value.ToString()}\"");
-        public TomlStringBuilder AppendString(string value) => Append($"\"{value}\"");
+        public TomlStringBuilder AppendString(string value) => value != null ? Append($"\"{value}\"") : Append("null");
         public TomlStringBuilder AppendEnum<T>(T value) where T : Enum => Append($"\"{value:F}\"");
         public TomlStringBuilder AppendInteger(long value) => Append(value.ToString());
 
@@ -85,48 +85,50 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
 
         public TomlStringBuilder AppendEmptyArray(string key) => AppendKey(key).AppendLine("[]");
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<bool> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendBoolean(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<bool> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendBoolean(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<char> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendChar(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<char> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendChar(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<string> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendString(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<string> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendString(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray<T>(string key, IReadOnlyList<T> collection) where T : Enum
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendEnum(value)).AppendLine();
+        public TomlStringBuilder AppendArray<T>(string key, IReadOnlyList<T> collection, bool multiline = false)
+            where T : Enum
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendEnum(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<sbyte> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<sbyte> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<short> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<short> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<int> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<int> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<long> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<long> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<byte> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<byte> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<ushort> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<ushort> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<uint> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<uint> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendInteger(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<float> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendFloat(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<float> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendFloat(value), multiline).AppendLine();
 
-        public TomlStringBuilder AppendArray(string key, IReadOnlyList<double> collection)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendFloat(value)).AppendLine();
+        public TomlStringBuilder AppendArray(string key, IReadOnlyList<double> collection, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendFloat(value), multiline).AppendLine();
 
         public TomlStringBuilder AppendArray(string key, IReadOnlyList<DateTime> collection,
-            string dateFormat = IsoDateFormat)
-            => AppendKey(key).AppendArrayInternal(collection, value => AppendDateTime(value, dateFormat)).AppendLine();
+            string dateFormat = IsoDateFormat, bool multiline = false)
+            => AppendKey(key).AppendArrayInternal(collection, value => AppendDateTime(value, dateFormat), multiline)
+                .AppendLine();
 
         #endregion
 
@@ -201,7 +203,8 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
 
         public override string ToString() => _builder.ToString();
 
-        private TomlStringBuilder AppendArrayInternal<T>(IReadOnlyCollection<T> collection, Action<T> appendItem)
+        private TomlStringBuilder AppendArrayInternal<T>(IReadOnlyCollection<T> collection, Action<T> appendItem,
+            bool multiline = false)
         {
             if (collection == null)
                 return Append("null");
@@ -209,18 +212,24 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures.Builders
             if (collection.Count < 1)
                 return Append("[]");
 
-            Append("[ ");
+            Append(multiline ? "[" : "[ ");
+
+            if (multiline)
+                AppendLine();
 
             var counter = 0;
             foreach (var item in collection)
             {
                 appendItem?.Invoke(item);
 
-                if (counter++ < collection.Count - 1)
+                if (multiline || counter++ < collection.Count - 1)
                     Append(", ");
+
+                if (multiline)
+                    AppendLine();
             }
 
-            Append(" ]");
+            Append(multiline ? "]" : " ]");
             return this;
         }
 
