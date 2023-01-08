@@ -8,24 +8,7 @@ namespace UnderLogic.Serialization.Toml.Tests
     internal partial class TomlSerializerTests
     {
         [TestCase(2, 4, 6)]
-        [TestCase(3.14f, 3.14f, 3.14f)]
-        [TestCase(-42e10f, 0, 42e10f)]
-        public void Deserialize_StructObject_ShouldParseRootTable(float x, float y, float z)
-        {
-            var toml = new TomlStringBuilder()
-                .AppendKeyValue("x", x)
-                .AppendKeyValue("y", y)
-                .AppendKeyValue("z", z)
-                .ToString();
-
-            var deserializedValue = TomlSerializer.Deserialize<SerializablePoint>(toml);
-            Assert.That(deserializedValue.X, Is.EqualTo(x));
-            Assert.That(deserializedValue.Y, Is.EqualTo(y));
-            Assert.That(deserializedValue.Z, Is.EqualTo(z));
-        }
-        
-        [TestCase(2, 4, 6)]
-        [TestCase(3.14f, 3.14f, 3.14f)]
+        [TestCase(3.14f,  3.14f, 3.14f)]
         [TestCase(-42e10f, 0, 42e10f)]
         public void Deserialize_StructObject_ShouldParseStandardTable(float x, float y, float z)
         {

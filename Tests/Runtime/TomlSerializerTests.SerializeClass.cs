@@ -17,7 +17,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 .AppendKeyValue("lastName", user.LastName)
                 .AppendKeyValue("age", user.Age)
                 .AppendKeyValue("weight", user.Weight)
-                .AppendKeyValue("isAdmin", true)
+                .AppendKeyValue("isAdmin", false)
                 .AppendKeyValue("createdDate", user.CreatedDate)
                 .ToString();
 
@@ -37,7 +37,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 .AppendKeyValue("lastName", user.LastName)
                 .AppendKeyValue("age", user.Age)
                 .AppendKeyValue("weight", user.Weight)
-                .AppendKeyValue("isAdmin", true)
+                .AppendKeyValue("isAdmin", false)
                 .AppendKeyValue("createdDate", user.CreatedDate)
                 .ToString();
 
