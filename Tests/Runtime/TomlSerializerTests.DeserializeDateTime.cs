@@ -2,7 +2,6 @@ using System;
 using System.Globalization;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -22,7 +21,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_DateTimeValue_ShouldParseFormats(string stringValue)
         {
             var expectedDate = DateTime.Parse(stringValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-            var toml = new TomlStringBuilder().AppendKey("value").AppendLine(stringValue).ToString();
+            var toml = $"value = {stringValue}\n";
 
             var deserializedValue = TomlSerializer.Deserialize<SerializableValue<DateTime>>(toml);
             Assert.That(deserializedValue.Value, Is.EqualTo(expectedDate));

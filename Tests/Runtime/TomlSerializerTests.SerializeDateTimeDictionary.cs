@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -13,7 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var dictionary = SerializableDictionary<DateTime>.Null();
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("dictionary").ToString();
+            var expectedToml = "dictionary = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -23,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var dictionary = SerializableDictionary<DateTime>.Empty();
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyInlineTable("dictionary").ToString();
+            var expectedToml = "dictionary = {}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -37,7 +37,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             };
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendInlineTable("dictionary", dictionary).ToString();
+            var expectedValueStrings = dictionary.Select(kv => $"{kv.Key} = {kv.Value:yyyy-MM-dd HH:mm:ss.fffZ}");
+            var expectedToml = $"dictionary = {{ {string.Join(", ", expectedValueStrings)} }}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

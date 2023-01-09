@@ -1,6 +1,6 @@
+using System.Text;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -12,15 +12,15 @@ namespace UnderLogic.Serialization.Toml.Tests
             var point = new SerializablePoint(2, 4, 6);
             var toml = TomlSerializer.Serialize(point);
 
-            var expectedToml = new TomlStringBuilder()
-                .AppendKeyValue("x", point.X)
-                .AppendKeyValue("y", point.Y)
-                .AppendKeyValue("z", point.Z)
+            var expectedToml = new StringBuilder()
+                .AppendLine($"x = {point.X}")
+                .AppendLine($"y = {point.Y}")
+                .AppendLine($"z = {point.Z}")
                 .ToString();
 
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
-        
+
         [Test]
         public void Serialize_StructObject_ShouldSerializeStandardTable()
         {
@@ -28,11 +28,11 @@ namespace UnderLogic.Serialization.Toml.Tests
             var wrappedPoint = new SerializableValue<SerializablePoint>(point);
             var toml = TomlSerializer.Serialize(wrappedPoint);
 
-            var expectedToml = new TomlStringBuilder()
-                .AppendTableHeader("value")
-                .AppendKeyValue("x", point.X)
-                .AppendKeyValue("y", point.Y)
-                .AppendKeyValue("z", point.Z)
+            var expectedToml = new StringBuilder()
+                .AppendLine("[value]")
+                .AppendLine($"x = {point.X}")
+                .AppendLine($"y = {point.Y}")
+                .AppendLine($"z = {point.Z}")
                 .ToString();
 
             Assert.That(toml, Is.EqualTo(expectedToml));

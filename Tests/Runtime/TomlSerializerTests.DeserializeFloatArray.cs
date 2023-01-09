@@ -1,6 +1,7 @@
+using System.Globalization;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -10,7 +11,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_FloatArray_ShouldSetValues()
         {
             var expectedValues = new[] { -3.14f, 0, 3.14f };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues).ToString();
+            var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<float>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -20,7 +22,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_FloatArrayMultiline_ShouldSetValues()
         {
             var expectedValues = new[] { -3.14f, 0, 3.14f };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues, true).ToString();
+            var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var toml = $"array = [\n{string.Join(",\n", expectedValueStrings)}\n]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<float>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -30,7 +33,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_FloatArrayScientific_ShouldSetValues()
         {
             var expectedValues = new[] { -3.14e-10f, 0, 3.14e-10f };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues, true).ToString();
+            var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<float>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -40,7 +44,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_FloatArraySpecials_ShouldSetValues()
         {
             var expectedValues = new[] { float.NaN, float.NegativeInfinity, float.PositiveInfinity };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues).ToString();
+            var expectedValueStrings = new[] { "nan", "-inf", "+inf" };
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<float>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -50,7 +55,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_DoubleArray_ShouldSetValues()
         {
             var expectedValues = new[] { -3.14, 0, 3.14 };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues).ToString();
+            var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<double>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -60,7 +66,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_DoubleArrayMultiline_ShouldSetValues()
         {
             var expectedValues = new[] { -3.14, 0, 3.14 };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues, true).ToString();
+            var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var toml = $"array = [\n{string.Join(",\n", expectedValueStrings)}\n]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<double>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -70,7 +77,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_DoubleArrayScientific_ShouldSetValues()
         {
             var expectedValues = new[] { -3.14e-10, 0, 3.14e-10 };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues, true).ToString();
+            var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<double>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -80,7 +88,8 @@ namespace UnderLogic.Serialization.Toml.Tests
         public void Deserialize_DoubleArraySpecials_ShouldSetValues()
         {
             var expectedValues = new[] { double.NaN, double.NegativeInfinity, double.PositiveInfinity };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues).ToString();
+            var expectedValueStrings = new[] { "nan", "-inf", "+inf" };
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<double>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));

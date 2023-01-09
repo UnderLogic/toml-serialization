@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -13,7 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var dictionary = SerializableDictionary<string>.Null();
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("dictionary").ToString();
+            var expectedToml = "dictionary = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -23,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var dictionary = SerializableDictionary<string>.Empty();
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyInlineTable("dictionary").ToString();
+            var expectedToml = "dictionary = {}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -38,7 +38,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             };
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendInlineTable("dictionary", dictionary).ToString();
+            var expectedKeyValueStrings = dictionary.Select(kv => $"{kv.Key} = \"{kv.Value}\"");
+            var expectedToml = $"dictionary = {{ {string.Join(", ", expectedKeyValueStrings)} }}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -67,7 +68,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 { "double_quote", "This is a \\\"quoted\\\" string" }
             };
 
-            var expectedToml = new TomlStringBuilder().AppendInlineTable("dictionary", expectedDictionary).ToString();
+            var expectedKeyValueStrings = expectedDictionary.Select(kv => $"{kv.Key} = \"{kv.Value}\"");
+            var expectedToml = $"dictionary = {{ {string.Join(", ", expectedKeyValueStrings)} }}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -81,7 +83,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             };
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendInlineTable("dictionary", dictionary).ToString();
+            var expectedKeyValueStrings = dictionary.Select(kv => $"{kv.Key} = \"{kv.Value}\"");
+            var expectedToml = $"dictionary = {{ {string.Join(", ", expectedKeyValueStrings)} }}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

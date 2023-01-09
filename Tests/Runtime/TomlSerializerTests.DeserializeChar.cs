@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -20,7 +19,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase("+", '+')]
         public void Deserialize_CharValue_ShouldSetValue(string stringValue, char expectedValue)
         {
-            var toml = new TomlStringBuilder().AppendKeyValue("value", stringValue).ToString();
+            var toml = $"value = \"{stringValue}\"\n";
 
             var deserializedValue = TomlSerializer.Deserialize<SerializableValue<char>>(toml);
             Assert.That(deserializedValue.Value, Is.EqualTo(expectedValue));
@@ -34,7 +33,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase("\\\"", '"')]
         public void Deserialize_CharValue_ShouldUnescapeChars(string stringValue, char expectedValue)
         {
-            var toml = new TomlStringBuilder().AppendKeyValue("value", stringValue).ToString();
+            var toml = $"value = \"{stringValue}\"\n";
 
             var deserializedValue = TomlSerializer.Deserialize<SerializableValue<char>>(toml);
             Assert.That(deserializedValue.Value, Is.EqualTo(expectedValue));
@@ -43,7 +42,7 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase("#", '#')]
         public void Deserialize_CharValue_ShouldAllowCommentChar(string stringValue, char expectedValue)
         {
-            var toml = new TomlStringBuilder().AppendKeyValue("value", stringValue).ToString();
+            var toml = $"value = \"{stringValue}\"\n";
 
             var deserializedValue = TomlSerializer.Deserialize<SerializableValue<char>>(toml);
             Assert.That(deserializedValue.Value, Is.EqualTo(expectedValue));

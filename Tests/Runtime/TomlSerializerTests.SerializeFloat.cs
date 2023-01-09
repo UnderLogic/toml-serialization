@@ -1,6 +1,6 @@
+using System.Globalization;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<float>(floatValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", floatValue).ToString();
+            var expectedToml = $"value = {((double)floatValue).ToString(CultureInfo.InvariantCulture)}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -24,7 +24,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<float>(float.NaN);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendNaNValue("value").AppendLine().ToString();
+            var expectedToml = "value = nan\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -34,7 +34,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<float>(float.PositiveInfinity);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendPositiveInfinityValue("value").AppendLine().ToString();
+            var expectedToml = "value = +inf\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -44,7 +44,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<float>(float.NegativeInfinity);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendNegativeInfinityValue("value").AppendLine().ToString();
+            var expectedToml = "value = -inf\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -56,7 +56,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<double>(floatValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", floatValue).ToString();
+            var expectedToml = $"value = {floatValue.ToString(CultureInfo.InvariantCulture)}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -66,7 +66,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<double>(double.NaN);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendNaNValue("value").AppendLine().ToString();
+            var expectedToml = "value = nan\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -76,7 +76,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<double>(double.PositiveInfinity);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendPositiveInfinityValue("value").AppendLine().ToString();
+            var expectedToml = "value = +inf\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -86,7 +86,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<double>(double.NegativeInfinity);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendNegativeInfinityValue("value").AppendLine().ToString();
+            var expectedToml = "value = -inf\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

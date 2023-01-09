@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -13,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<bool>(boolValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", boolValue).ToString();
+            var expectedToml = $"value = {boolValue.ToString().ToLowerInvariant()}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

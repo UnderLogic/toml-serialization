@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -15,7 +15,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 new DateTime(1979, 5, 27),
                 new DateTime(2000, 1, 1)
             };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues).ToString();
+            var expectedValueStrings = expectedValues.Select(x => x.ToString("yyyy-MM-dd HH:mm:ss.fffZ"));
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<DateTime>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -29,7 +30,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 new DateTime(1979, 5, 27),
                 new DateTime(2000, 1, 1)
             };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues, multiline: true).ToString();
+            var expectedValueStrings = expectedValues.Select(x => x.ToString("yyyy-MM-dd HH:mm:ss.fffZ"));
+            var toml = $"array = [\n{string.Join(",\n", expectedValueStrings)}\n]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<DateTime>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));

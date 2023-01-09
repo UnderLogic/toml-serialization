@@ -1,6 +1,7 @@
+using System.Globalization;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -12,7 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<float>.Null();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("list").ToString();
+            var expectedToml = "list = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -22,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<float>.Empty();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").ToString();
+            var expectedToml = "list = []\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -32,7 +33,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<float>.WithValues(-3.14f, 0f, 3.14f);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
+            var expectedValueStrings = list.Select(x => ((double)x).ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"list = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -42,7 +44,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<float>.WithValues(float.NaN, float.NegativeInfinity, float.PositiveInfinity);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
+            var expectedValueStrings = new[] { "nan", "-inf", "+inf" };
+            var expectedToml = $"list = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -52,7 +55,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<double>.Null();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("list").ToString();
+            var expectedToml = "list = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -62,7 +65,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<double>.Empty();
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("list").ToString();
+            var expectedToml = "list = []\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -72,7 +75,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var list = SerializableList<double>.WithValues(-3.14, 0, 3.14);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
+            var expectedValueStrings = list.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"list = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -83,7 +87,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 double.PositiveInfinity);
             var toml = TomlSerializer.Serialize(list);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("list", list).ToString();
+            var expectedValueStrings = new[] { "nan", "-inf", "+inf" };
+            var expectedToml = $"list = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

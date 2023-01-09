@@ -1,8 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var dictionary = SerializableDictionary<DayOfWeek>.Null();
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("dictionary").ToString();
+            var expectedToml = "dictionary = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -24,7 +24,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var dictionary = SerializableDictionary<DayOfWeek>.Empty();
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyInlineTable("dictionary").ToString();
+            var expectedToml = "dictionary = {}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -43,7 +43,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             };
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendInlineTable("dictionary", dictionary).ToString();
+            var expectedKeyValueStrings = dictionary.Select(kv => $"{kv.Key} = \"{kv.Value:F}\"");
+            var expectedToml = $"dictionary = {{ {string.Join(", ", expectedKeyValueStrings)} }}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -58,7 +59,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             };
             var toml = TomlSerializer.Serialize(dictionary);
 
-            var expectedToml = new TomlStringBuilder().AppendInlineTable("dictionary", dictionary).ToString();
+            var expectedKeyValueStrings = dictionary.Select(kv => $"{kv.Key} = \"{kv.Value:F}\"");
+            var expectedToml = $"dictionary = {{ {string.Join(", ", expectedKeyValueStrings)} }}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

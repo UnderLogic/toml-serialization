@@ -1,8 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -14,7 +14,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<DayOfWeek>.Null();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("array").ToString();
+            var expectedToml = "array = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -24,7 +24,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<DayOfWeek>.Empty();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").ToString();
+            var expectedToml = "array = []\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -35,7 +35,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => $"\"{x:F}\"");
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -46,7 +47,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 FileAttributes.Compressed | FileAttributes.Encrypted);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => $"\"{x:F}\"");
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

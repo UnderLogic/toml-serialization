@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -12,7 +11,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<string>(null);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("value").ToString();
+            var expectedToml = "value = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -24,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<string>(stringValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", stringValue).ToString();
+            var expectedToml = $"value = \"{stringValue}\"\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -39,7 +38,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<string>(stringValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", expectedValue).ToString();
+            var expectedToml = $"value = \"{expectedValue}\"\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -50,7 +49,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var value = new SerializableValue<string>(stringValue);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", stringValue).ToString();
+            var expectedToml = $"value = \"{stringValue}\"\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

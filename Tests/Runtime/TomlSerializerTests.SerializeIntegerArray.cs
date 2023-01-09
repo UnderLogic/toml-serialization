@@ -1,6 +1,7 @@
+using System.Globalization;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -12,7 +13,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<long>.Null();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("array").ToString();
+            var expectedToml = "array = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -22,7 +23,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<long>.Empty();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").ToString();
+            var expectedToml = "array = []\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -32,7 +33,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<sbyte>.WithValues(-42, 0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -42,7 +44,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<short>.WithValues(-42, 0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -52,7 +55,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<int>.WithValues(-42, 0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -62,7 +66,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<long>.WithValues(-42, 0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -72,7 +77,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<byte>.WithValues(0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -82,7 +88,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<ushort>.WithValues(0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -92,7 +99,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<uint>.WithValues(0, 42);
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => x.ToString(CultureInfo.InvariantCulture));
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

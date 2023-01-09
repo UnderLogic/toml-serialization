@@ -1,7 +1,6 @@
 using System;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -10,10 +9,11 @@ namespace UnderLogic.Serialization.Toml.Tests
         [Test]
         public void Serialize_DateTimeValue_ShouldBeIso8601Format()
         {
-            var value = new SerializableValue<DateTime>(new DateTime(1979, 5, 27));
+            var expectedDateTime = new DateTime(1979, 5, 27);
+            var value = new SerializableValue<DateTime>(expectedDateTime);
             var toml = TomlSerializer.Serialize(value);
 
-            var expectedToml = new TomlStringBuilder().AppendKeyValue("value", value.Value).ToString();
+            var expectedToml = $"value = {expectedDateTime:yyyy-MM-dd HH:mm:ss.fffZ}\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

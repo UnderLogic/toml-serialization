@@ -1,6 +1,6 @@
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -12,7 +12,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<char>.Null();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendNullKeyValue("array").ToString();
+            var expectedToml = "array = null\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -22,7 +22,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<char>.Empty();
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendEmptyArray("array").ToString();
+            var expectedToml = "array = []\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
         
@@ -32,7 +32,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<char>.WithValues('A', 'Z', '0', '9', '_', '-', '+');
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => $"\"{x}\"");
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -43,7 +44,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = TomlSerializer.Serialize(array);
 
             var expectedValues = new[] { "\\\\", "\\t", "\\r", "\\n", "\\f", "\\\"" };
-            var expectedToml = new TomlStringBuilder().AppendArray("array", expectedValues).ToString();
+            var expectedValueStrings = expectedValues.Select(x => $"\"{x}\"");
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
 
@@ -53,7 +55,8 @@ namespace UnderLogic.Serialization.Toml.Tests
             var array = SerializableArray<char>.WithValues('#');
             var toml = TomlSerializer.Serialize(array);
 
-            var expectedToml = new TomlStringBuilder().AppendArray("array", array).ToString();
+            var expectedValueStrings = array.Select(x => $"\"{x}\"");
+            var expectedToml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
             Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }

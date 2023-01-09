@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
+using System.Text;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -15,14 +14,14 @@ namespace UnderLogic.Serialization.Toml.Tests
         {
             var now = DateTime.Now.Date;
 
-            var toml = new TomlStringBuilder()
-                .AppendTableHeader("value")
-                .AppendKeyValue("firstName", firstName)
-                .AppendKeyValue("lastName", lastName)
-                .AppendKeyValue("age", age)
-                .AppendKeyValue("weight", weight)
-                .AppendKeyValue("isAdmin", isAdmin)
-                .AppendKeyValue("createdDate", now)
+            var toml = new StringBuilder()
+                .AppendLine("[value]")
+                .AppendLine($"firstName = \"{firstName}\"")
+                .AppendLine($"lastName = \"{lastName}\"")
+                .AppendLine($"age = {age}")
+                .AppendLine($"weight = {weight}")
+                .AppendLine($"isAdmin = {isAdmin.ToString().ToLowerInvariant()}")
+                .AppendLine($"createdDate = {now:yyyy-MM-dd HH:mm:ss.fffZ}")
                 .ToString();
 
             var deserializedValue = TomlSerializer.Deserialize<SerializableValue<SerializableUser>>(toml);
@@ -33,25 +32,25 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.That(deserializedValue.Value.IsAdmin, Is.EqualTo(isAdmin));
             Assert.That(deserializedValue.Value.CreatedDate, Is.EqualTo(now));
         }
-        
+
         [TestCase("Alice", "User", 24, 120.5f, false)]
         [TestCase("Bob", "User", 42, 180.25f, true)]
-        public void Deserialize_ClassFromInlineTable_ShouldSetFields(string firstName, string lastName, int age, float weight,
+        public void Deserialize_ClassFromTableInline_ShouldSetFields(string firstName, string lastName, int age,
+            float weight,
             bool isAdmin)
         {
             var now = DateTime.Now.Date;
 
-            var inlineDict = new Dictionary<string, object>
-            {
-                { "firstName", firstName },
-                { "lastName", lastName },
-                { "age", age },
-                { "weight", weight },
-                { "isAdmin", isAdmin },
-                { "createdDate", now }
-            };
-            
-            var toml = new TomlStringBuilder().AppendInlineTable("value", inlineDict).ToString();
+            var toml = new StringBuilder()
+                .Append("value = { ")
+                .Append($"firstName = \"{firstName}\", ")
+                .Append($"lastName = \"{lastName}\", ")
+                .Append($"age = {age}, ")
+                .Append($"weight = {weight}, ")
+                .Append($"isAdmin = {isAdmin.ToString().ToLowerInvariant()}, ")
+                .Append($"createdDate = {now:yyyy-MM-dd HH:mm:ss.fffZ}")
+                .AppendLine(" }")
+                .ToString();
 
             var deserializedValue = TomlSerializer.Deserialize<SerializableValue<SerializableUser>>(toml);
             Assert.That(deserializedValue.Value.FirstName, Is.EqualTo(firstName));

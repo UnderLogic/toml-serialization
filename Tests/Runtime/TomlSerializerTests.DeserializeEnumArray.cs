@@ -1,8 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
-using UnderLogic.Serialization.Toml.Tests.Fixtures.Builders;
 
 namespace UnderLogic.Serialization.Toml.Tests
 {
@@ -21,7 +21,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 DayOfWeek.Friday,
                 DayOfWeek.Saturday
             };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues).ToString();
+            var expectedValueStrings = expectedValues.Select(x => $"\"{x:F}\"");
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<DayOfWeek>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -40,7 +41,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 DayOfWeek.Friday,
                 DayOfWeek.Saturday
             };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues, true).ToString();
+            var expectedValueStrings = expectedValues.Select(x => $"\"{x:F}\"");
+            var toml = $"array = [\n{string.Join(",\n", expectedValueStrings)}\n]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<DayOfWeek>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -55,7 +57,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 FileAttributes.System,
                 FileAttributes.Compressed | FileAttributes.Encrypted
             };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues).ToString();
+            var expectedValueStrings = expectedValues.Select(x => $"\"{x:F}\"");
+            var toml = $"array = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<FileAttributes>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
@@ -70,7 +73,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 FileAttributes.System,
                 FileAttributes.Compressed | FileAttributes.Encrypted
             };
-            var toml = new TomlStringBuilder().AppendArray("array", expectedValues, true).ToString();
+            var expectedValueStrings = expectedValues.Select(x => $"\"{x:F}\"");
+            var toml = $"array = [\n{string.Join(",\n", expectedValueStrings)}\n]\n";
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<FileAttributes>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
