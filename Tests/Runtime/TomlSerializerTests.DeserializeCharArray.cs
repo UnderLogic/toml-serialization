@@ -7,6 +7,22 @@ namespace UnderLogic.Serialization.Toml.Tests
     internal partial class TomlSerializerTests
     {
         [Test]
+        public void Deserialize_NullCharArray_ShouldSetNull()
+        {
+            var toml = "array = null\n";
+            var deserializedArray = TomlSerializer.Deserialize<SerializableArray<char>>(toml);
+            Assert.That(deserializedArray.IsNull, Is.EqualTo(true), "Array should be null");
+        }
+        
+        [Test]
+        public void Deserialize_EmptyCharArray_ShouldSetEmpty()
+        {
+            var toml = "array = []\n";
+            var deserializedArray = TomlSerializer.Deserialize<SerializableArray<char>>(toml);
+            Assert.That(deserializedArray.Count, Is.EqualTo(0), "Array should be null");
+        }
+        
+        [Test]
         public void Deserialize_CharArray_ShouldSetValues()
         {
             var expectedValues = new[] { 'A', 'Z', '0', '9', '!', '@', '$', '_', '-', '+' };

@@ -14,6 +14,8 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
 
         public IEnumerable<string> Keys => _dictionary.Keys;
         public IEnumerable<TValue> Values => _dictionary.Values;
+        
+        public bool IsNull => _dictionary == null;
 
         public SerializableDictionary()
         {

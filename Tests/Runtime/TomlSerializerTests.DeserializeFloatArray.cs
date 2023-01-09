@@ -8,6 +8,22 @@ namespace UnderLogic.Serialization.Toml.Tests
     internal partial class TomlSerializerTests
     {
         [Test]
+        public void Deserialize_NullFloatArray_ShouldSetNull()
+        {
+            var toml = "array = null\n";
+            var deserializedArray = TomlSerializer.Deserialize<SerializableArray<float>>(toml);
+            Assert.That(deserializedArray.IsNull, Is.EqualTo(true), "Array should be null");
+        }
+        
+        [Test]
+        public void Deserialize_EmptyFloatArray_ShouldSetEmpty()
+        {
+            var toml = "array = []\n";
+            var deserializedArray = TomlSerializer.Deserialize<SerializableArray<float>>(toml);
+            Assert.That(deserializedArray.Count, Is.EqualTo(0), "Array should be null");
+        }
+        
+        [Test]
         public void Deserialize_FloatArray_ShouldSetValues()
         {
             var expectedValues = new[] { -3.14f, 0, 3.14f };
@@ -49,6 +65,22 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var deserializedArray = TomlSerializer.Deserialize<SerializableArray<float>>(toml);
             Assert.That(deserializedArray, Is.EqualTo(expectedValues));
+        }
+        
+        [Test]
+        public void Deserialize_NullDoubleArray_ShouldSetNull()
+        {
+            var toml = "array = null\n";
+            var deserializedArray = TomlSerializer.Deserialize<SerializableArray<double>>(toml);
+            Assert.That(deserializedArray.IsNull, Is.EqualTo(true), "Array should be null");
+        }
+        
+        [Test]
+        public void Deserialize_EmptyDoubleArray_ShouldSetEmpty()
+        {
+            var toml = "array = []\n";
+            var deserializedArray = TomlSerializer.Deserialize<SerializableArray<double>>(toml);
+            Assert.That(deserializedArray.Count, Is.EqualTo(0), "Array should be null");
         }
 
         [Test]

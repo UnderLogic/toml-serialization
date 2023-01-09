@@ -12,6 +12,8 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
 
         public int Count => _array.Length;
         public T this[int index] => _array[index];
+        
+        public bool IsNull => _array == null;
 
         public SerializableArray() : this(Array.Empty<T>()) { }
 

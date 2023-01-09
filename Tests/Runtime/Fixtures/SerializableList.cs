@@ -12,6 +12,8 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
 
         public int Count => _list.Count;
         public T this[int index] => _list[index];
+        
+        public bool IsNull => _list == null;
 
         public SerializableList() : this(Enumerable.Empty<T>()) { }
 
