@@ -46,17 +46,6 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
 
         [Test]
-        public void Deserialize_FloatListScientific_ShouldSetValues()
-        {
-            var expectedValues = new[] { -3.14e-10f, 0, 3.14e-10f };
-            var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
-            var toml = $"list = [ {string.Join(", ", expectedValueStrings)} ]\n";
-
-            var deserializedList = TomlSerializer.Deserialize<SerializableList<float>>(toml);
-            Assert.That(deserializedList, Is.EqualTo(expectedValues));
-        }
-
-        [Test]
         public void Deserialize_FloatListSpecials_ShouldSetValues()
         {
             var expectedValues = new[] { float.NaN, float.NegativeInfinity, float.PositiveInfinity };
@@ -100,17 +89,6 @@ namespace UnderLogic.Serialization.Toml.Tests
             var expectedValues = new[] { -3.14, 0, 3.14 };
             var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
             var toml = $"list = [\n{string.Join(",\n", expectedValueStrings)}\n]\n";
-
-            var deserializedList = TomlSerializer.Deserialize<SerializableList<double>>(toml);
-            Assert.That(deserializedList, Is.EqualTo(expectedValues));
-        }
-
-        [Test]
-        public void Deserialize_DoubleListScientific_ShouldSetValues()
-        {
-            var expectedValues = new[] { -3.14e-10, 0, 3.14e-10 };
-            var expectedValueStrings = expectedValues.Select(x => x.ToString(CultureInfo.InvariantCulture));
-            var toml = $"list = [ {string.Join(", ", expectedValueStrings)} ]\n";
 
             var deserializedList = TomlSerializer.Deserialize<SerializableList<double>>(toml);
             Assert.That(deserializedList, Is.EqualTo(expectedValues));

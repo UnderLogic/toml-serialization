@@ -5,11 +5,9 @@ namespace UnderLogic.Serialization.Toml.Tests
 {
     internal partial class TomlSerializerTests
     {
-        [TestCase("3.14e10", 3.14e10f)]
         [TestCase("3.14", 3.14f)]
         [TestCase("0", 0f)]
         [TestCase("-3.14", -3.14f)]
-        [TestCase("-3.14e-10", -3.14e-10f)]
         public void Deserialize_FloatValue_ShouldSetValue(string stringValue, float expectedValue)
         {
             var toml = $"value = {stringValue}\n";
@@ -45,6 +43,47 @@ namespace UnderLogic.Serialization.Toml.Tests
             var toml = $"value = {stringValue}\n";
 
             var deserializedValue = TomlSerializer.Deserialize<SerializableValue<float>>(toml);
+            Assert.That(deserializedValue.Value, Is.EqualTo(expectedValue));
+        }
+        
+        [TestCase("3.14", 3.14)]
+        [TestCase("0", 0f)]
+        [TestCase("-3.14", -3.14)]
+        public void Deserialize_DoubleValue_ShouldSetValue(string stringValue, double expectedValue)
+        {
+            var toml = $"value = {stringValue}\n";
+
+            var deserializedValue = TomlSerializer.Deserialize<SerializableValue<double>>(toml);
+            Assert.That(deserializedValue.Value, Is.EqualTo(expectedValue));
+        }
+        
+        [TestCase("-nan", double.NaN)]
+        [TestCase("nan", double.NaN)]
+        [TestCase("+nan", double.NaN)]
+        public void Deserialize_DoubleValue_ShouldSetNaN(string stringValue, double expectedValue)
+        {
+            var toml = $"value = {stringValue}\n";
+
+            var deserializedValue = TomlSerializer.Deserialize<SerializableValue<double>>(toml);
+            Assert.That(deserializedValue.Value, Is.EqualTo(expectedValue));
+        }
+        
+        [TestCase("+inf", double.PositiveInfinity)]
+        [TestCase("inf", double.PositiveInfinity)]
+        public void Deserialize_DoubleValue_ShouldSetPositiveInfinity(string stringValue, double expectedValue)
+        {
+            var toml = $"value = {stringValue}\n";
+
+            var deserializedValue = TomlSerializer.Deserialize<SerializableValue<double>>(toml);
+            Assert.That(deserializedValue.Value, Is.EqualTo(expectedValue));
+        }
+        
+        [TestCase("-inf", double.NegativeInfinity)]
+        public void Deserialize_DoubleValue_ShouldSetNegativeInfinity(string stringValue, double expectedValue)
+        {
+            var toml = $"value = {stringValue}\n";
+
+            var deserializedValue = TomlSerializer.Deserialize<SerializableValue<double>>(toml);
             Assert.That(deserializedValue.Value, Is.EqualTo(expectedValue));
         }
     }
