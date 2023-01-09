@@ -24,11 +24,13 @@ While there are various TOML libraries available for .NET, this package aims to 
 It aims to provide a familiar API to Unity's [`JsonUtility`](https://docs.unity3d.com/ScriptReference/JsonUtility.html) API for serializing and deserializing JSON data.
 Additionally, it provides ways to customize the serialization process via [attributes](attributes.md) similar to those in Microsoft's [`System.Text.Json`](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.serialization?view=net-7.0) namespace.
 
-It is also highly tested with 90%+ code coverage in the [`TomlSerializer`](serialization/toml-serializer.md), with over 600 unit tests.
+It is also covered with unit tests to ensure the reliability of the package library as new features are introduced.
 
 ## Compatibility
 
-This package is compatible with Unity 2019.4 and newer, it only uses C# 7.0 features for maximum compatibility.
+This package is compatible with [Unity 2019.1 and later](https://docs.unity3d.com/2019.1/Documentation/Manual/CSharpCompiler.html). It only uses C# 7.3 features and targets .NET Framework 4.6.
+
+While it is recommended to use one of the latest LTS releases of Unity, there are older projects that may opt to use this library.
 
 ## Limitations
 

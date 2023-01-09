@@ -5,8 +5,8 @@ namespace UnderLogic.Serialization.Toml
 {
     internal class TomlLineBuffer
     {
-        private readonly StringBuilder _lineBuffer = new(1024);
-        private readonly StringBuilder _tempBuffer = new(1024);
+        private readonly StringBuilder _lineBuffer = new StringBuilder(1024);
+        private readonly StringBuilder _tempBuffer = new StringBuilder(1024);
         
         public void AppendLine(string value) => _lineBuffer.AppendLine(value);
 

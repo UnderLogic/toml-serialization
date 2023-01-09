@@ -7,10 +7,10 @@ namespace UnderLogic.Serialization.Toml.Types
 {
     internal sealed class TomlTable : TomlValue,  IEnumerable<TomlKeyValuePair>
     {
-        private readonly Dictionary<string, TomlValue> _table = new();
+        private readonly Dictionary<string, TomlValue> _table = new Dictionary<string, TomlValue>();
 
-        public static TomlTable Empty => new();
-        public static TomlTable EmptyInline => new() { IsInline = true };
+        public static TomlTable Empty => new TomlTable();
+        public static TomlTable EmptyInline => new TomlTable() { IsInline = true };
         
         public bool IsInline { get; set; }
         public int Count => _table.Count;

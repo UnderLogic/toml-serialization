@@ -9,29 +9,29 @@ namespace UnderLogic.Serialization.Toml
     internal static class StringExtensions
     {
         private static readonly Regex UnicodeCharRegex =
-            new(@"\\u([0-9a-f]{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            new Regex(@"\\u([0-9a-f]{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex WordSplitRegex =
-            new(@"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=\W)(?=\w)|(?<=\w)(?=\W)|(?<=_)(?=\w)|(?<=\w)(?=_)",
+            new Regex(@"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=\W)(?=\w)|(?<=\w)(?=\W)|(?<=_)(?=\w)|(?<=\w)(?=_)",
                 RegexOptions.Compiled);
-        private static readonly Regex WordRegex = new(@"^[a-z0-9]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex WordRegex =
+            new Regex(@"^[a-z0-9]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public static string EscapeChar(this string text, char escapeChar)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return text;
-
-            return text.Replace(escapeChar.ToString(), $"\\{escapeChar}");
-        }
+        public static string EscapeBackslashes(this string text)
+            => string.IsNullOrWhiteSpace(text) ? text : text.Replace("\\", "\\\\");
+        
+        public static string EscapeQuotes(this string text)
+            => string.IsNullOrWhiteSpace(text) ? text : text.Replace("\"", "\\\"");
 
         public static string EscapeWhitespace(this string text)
         {
-            if (string.IsNullOrWhiteSpace(text))
+            if (text == null)
                 return text;
 
             return text
                 .Replace("\t", "\\t")
                 .Replace("\r", "\\r")
-                .Replace("\n", "\\n");
+                .Replace("\n", "\\n")
+                .Replace("\f", "\\f");
         }
 
         public static string UnescapeTomlString(this string text)
@@ -44,7 +44,8 @@ namespace UnderLogic.Serialization.Toml
                 .Replace("\\\"", "\"")
                 .Replace("\\t", "\t")
                 .Replace("\\r", "\r")
-                .Replace("\\n", "\n");
+                .Replace("\\n", "\n")
+                .Replace("\\f", "\f");
         }
 
         public static string ToCase(this string text, StringCasing casing)
@@ -142,6 +143,7 @@ namespace UnderLogic.Serialization.Toml
                 if (eachChar == '\\' && !escaped)
                 {
                     escaped = true;
+                    currentString.Append(eachChar);
                     continue;
                 }
 

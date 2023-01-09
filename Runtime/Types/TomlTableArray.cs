@@ -6,7 +6,7 @@ namespace UnderLogic.Serialization.Toml.Types
 {
     internal sealed class TomlTableArray : TomlValue, IReadOnlyList<TomlTable>
     {
-        private readonly List<TomlTable> _tables = new();
+        private readonly List<TomlTable> _tables = new List<TomlTable>();
 
         public int Count => _tables.Count;
         
