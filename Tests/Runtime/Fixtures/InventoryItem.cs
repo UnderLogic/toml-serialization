@@ -47,5 +47,20 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
             get => _canDrop;
             set => _canDrop = value;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is InventoryItem item)
+            {
+                return Id == item.Id &&
+                       Name == item.Name &&
+                       DisplayName == item.DisplayName &&
+                       Quantity == item.Quantity &&
+                       MaxQuantity == item.MaxQuantity &&
+                       CanDrop == item.CanDrop;
+            }
+
+            return false;
+        }
     }
 }

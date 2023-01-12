@@ -35,6 +35,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                 .AppendLine($"gold = {player.Gold}")
                 .ToString();
             
+            Assert.That(fieldSection, Is.Not.Null);
             Assert.That($"{fieldSection.Trim()}\n", Is.EqualTo(expectedFields));
         }
         
@@ -65,9 +66,66 @@ namespace UnderLogic.Serialization.Toml.Tests
                 .AppendLine($"dexterity = {player.Stats.Dexterity}")
                 .ToString();
             
+            Assert.That(statsTable, Is.Not.Null);
             Assert.That($"{statsTable.Trim()}\n", Is.EqualTo(expectedStatsTable));
         }
         
+        [Test]
+        public void Serialize_ComplexType_ShouldSerializeEmptyNestedTable()
+        {
+            var player = new PlayerCharacter();
+
+            var toml = TomlSerializer.Serialize(player);
+            var equipmentTable = toml.Split("\n\n").Skip(2).FirstOrDefault();
+            
+            Assert.That("[equipment]\n", Is.EqualTo(equipmentTable));
+        }
+        
+        [Test]
+        public void Serialize_ComplexType_ShouldSerializeNestedTables()
+        {
+            var player = new PlayerCharacter();
+            player.Equipment.Add("weapon", new EquipmentItem
+            {
+                Name = "Sword",
+                AttackPower = 15,
+                Durability = 50,
+                MaxDurability = 100
+            });
+            player.Equipment.Add("shield", new EquipmentItem
+            {
+                Name = "Magic Shield",
+                ArmorClass = 10,
+                SpellPower = 5,
+                MagicResist = 2,
+                Durability = 90,
+                MaxDurability = 100
+            });
+
+            var toml = TomlSerializer.Serialize(player);
+            var equipmentTables = toml.Split("\n\n").Skip(2).ToList();
+
+            foreach (var kv in player.Equipment)
+            {
+                var tableName = $"[equipment.{kv.Key}]";
+                var equipmentTable = equipmentTables.FirstOrDefault(t => t.StartsWith(tableName));
+
+                var expectedTable = new StringBuilder()
+                    .AppendLine(tableName)
+                    .AppendLine($"name = \"{kv.Value.Name}\"")
+                    .AppendLine($"attackPower = {kv.Value.AttackPower}")
+                    .AppendLine($"armorClass = {kv.Value.ArmorClass}")
+                    .AppendLine($"spellPower = {kv.Value.SpellPower}")
+                    .AppendLine($"magicResist = {kv.Value.MagicResist}")
+                    .AppendLine($"durability = {kv.Value.Durability}")
+                    .AppendLine($"maxDurability = {kv.Value.MaxDurability}")
+                    .ToString();
+                
+                Assert.That(equipmentTable, Is.Not.Null);
+                Assert.That($"{equipmentTable.Trim()}\n", Is.EqualTo(expectedTable));
+            }
+        }
+
         [Test]
         public void Serialize_ComplexType_ShouldSerializeTableArraysAfterTables()
         {
@@ -92,7 +150,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             });
 
             var toml = TomlSerializer.Serialize(player);
-            var inventoryTables = toml.Split("\n\n").Skip(2).ToList();
+            var inventoryTables = toml.Split("\n\n").Skip(3).ToList();
 
             Assert.That(inventoryTables.Count, Is.EqualTo(player.Inventory.Count));
             
@@ -111,6 +169,7 @@ namespace UnderLogic.Serialization.Toml.Tests
                     .AppendLine($"canDrop = {item.CanDrop.ToString().ToLowerInvariant()}")
                     .ToString();
                 
+                Assert.That(inventoryTable, Is.Not.Null);
                 Assert.That($"{inventoryTable.Trim()}\n", Is.EqualTo(expectedInventoryTable));
             }
         }

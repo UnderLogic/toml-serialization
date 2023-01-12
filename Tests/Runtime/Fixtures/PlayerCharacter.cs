@@ -16,9 +16,10 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
         private PlayerStats _stats = new PlayerStats();
         private int _statPoints;
 
+        private Dictionary<string, EquipmentItem> _equipment = new Dictionary<string, EquipmentItem>();
         private List<InventoryItem> _inventory = new List<InventoryItem>();
         private int gold;
-        
+
         public string Name
         {
             get => _name;
@@ -67,7 +68,8 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
             set => _statPoints = value;
         }
 
-        public List<InventoryItem> Inventory => _inventory;
+        public IDictionary<string, EquipmentItem> Equipment => _equipment;
+        public IList<InventoryItem> Inventory => _inventory;
         
         public int Gold
         {
