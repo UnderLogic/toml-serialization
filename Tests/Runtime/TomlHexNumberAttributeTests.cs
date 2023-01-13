@@ -11,9 +11,9 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(0xdeadbeef, "0xdeadbeef")]
         public void Serialize_Integer_ShouldFormatAsHexLowercase(long integerValue, string expectedStringValue)
         {
-            var serializableIntegers = new SerializableIntegers(integerValue);
+            var serializedIntegers = new SerializableIntegers(integerValue);
             
-            var toml = TomlSerializer.Serialize(serializableIntegers);
+            var toml = TomlSerializer.Serialize(serializedIntegers);
             var tomlLines = toml.Split("\n");
             
             var expectedToml = $"lowerHexNumber = {expectedStringValue}";
@@ -38,9 +38,9 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(0xDEADBEEF, "0xDEADBEEF")]
         public void Serialize_Integer_ShouldFormatAsHexUppercase(long integerValue, string expectedStringValue)
         {
-            var serializableIntegers = new SerializableIntegers(integerValue);
+            var serializedIntegers = new SerializableIntegers(integerValue);
             
-            var toml = TomlSerializer.Serialize(serializableIntegers);
+            var toml = TomlSerializer.Serialize(serializedIntegers);
             var tomlLines = toml.Split("\n");
             
             var expectedToml = $"upperHexNumber = {expectedStringValue}";

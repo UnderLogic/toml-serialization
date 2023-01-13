@@ -10,9 +10,9 @@ namespace UnderLogic.Serialization.Toml.Tests
         [TestCase(511, "0o777")]
         public void Serialize_Integer_ShouldFormatAsOctal(int integerValue, string expectedStringValue)
         {
-            var serializableIntegers = new SerializableIntegers(integerValue);
+            var serializedIntegers = new SerializableIntegers(integerValue);
             
-            var toml = TomlSerializer.Serialize(serializableIntegers);
+            var toml = TomlSerializer.Serialize(serializedIntegers);
             var tomlLines = toml.Split("\n");
             
             var expectedToml = $"octalNumber = {expectedStringValue}";
