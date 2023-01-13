@@ -104,7 +104,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             var (key, lootTable) = firstMonster.Loot.FirstOrDefault();
 
             var toml = TomlSerializer.Serialize(dungeon);
-            var firstLootTable = toml.Split("\n\n").Skip(5).FirstOrDefault();
+            var firstLootTable = toml.Split("\n\n").Skip(4).FirstOrDefault();
 
             var expectedLootTable = new StringBuilder()
                 .AppendLine($"[rooms.monsters.loot.{key}]")

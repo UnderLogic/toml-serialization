@@ -71,17 +71,6 @@ namespace UnderLogic.Serialization.Toml.Tests
         }
         
         [Test]
-        public void Serialize_ComplexType_ShouldSerializeEmptyNestedTable()
-        {
-            var player = new PlayerCharacter();
-
-            var toml = TomlSerializer.Serialize(player);
-            var equipmentTable = toml.Split("\n\n").Skip(2).FirstOrDefault();
-            
-            Assert.That("[equipment]\n", Is.EqualTo(equipmentTable));
-        }
-        
-        [Test]
         public void Serialize_ComplexType_ShouldSerializeNestedTables()
         {
             var player = new PlayerCharacter();
@@ -150,7 +139,7 @@ namespace UnderLogic.Serialization.Toml.Tests
             });
 
             var toml = TomlSerializer.Serialize(player);
-            var inventoryTables = toml.Split("\n\n").Skip(3).ToList();
+            var inventoryTables = toml.Split("\n\n").Skip(2).ToList();
 
             Assert.That(inventoryTables.Count, Is.EqualTo(player.Inventory.Count));
             

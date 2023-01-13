@@ -388,12 +388,6 @@ namespace UnderLogic.Serialization.Toml
             return true;
         }
 
-        public void Close()
-        {
-            CheckIfDisposed();
-            _reader.Close();
-        }
-
         public void Dispose() => Dispose(true);
 
         private void CheckIfDisposed()
