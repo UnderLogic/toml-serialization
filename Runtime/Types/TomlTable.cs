@@ -26,80 +26,78 @@ namespace UnderLogic.Serialization.Toml.Types
                 Add(kvp.Key, kvp.Value);
         }
 
-        public void Add(string key, TomlValue value)
-        {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-
-            if (!_table.TryAdd(key, value))
-                throw new InvalidOperationException($"Key {key} already exists in table");
-        }
-
-        public void AddPath(string keyPath, TomlValue value)
+        public void Add(string keyPath, TomlValue value)
         {
             if (keyPath == null)
                 throw new ArgumentNullException(nameof(keyPath));
-            
+
+            if (string.IsNullOrWhiteSpace(keyPath))
+                throw new ArgumentException("Key path cannot be whitespace", nameof(keyPath));
+
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            var components = keyPath.Split('.');
+            var components = keyPath.Split('.', 2, StringSplitOptions.RemoveEmptyEntries);
+            var key = components[0];
+
+            // Not a dotted key, add normally to this table
             if (components.Length < 2)
             {
-                Add(components[0], value);
+                if (!_table.TryAdd(key, value))
+                    throw new InvalidOperationException($"Key {key} already exists in table");
+
                 return;
             }
 
-            var tablePath = components.Take(components.Length - 1);
-            var key = components.Last();
-            
-            var currentTable = this;
-            foreach (var tableKey in tablePath)
+            // Dotted key, create a sub-table if it doesn't exist
+            TomlTable childTable = null;
+            if (_table.TryGetValue(key, out var existingValue))
             {
-                if (!currentTable._table.TryGetValue(tableKey, out var tableValue))
-                {
-                    tableValue = new TomlTable();
-                    currentTable.Add(tableKey, tableValue);
-                }
-
-                if (!(tableValue is TomlTable table))
-                    throw new InvalidOperationException($"Key {tableKey} is not a table");
-
-                currentTable = table;
+                if (existingValue is TomlTable table)
+                    childTable = table;
+                else if (existingValue is TomlTableArray tableArray)
+                    childTable = tableArray.Last();
             }
-            
-            currentTable.Add(key, value);
+            else
+            {
+                childTable = new TomlTable();
+                _table.Add(key, childTable);
+            }
+
+            if (childTable == null)
+                throw new InvalidOperationException($"Key {key} already exists in table and is not a table");
+
+            var subKeyPath = keyPath.Substring(key.Length + 1);
+            childTable.Add(subKeyPath, value);
         }
 
-        public bool TryGetValue(string key, out TomlValue value) => _table.TryGetValue(key, out value);
-
-        public bool TryGetValuePath(string keyPath, out TomlValue value)
+        public bool TryGetValue(string keyPath, out TomlValue value)
         {
             value = null;
+
+            if (string.IsNullOrWhiteSpace(keyPath))
+                return false;
             
-            var components = keyPath.Split('.');
+            var components = keyPath.Split('.', 2, StringSplitOptions.RemoveEmptyEntries);
+            var key = components[0];
+
             if (components.Length < 2)
-                return TryGetValue(components[0], out value);
+                return _table.TryGetValue(key, out value);
 
-            var tablePath = components.Take(components.Length - 1);
-            var key = components.Last();
-
-            var currentTable = this;
-            foreach(var tableKey in tablePath)
+            TomlTable childTable = null;
+            if (_table.TryGetValue(key, out var existingValue))
             {
-                if (!TryGetValue(tableKey, out var valueAtPath))
-                    return false;
-                
-                if (valueAtPath is TomlTable childTable)
-                    currentTable = childTable;
-                else
-                    return false;
+                if (existingValue is TomlTable table)
+                    childTable = table;
+                else if (existingValue is TomlTableArray tableArray)
+                    childTable = tableArray.Last();
             }
+
+            if (childTable == null)
+                return false;
             
-            return currentTable.TryGetValue(key, out value);
+            var subKeyPath = keyPath.Substring(key.Length + 1);
+            return childTable.TryGetValue(subKeyPath, out value);
         }
 
         public override string ToString()

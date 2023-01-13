@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnderLogic.Serialization.Toml.Types;
 
@@ -169,9 +170,6 @@ namespace UnderLogic.Serialization.Toml
         {
             CheckIfDisposed();
 
-            if (!string.IsNullOrWhiteSpace(tableKey))
-                WriteTableKey(tableKey);
-
             var isFirstItem = string.IsNullOrWhiteSpace(tableKey);
 
             if (table != null)
@@ -214,12 +212,17 @@ namespace UnderLogic.Serialization.Toml
 
                 foreach (var childTable in childTables)
                 {
-                    if (!isFirstItem)
-                        _writer.WriteLine();
-
                     var childTablePath = string.IsNullOrWhiteSpace(tableKey)
                         ? childTable.Key
                         : $"{tableKey}.{childTable.Key}";
+
+                    if (HasNonTableFields(childTable.Value))
+                    {
+                        if (!isFirstItem)
+                            _writer.WriteLine();
+                        
+                        WriteTableKey(childTablePath);
+                    }
 
                     WriteTableExpanded(childTablePath, childTable.Value);
                     isFirstItem = false;
@@ -227,12 +230,12 @@ namespace UnderLogic.Serialization.Toml
 
                 foreach (var childArray in childArrays)
                 {
-                    if (!isFirstItem)
-                        _writer.WriteLine();
-
                     var childArrayPath = string.IsNullOrWhiteSpace(tableKey)
                         ? childArray.Key
                         : $"{tableKey}.{childArray.Key}";
+                    
+                    if (!isFirstItem)
+                        _writer.WriteLine();
 
                     WriteTableArray(childArrayPath, childArray.Value);
                     isFirstItem = false;
@@ -262,7 +265,7 @@ namespace UnderLogic.Serialization.Toml
                 WriteTableArrayKey(key);
 
                 if (table != null)
-                    WriteTableExpanded(string.Empty, table);
+                    WriteTableExpanded(key, table);
 
                 counter++;
 
@@ -401,24 +404,6 @@ namespace UnderLogic.Serialization.Toml
             _writer.Write(value.ToString(format));
         }
 
-        public void WriteLine()
-        {
-            CheckIfDisposed();
-            _writer.WriteLine();
-        }
-
-        public void Flush()
-        {
-            CheckIfDisposed();
-            _writer.Flush();
-        }
-
-        public void Close()
-        {
-            CheckIfDisposed();
-            _writer.Close();
-        }
-
         public void Dispose() => Dispose(true);
 
         private static void ValidateKey(string key)
@@ -426,6 +411,9 @@ namespace UnderLogic.Serialization.Toml
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
         }
+
+        private static bool HasNonTableFields(TomlTable table)
+            => table.Any(kv => !(kv.Value is TomlTable) && !(kv.Value is TomlTableArray));
 
         private void CheckIfDisposed()
         {
