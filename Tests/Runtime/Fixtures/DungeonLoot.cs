@@ -33,5 +33,18 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
             get => _dropsForAllPlayers;
             set => _dropsForAllPlayers = value;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is DungeonLoot loot)
+            {
+                return loot.LootTable == LootTable &&
+                       loot.DropChance == DropChance &&
+                       loot.Rolls == Rolls &&
+                       loot.DropsForAllPlayers == DropsForAllPlayers;
+            }
+
+            return false;
+        }
     }
 }

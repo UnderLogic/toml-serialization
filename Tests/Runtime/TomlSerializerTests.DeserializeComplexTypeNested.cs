@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
@@ -85,6 +86,71 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var firstRoom = deserializedDungeon.Rooms[0];
             Assert.That(firstRoom.Traps, Is.EqualTo(expectedTraps));
+        }
+        
+        [Test]
+        public void Deserialize_ComplexTypeNested_ShouldSetNestedDictionaries()
+        {
+            var expectedLoot = new Dictionary<string, DungeonLoot>
+            {
+                {"quest", new DungeonLoot
+                {
+                    LootTable = "loot-goblin-quest",
+                    DropChance = 100,
+                    Rolls = 1,
+                    DropsForAllPlayers = true
+                }},
+                {"common", new DungeonLoot
+                {
+                    LootTable = "loot-goblin-common",
+                    DropChance = 30,
+                    Rolls = 3,
+                }},
+                {"uncommon", new DungeonLoot
+                {
+                    LootTable = "loot-goblin-uncommon",
+                    DropChance = 10,
+                    Rolls = 2,
+                }},
+                {"rare", new DungeonLoot
+                {
+                    LootTable = "loot-goblin-rare",
+                    DropChance = 5,
+                    Rolls = 1,
+                }},
+            };
+
+            var sb = new StringBuilder()
+                .AppendLine("[[rooms]]")
+                .AppendLine("id = 1")
+                .AppendLine()
+                .AppendLine("[[rooms.monsters]]")
+                .AppendLine("name = \"Goblin\"")
+                .AppendLine("health = 5")
+                .AppendLine("attack = 2")
+                .AppendLine("defense = 1")
+                .AppendLine("movement = 3");
+
+            foreach (var (key, loot) in expectedLoot)
+            {
+                sb.AppendLine();
+                sb.AppendLine($"[rooms.monsters.loot.{key}]");
+                sb.AppendLine($"lootTable = \"{loot.LootTable}\"");
+                sb.AppendLine($"dropChance = {loot.DropChance}");
+                sb.AppendLine($"rolls = {loot.Rolls}");
+                sb.AppendLine($"dropsForAllPlayers = {loot.DropsForAllPlayers.ToString().ToLowerInvariant()}");
+            }
+            
+            var toml = sb.ToString();
+
+            var deserializedDungeon = TomlSerializer.Deserialize<Dungeon>(toml);
+            Assert.That(deserializedDungeon.Rooms.Count, Is.EqualTo(1));
+
+            var firstRoom = deserializedDungeon.Rooms[0];
+            Assert.That(firstRoom.Monsters.Count, Is.EqualTo(1));
+            
+            var firstMonster = firstRoom.Monsters[0];
+            Assert.That(firstMonster.Loot, Is.EqualTo(expectedLoot));
         }
     }
 }
