@@ -255,7 +255,7 @@ namespace UnderLogic.Serialization.Toml
 
         private static TomlTable ConvertObjectToTomlTable(object obj, ConvertOptions options)
         {
-            var tomlTable = new TomlTable();
+            var tomlTable = new TomlTable() { IsInline = options.ForceInline };
             SerializeObject(tomlTable, obj, options);
 
             return tomlTable;
