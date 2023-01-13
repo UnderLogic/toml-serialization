@@ -47,5 +47,20 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
             get => _triggerCount;
             set => _triggerCount = value;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is DungeonTrap trap)
+            {
+                return trap.Name == Name &&
+                       trap.Type == Type &&
+                       trap.Damage == Damage &&
+                       trap.X == X &&
+                       trap.Y == Y &&
+                       trap.TriggerCount == TriggerCount;
+            }
+
+            return false;
+        }
     }
 }
