@@ -169,9 +169,6 @@ namespace UnderLogic.Serialization.Toml
         {
             CheckIfDisposed();
 
-            if (!string.IsNullOrWhiteSpace(tableKey))
-                WriteTableKey(tableKey);
-
             var isFirstItem = string.IsNullOrWhiteSpace(tableKey);
 
             if (table != null)
@@ -221,6 +218,7 @@ namespace UnderLogic.Serialization.Toml
                         ? childTable.Key
                         : $"{tableKey}.{childTable.Key}";
 
+                    WriteTableKey(childTablePath);
                     WriteTableExpanded(childTablePath, childTable.Value);
                     isFirstItem = false;
                 }
@@ -262,7 +260,7 @@ namespace UnderLogic.Serialization.Toml
                 WriteTableArrayKey(key);
 
                 if (table != null)
-                    WriteTableExpanded(string.Empty, table);
+                    WriteTableExpanded(key, table);
 
                 counter++;
 

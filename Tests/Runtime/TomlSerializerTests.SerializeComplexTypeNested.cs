@@ -68,8 +68,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 .AppendLine($"triggerCount = {firstTrap.TriggerCount}")
                 .ToString();
 
-            Assert.That(expectedTrapTable, Is.Not.Null);
-            Assert.That($"{expectedTrapTable.Trim()}\n", Is.EqualTo(firstTrapTable));
+            Assert.That(firstTrapTable, Is.Not.Null);
+            Assert.That($"{firstTrapTable.Trim()}\n", Is.EqualTo(expectedTrapTable));
         }
         
         [Test]
@@ -91,8 +91,8 @@ namespace UnderLogic.Serialization.Toml.Tests
                 .AppendLine($"movement = {firstMonster.Movement}")
                 .ToString();
 
-            Assert.That(expectedMonsterTable, Is.Not.Null);
-            Assert.That($"{expectedMonsterTable.Trim()}\n", Is.EqualTo(firstMonsterTable));
+            Assert.That(firstMonsterTable, Is.Not.Null);
+            Assert.That($"{firstMonsterTable.Trim()}\n", Is.EqualTo(expectedMonsterTable));
         }
 
         [Test]
@@ -107,15 +107,15 @@ namespace UnderLogic.Serialization.Toml.Tests
             var firstLootTable = toml.Split("\n\n").Skip(5).FirstOrDefault();
 
             var expectedLootTable = new StringBuilder()
-                .AppendLine($"[[rooms.monsters.loot.{key}]]")
+                .AppendLine($"[rooms.monsters.loot.{key}]")
                 .AppendLine($"lootTable = \"{lootTable.LootTable}\"")
                 .AppendLine($"dropChance = {lootTable.DropChance}")
                 .AppendLine($"rolls = {lootTable.Rolls}")
                 .AppendLine($"dropsForAllPlayers = {lootTable.DropsForAllPlayers.ToString().ToLowerInvariant()}")
                 .ToString();
 
-            Assert.That(expectedLootTable, Is.Not.Null);
-            Assert.That($"{expectedLootTable.Trim()}\n", Is.EqualTo(firstLootTable));
+            Assert.That(firstLootTable, Is.Not.Null);
+            Assert.That($"{firstLootTable.Trim()}\n", Is.EqualTo(expectedLootTable));
         }
 
         private static Dungeon CreateMockDungeon()
