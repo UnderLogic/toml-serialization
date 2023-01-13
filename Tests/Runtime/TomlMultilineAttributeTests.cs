@@ -1,3 +1,4 @@
+using System.Text;
 using NUnit.Framework;
 using UnderLogic.Serialization.Toml.Tests.Fixtures;
 
@@ -71,10 +72,29 @@ namespace UnderLogic.Serialization.Toml.Tests
             var serializedStrings = new SerializableStrings(value);
             
             var toml = TomlSerializer.Serialize(serializedStrings);
-            var tomlLines = toml.Split("\n");
 
             var expectedToml = $"multilineLiteralString = '''\n{value}'''";
             Assert.That(expectedToml, Is.SubsetOf(toml));
+        }
+
+        [Test]
+        public void Serialize_MultilineArray_ShouldPlaceItemsOnNewLine()
+        {
+            var serializedArray = SerializableMultilineArray<int>.WithValues(1, 2, 3, 4, 5);
+
+            var toml = TomlSerializer.Serialize(serializedArray);
+
+            var expectedToml = new StringBuilder()
+                .AppendLine("array = [")
+                .AppendLine("    1,")
+                .AppendLine("    2,")
+                .AppendLine("    3,")
+                .AppendLine("    4,")
+                .AppendLine("    5,")
+                .AppendLine("]")
+                .ToString();
+            
+            Assert.That(toml, Is.EqualTo(expectedToml));
         }
     }
 }
