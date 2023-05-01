@@ -99,7 +99,9 @@ namespace UnderLogic.Serialization.Toml.Tests
 
             var deserializedPlayer = TomlSerializer.Deserialize<PlayerCharacter>(toml);
             Assert.That(deserializedPlayer.Inventory.Count, Is.EqualTo(inventoryItems.Length));
-            Assert.That(deserializedPlayer.Inventory, Is.EqualTo(inventoryItems));
+
+            for (var i = 0; i < deserializedPlayer.Inventory.Count; i++)
+                Assert.IsTrue(deserializedPlayer.Inventory[i].IsEquivalentTo(inventoryItems[i]));
         }
         
         [Test]

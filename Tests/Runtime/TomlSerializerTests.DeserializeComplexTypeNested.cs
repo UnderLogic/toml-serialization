@@ -85,7 +85,10 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.That(deserializedDungeon.Rooms.Count, Is.EqualTo(1));
 
             var firstRoom = deserializedDungeon.Rooms[0];
-            Assert.That(firstRoom.Traps, Is.EqualTo(expectedTraps));
+            Assert.AreEqual(expectedTraps.Length, firstRoom.Traps.Count);
+
+            for (var i = 0; i < expectedTraps.Length; i++)
+                Assert.IsTrue(expectedTraps[i].IsEquivalentTo(firstRoom.Traps[i]));
         }
         
         [Test]
@@ -150,7 +153,18 @@ namespace UnderLogic.Serialization.Toml.Tests
             Assert.That(firstRoom.Monsters.Count, Is.EqualTo(1));
             
             var firstMonster = firstRoom.Monsters[0];
-            Assert.That(firstMonster.Loot, Is.EqualTo(expectedLoot));
+            Assert.AreEqual(expectedLoot.Count, firstMonster.Loot.Count);
+
+            foreach (var pair in expectedLoot)
+            {
+                var key = pair.Key;
+                Assert.IsTrue(firstMonster.Loot.ContainsKey(key));
+
+                var expectedLootItem = pair.Value;
+                var actualLootItem = firstMonster.Loot[key];
+                
+                Assert.IsTrue(expectedLootItem.IsEquivalentTo(actualLootItem));
+            }
         }
     }
 }

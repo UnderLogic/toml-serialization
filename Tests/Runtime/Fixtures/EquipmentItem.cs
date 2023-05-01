@@ -55,20 +55,15 @@ namespace UnderLogic.Serialization.Toml.Tests.Fixtures
             set => _maxDurability = value;
         }
 
-        public override bool Equals(object obj)
+        public bool IsEquivalentTo(EquipmentItem other)
         {
-            if (obj is EquipmentItem item)
-            {
-                return item.Name == Name &&
-                       item.AttackPower == AttackPower &&
-                       item.ArmorClass == ArmorClass &&
-                       item.SpellPower == SpellPower &&
-                       item.MagicResist == MagicResist &&
-                       item.Durability == Durability &&
-                       item.MaxDurability == MaxDurability;
-            }
-
-            return false;
+            return other.Name == Name &&
+                   other.AttackPower == AttackPower &&
+                   other.ArmorClass == ArmorClass &&
+                   other.SpellPower == SpellPower &&
+                   other.MagicResist == MagicResist &&
+                   other.Durability == Durability &&
+                   other.MaxDurability == MaxDurability;
         }
     }
 }
