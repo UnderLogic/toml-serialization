@@ -6,7 +6,7 @@
 
 Unity package library for serializing and deserializing [TOML](https://toml.io/en/) data.
 
-**NOTE:** This package is still in development and may have breaking changes in future versions until a stable v1.0.0 release is made.
+:exclamation: **This repository is no longer maintained.** :exclamation:
 
 ## Motivation
 
