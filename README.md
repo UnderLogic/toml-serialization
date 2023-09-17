@@ -8,6 +8,11 @@ Unity package library for serializing and deserializing [TOML](https://toml.io/e
 
 :exclamation: **This repository is no longer maintained.** :exclamation:
 
+## So long Unity...
+
+**Due to Unity's decision to change pricing model to effectively charge developers microtransaction costs for installs, we are no longer working with Unity or building/maintaining package libraries for it.**
+We will be migrating to Godot 4 for all projects.
+
 ## Motivation
 
 Unity does not have built-in support for TOML files and many existing libraries are not compatible with Unity.
