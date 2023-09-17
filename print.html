@@ -1,0 +1,2100 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>TOML Serialization</title>
+        <meta name="robots" content="noindex" />
+        <!-- Custom HTML head -->
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="CHANGELOG.html"><strong aria-hidden="true">2.</strong> Changelog</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li class="chapter-item expanded "><a href="getting-started.html"><strong aria-hidden="true">4.</strong> Getting Started</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/define-a-model.html"><strong aria-hidden="true">4.1.</strong> Define a Model</a></li><li class="chapter-item expanded "><a href="getting-started/serialize-to-file.html"><strong aria-hidden="true">4.2.</strong> Serialize to File</a></li><li class="chapter-item expanded "><a href="getting-started/deserialize-from-file.html"><strong aria-hidden="true">4.3.</strong> Deserialize from File</a></li></ol></li><li class="chapter-item expanded "><a href="supported-types.html"><strong aria-hidden="true">5.</strong> Supported Types</a></li><li class="chapter-item expanded "><a href="limitations.html"><strong aria-hidden="true">6.</strong> Limitations</a></li><li class="chapter-item expanded "><a href="under-the-hood.html"><strong aria-hidden="true">7.</strong> Under the Hood</a></li><li class="chapter-item expanded affix "><li class="part-title">Serialization Rules</li><li class="chapter-item expanded "><a href="serialization-rules/field-selection.html"><strong aria-hidden="true">8.</strong> Field Selection</a></li><li class="chapter-item expanded "><a href="serialization-rules/field-naming.html"><strong aria-hidden="true">9.</strong> Field Naming</a></li><li class="chapter-item expanded "><a href="serialization-rules/field-ordering.html"><strong aria-hidden="true">10.</strong> Field Ordering</a></li><li class="chapter-item expanded "><a href="serialization-rules/field-mapping.html"><strong aria-hidden="true">11.</strong> Field Mapping</a></li><li class="chapter-item expanded "><a href="serialization-rules/value-coercion.html"><strong aria-hidden="true">12.</strong> Value Coercion</a></li><li class="chapter-item expanded affix "><li class="part-title">Type Serialization</li><li class="chapter-item expanded "><a href="type-serialization/boolean.html"><strong aria-hidden="true">13.</strong> Boolean</a></li><li class="chapter-item expanded "><a href="type-serialization/character.html"><strong aria-hidden="true">14.</strong> Character</a></li><li class="chapter-item expanded "><a href="type-serialization/string.html"><strong aria-hidden="true">15.</strong> String</a></li><li class="chapter-item expanded "><a href="type-serialization/enum.html"><strong aria-hidden="true">16.</strong> Enum</a></li><li class="chapter-item expanded "><a href="type-serialization/integer.html"><strong aria-hidden="true">17.</strong> Integer</a></li><li class="chapter-item expanded "><a href="type-serialization/floating-point.html"><strong aria-hidden="true">18.</strong> Floating Point</a></li><li class="chapter-item expanded "><a href="type-serialization/datetime.html"><strong aria-hidden="true">19.</strong> DateTime</a></li><li class="chapter-item expanded "><a href="type-serialization/array.html"><strong aria-hidden="true">20.</strong> Array</a></li><li class="chapter-item expanded "><a href="type-serialization/list.html"><strong aria-hidden="true">21.</strong> List</a></li><li class="chapter-item expanded "><a href="type-serialization/dictionary.html"><strong aria-hidden="true">22.</strong> Dictionary</a></li><li class="chapter-item expanded "><a href="type-serialization/complex-type.html"><strong aria-hidden="true">23.</strong> Complex Type</a></li><li class="chapter-item expanded "><a href="type-serialization/scriptable-object.html"><strong aria-hidden="true">24.</strong> ScriptableObject</a></li><li class="chapter-item expanded "><a href="type-serialization/mono-behaviour.html"><strong aria-hidden="true">25.</strong> MonoBehaviour</a></li><li class="chapter-item expanded affix "><li class="part-title">Library Reference</li><li class="chapter-item expanded "><a href="serialization.html"><strong aria-hidden="true">26.</strong> Serialization</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="serialization/toml-serializer.html"><strong aria-hidden="true">26.1.</strong> TomlSerializer</a></li><li class="chapter-item expanded "><a href="serialization/toml-exporter.html"><strong aria-hidden="true">26.2.</strong> TomlExporter</a></li><li class="chapter-item expanded "><a href="serialization/toml-importer.html"><strong aria-hidden="true">26.3.</strong> TomlImporter</a></li></ol></li><li class="chapter-item expanded "><a href="attributes.html"><strong aria-hidden="true">27.</strong> Attributes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="attributes/toml-binary-number-attribute.html"><strong aria-hidden="true">27.1.</strong> TomlBinaryNumber</a></li><li class="chapter-item expanded "><a href="attributes/toml-camel-case-attribute.html"><strong aria-hidden="true">27.2.</strong> TomlCamelCase</a></li><li class="chapter-item expanded "><a href="attributes/toml-datetime-format-attribute.html"><strong aria-hidden="true">27.3.</strong> TomlDateTimeFormat</a></li><li class="chapter-item expanded "><a href="attributes/toml-expand-attribute.html"><strong aria-hidden="true">27.4.</strong> TomlExpand</a></li><li class="chapter-item expanded "><a href="attributes/toml-hex-number-attribute.html"><strong aria-hidden="true">27.5.</strong> TomlHexNumber</a></li><li class="chapter-item expanded "><a href="attributes/toml-inline-attribute.html"><strong aria-hidden="true">27.6.</strong> TomlInline</a></li><li class="chapter-item expanded "><a href="attributes/toml-kebab-case-attribute.html"><strong aria-hidden="true">27.7.</strong> TomlKebabCase</a></li><li class="chapter-item expanded "><a href="attributes/toml-key-attribute.html"><strong aria-hidden="true">27.8.</strong> TomlKey</a></li><li class="chapter-item expanded "><a href="attributes/toml-literal-attribute.html"><strong aria-hidden="true">27.9.</strong> TomlLiteral</a></li><li class="chapter-item expanded "><a href="attributes/toml-multiline-attribute.html"><strong aria-hidden="true">27.10.</strong> TomlMultiline</a></li><li class="chapter-item expanded "><a href="attributes/toml-octal-number-attribute.html"><strong aria-hidden="true">27.11.</strong> TomlOctalNumber</a></li><li class="chapter-item expanded "><a href="attributes/toml-pascal-case-attribute.html"><strong aria-hidden="true">27.12.</strong> TomlPascalCase</a></li><li class="chapter-item expanded "><a href="attributes/toml-snake-case-attribute.html"><strong aria-hidden="true">27.13.</strong> TomlSnakeCase</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">TOML Serialization</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p><img src="images/cover.png" alt="image" /></p>
+<p>Unity package library for serializing and deserializing <a href="https://toml.io/en/">TOML</a> data.</p>
+<p><strong>NOTE:</strong> This package is still in development and may have breaking changes in future versions until a stable v1.0.0 release is made.</p>
+<h2 id="what-is-toml"><a class="header" href="#what-is-toml">What is TOML?</a></h2>
+<p><a href="https://toml.io/en/">TOML</a> is a relatively newer file format, similar to JSON and YAML files, used for storing data in a human-readable format.</p>
+<h2 id="why-use-toml"><a class="header" href="#why-use-toml">Why use TOML?</a></h2>
+<ul>
+<li>Simple and straightforward format.</li>
+<li>Easy to read and write, especially for humans.</li>
+<li>Less overhead and control characters than JSON.</li>
+<li>Supports comments.</li>
+</ul>
+<h2 id="why-use-this-package"><a class="header" href="#why-use-this-package">Why use this package?</a></h2>
+<p>While there are various TOML libraries available for .NET, this package aims to provide a simple and easy to use API for serializing and deserializing TOML data in Unity.</p>
+<p>It aims to provide a familiar API to Unity's <a href="https://docs.unity3d.com/ScriptReference/JsonUtility.html"><code>JsonUtility</code></a> API for serializing and deserializing JSON data.
+Additionally, it provides ways to customize the serialization process via <a href="attributes.html">attributes</a> similar to those in Microsoft's <a href="https://learn.microsoft.com/en-us/dotnet/api/system.text.json.serialization?view=net-7.0"><code>System.Text.Json</code></a> namespace.</p>
+<p>It is also covered with unit tests to ensure the reliability of the package library as new features are introduced.</p>
+<h2 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h2>
+<p>This package is compatible with <a href="https://docs.unity3d.com/2019.1/Documentation/Manual/CSharpCompiler.html">Unity 2019.1 and later</a>. It only uses C# 7.3 features and targets .NET Framework 4.6.</p>
+<p>While it is recommended to use one of the latest LTS releases of Unity, there are older projects that may opt to use this library.</p>
+<h2 id="limitations"><a class="header" href="#limitations">Limitations</a></h2>
+<p>While this package does implement most of the TOML 1.0 specification, it is <strong>not</strong> intended to support every aspect of the specification..
+It is intended to provide a simple, easy-to-use, and performant library for serializing and deserializing objects to and from TOML format for the majority of use cases.</p>
+<p>That means when importing TOML files generated by other libraries or programs, there may be some issues with deserialization.
+However, if you are using this library to generate TOML files, you should not have any issues.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
+<p>All notable changes to this library will be documented in this file.</p>
+<p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
+and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h2 id="0410---2023-05-01"><a class="header" href="#0410---2023-05-01">[0.4.10] - 2023-05-01</a></h2>
+<h3 id="changed"><a class="header" href="#changed">Changed</a></h3>
+<ul>
+<li>Use custom <code>IsEquivalentTo</code> comparison method to prevent <code>GetHashCode</code> override warnings</li>
+</ul>
+<h3 id="fixed"><a class="header" href="#fixed">Fixed</a></h3>
+<ul>
+<li>Missing <code>.meta</code> file</li>
+</ul>
+<h2 id="049---2023-01-13"><a class="header" href="#049---2023-01-13">[0.4.9] - 2023-01-13</a></h2>
+<h3 id="fixed-1"><a class="header" href="#fixed-1">Fixed</a></h3>
+<ul>
+<li><code>TomlInlineAttribute</code> now properly applied to complex types during serialization</li>
+</ul>
+<h2 id="048---2023-01-13"><a class="header" href="#048---2023-01-13">[0.4.8] - 2023-01-13</a></h2>
+<h3 id="fixed-2"><a class="header" href="#fixed-2">Fixed</a></h3>
+<ul>
+<li>Nested table and table array keys are now properly prefixed with the parent table key when serialized</li>
+<li>Empty table keys are no longer serialized (as they are not necessary)</li>
+<li>Nested tables and table arrays are now properly deserialized</li>
+</ul>
+<h2 id="047---2023-01-09"><a class="header" href="#047---2023-01-09">[0.4.7] - 2023-01-09</a></h2>
+<h3 id="fixed-3"><a class="header" href="#fixed-3">Fixed</a></h3>
+<ul>
+<li>Escape whitespace strings in non-multiline strings</li>
+<li>Escape <code>\f</code> form-feed character in strings</li>
+<li>Unescape whitespace chars in character and string arrays</li>
+<li>All code is now C# 7.3 and .NET Framework 4.6 compatible for Unity 2019.1+</li>
+</ul>
+<h2 id="046---2023-01-04"><a class="header" href="#046---2023-01-04">[0.4.6] - 2023-01-04</a></h2>
+<h3 id="added"><a class="header" href="#added">Added</a></h3>
+<ul>
+<li><code>TomlCamelCaseAttribute</code> custom attribute</li>
+<li><code>TomlPascalCaseAttribute</code> custom attribute</li>
+<li><code>TomlSnakeCaseAttribute</code> custom attribute (allow for uppercase)</li>
+<li><code>TomlKebabCaseAttribute</code> custom attribute</li>
+</ul>
+<h3 id="removed"><a class="header" href="#removed">Removed</a></h3>
+<ul>
+<li><code>TomlCasingAttribute</code> custom attribute in favor of specific ones</li>
+</ul>
+<h2 id="045---2023-01-04"><a class="header" href="#045---2023-01-04">[0.4.5] - 2023-01-04</a></h2>
+<h3 id="added-1"><a class="header" href="#added-1">Added</a></h3>
+<ul>
+<li><code>TomlHexNumberAttribute</code> custom attribute</li>
+<li><code>TomlOctalNumberAttribute</code> custom attribute</li>
+<li><code>TomlBinaryNumberAttribute</code> custom attribute</li>
+<li><code>TomlDateTimeFormatAttribute</code> custom attribute</li>
+</ul>
+<h3 id="removed-1"><a class="header" href="#removed-1">Removed</a></h3>
+<ul>
+<li><code>TomlNumberFormatAttribute</code> custom attribute in favor of specific ones</li>
+</ul>
+<h2 id="044---2023-01-02"><a class="header" href="#044---2023-01-02">[0.4.4] - 2023-01-02</a></h2>
+<h3 id="added-2"><a class="header" href="#added-2">Added</a></h3>
+<ul>
+<li>Serialization support for <code>PositiveInfinity</code>, <code>NegativeInfinity</code> and <code>NaN</code> values</li>
+<li>Deserialization support for <code>PositiveInfinity</code>, <code>NegativeInfinity</code> and <code>NaN</code> values</li>
+<li><code>TomlNumberFormatAttribute</code> for serializing integer values in different formats</li>
+<li>Deserialize <code>hex</code> integer values (e.g. <code>0xdead_beef</code>)</li>
+<li>Deserialize <code>oct</code> integer values (e.g. <code>0o755</code>)</li>
+<li>Deserialize <code>bin</code> integer values (e.g. <code>0b1101010</code>)</li>
+<li>Unit tests for number formats and digit separators (e.g. <code>1_000_000</code>)</li>
+</ul>
+<h2 id="043---2022-12-31"><a class="header" href="#043---2022-12-31">[0.4.3] - 2022-12-31</a></h2>
+<h3 id="added-3"><a class="header" href="#added-3">Added</a></h3>
+<ul>
+<li><code>TomlMultilineAttribute</code> can be applied to arrays and lists to serialize them as multiline TOML arrays</li>
+<li><code>TomlLiteralAttribute</code> can be applied to lists of strings to serialize them as TOML literal strings</li>
+<li><code>TomlLiteralAttribute</code> can be applied to dictionaries of strings to serialize them as TOML literal strings</li>
+</ul>
+<h2 id="042---2022-12-31"><a class="header" href="#042---2022-12-31">[0.4.2] - 2022-12-31</a></h2>
+<h3 id="added-4"><a class="header" href="#added-4">Added</a></h3>
+<ul>
+<li>Deserialization support for multiline arrays (including jagged arrays)</li>
+</ul>
+<h3 id="fixed-4"><a class="header" href="#fixed-4">Fixed</a></h3>
+<ul>
+<li>Allow trailing commas for arrays</li>
+</ul>
+<h2 id="041---2022-12-30"><a class="header" href="#041---2022-12-30">[0.4.1] - 2022-12-30</a></h2>
+<h3 id="added-5"><a class="header" href="#added-5">Added</a></h3>
+<ul>
+<li><code>TomlLiteralAttribute</code> custom attribute for serializing literal strings</li>
+<li><code>TomlMultilineAttribute</code> custom attribute for serializing multi-line strings (including literals)</li>
+<li><code>TomlInlineAttribute</code> custom attribute for serializing inline tables explicitly</li>
+<li><code>TomlExpandAttribute</code> custom attribute for serializing expanded tables explicitly</li>
+<li>More unit tests for various serialization cases</li>
+</ul>
+<h3 id="changed-1"><a class="header" href="#changed-1">Changed</a></h3>
+<ul>
+<li><code>TomlFloat</code> values can be coerced into integer values (will be truncated)</li>
+</ul>
+<h2 id="040---2022-12-30"><a class="header" href="#040---2022-12-30">[0.4.0] - 2022-12-30</a></h2>
+<h3 id="added-6"><a class="header" href="#added-6">Added</a></h3>
+<ul>
+<li><code>TomlKeyAttribute</code> custom attribute for overriding the TOML key of a field</li>
+<li><code>TomlCasingAttribute</code> custom attribute for overriding the TOML key casing of an object or field</li>
+</ul>
+<h3 id="fixed-5"><a class="header" href="#fixed-5">Fixed</a></h3>
+<ul>
+<li>Excessive escaping of strings in TOML output</li>
+</ul>
+<h2 id="035---2022-12-29"><a class="header" href="#035---2022-12-29">[0.3.5] - 2022-12-29</a></h2>
+<h3 id="added-7"><a class="header" href="#added-7">Added</a></h3>
+<ul>
+<li>Deserialization of multiline basic strings using <code>&quot;&quot;&quot;</code> syntax</li>
+<li>Deserialization of multiline literal strings using <code>'''</code> syntax</li>
+<li>Deserialization of unicode escape sequences in basic strings using <code>\uXXXX</code> syntax</li>
+<li>More documentation on deserialization rules</li>
+<li>Proper escaping of serialized strings</li>
+</ul>
+<h3 id="changed-2"><a class="header" href="#changed-2">Changed</a></h3>
+<ul>
+<li>Updated icons for <code>TomlImporter</code> and <code>TomlExporter</code> components</li>
+</ul>
+<h3 id="fixed-6"><a class="header" href="#fixed-6">Fixed</a></h3>
+<ul>
+<li>Now properly ignores inline comments when parsing TOML</li>
+<li>Ignore escape sequences in literal strings</li>
+</ul>
+<h2 id="034---2022-12-28"><a class="header" href="#034---2022-12-28">[0.3.4] - 2022-12-28</a></h2>
+<h3 id="added-8"><a class="header" href="#added-8">Added</a></h3>
+<ul>
+<li>Serialization of jagged arrays</li>
+<li>Unit tests for jagged arrays</li>
+</ul>
+<h3 id="changed-3"><a class="header" href="#changed-3">Changed</a></h3>
+<ul>
+<li>Made <code>HasDefaultConstructor</code> method private, as it is an internal helper method</li>
+</ul>
+<h3 id="fixed-7"><a class="header" href="#fixed-7">Fixed</a></h3>
+<ul>
+<li>Escaping of quoted strings</li>
+</ul>
+<h2 id="033---2022-12-27"><a class="header" href="#033---2022-12-27">[0.3.3] - 2022-12-27</a></h2>
+<h3 id="added-9"><a class="header" href="#added-9">Added</a></h3>
+<ul>
+<li><code>TomlImporter</code> component to import TOML files into Unity objects</li>
+<li>Custom editor for <code>TomlExporter</code> component</li>
+<li>Custom editor for <code>TomlImporter</code> component</li>
+<li>Sample scene for <code>TomlImporter</code> component</li>
+<li>Icons for <code>TomlExporter</code> and <code>TomlImporter</code> components</li>
+</ul>
+<h3 id="changed-4"><a class="header" href="#changed-4">Changed</a></h3>
+<ul>
+<li>Renamed <code>sourceObject</code> to <code>targetObject</code> for <code>TomlExporter</code> component</li>
+<li>Removed <code>outputDirectory</code> from <code>TomlExporter</code> component</li>
+<li>Renamed <code>defaultFilename</code> to <code>outputFile</code> for <code>TomlExporter</code> component</li>
+<li>Updated documentation</li>
+</ul>
+<h2 id="032---2022-12-27"><a class="header" href="#032---2022-12-27">[0.3.2] - 2022-12-27</a></h2>
+<h3 id="added-10"><a class="header" href="#added-10">Added</a></h3>
+<ul>
+<li>Unit tests for bidirectional serialization to and from TOML</li>
+<li>Support for serializing nested objects using dot (<code>.</code>) notation</li>
+</ul>
+<h3 id="fixed-8"><a class="header" href="#fixed-8">Fixed</a></h3>
+<ul>
+<li>Serialization of arrays and lists containing <code>null</code> values</li>
+<li>Serialization of mixed arrays and lists containing nested arrays and lists</li>
+<li>Serialization of mixed dictionaries containing arrays and lists</li>
+</ul>
+<h2 id="031---2022-12-26"><a class="header" href="#031---2022-12-26">[0.3.1] - 2022-12-26</a></h2>
+<h3 id="fixed-9"><a class="header" href="#fixed-9">Fixed</a></h3>
+<ul>
+<li>Serialization order of tables and arrays within another table</li>
+</ul>
+<h2 id="030---2022-12-26"><a class="header" href="#030---2022-12-26">[0.3.0] - 2022-12-26</a></h2>
+<h3 id="added-11"><a class="header" href="#added-11">Added</a></h3>
+<ul>
+<li><code>Deserialize</code> methods for <code>TomlSerializer</code> static class</li>
+<li>Unit tests for <code>Deserialize</code> methods</li>
+<li>Unit tests for <code>Serialize</code> methods</li>
+<li>Updated documentation</li>
+</ul>
+<h3 id="changed-5"><a class="header" href="#changed-5">Changed</a></h3>
+<ul>
+<li><code>Serialize</code> now only serializes <code>IList</code> instead of <code>IEnumerable</code> fields</li>
+</ul>
+<h3 id="fixed-10"><a class="header" href="#fixed-10">Fixed</a></h3>
+<ul>
+<li>Escape double quotes and backslashes in serialized strings</li>
+</ul>
+<h2 id="020---2022-12-21"><a class="header" href="#020---2022-12-21">[0.2.0] - 2022-12-21</a></h2>
+<h3 id="added-12"><a class="header" href="#added-12">Added</a></h3>
+<ul>
+<li><code>TomlExporter</code> component for exporting TOML files from Unity objects</li>
+<li>Documentation for <code>TomlExporter</code> component</li>
+<li>Exporter sample scene</li>
+<li>Serializer sample scene</li>
+</ul>
+<h3 id="fixed-11"><a class="header" href="#fixed-11">Fixed</a></h3>
+<ul>
+<li><code>TomlSerializer</code> not putting a new line space between tables</li>
+</ul>
+<h2 id="010---2022-12-20"><a class="header" href="#010---2022-12-20">[0.1.0] - 2022-12-20</a></h2>
+<h3 id="added-13"><a class="header" href="#added-13">Added</a></h3>
+<ul>
+<li><code>TomlSerializer</code> class for serializing objects to TOML format</li>
+<li>Unit tests for <code>TomlSerializer</code> class</li>
+<li>Documentation for <code>TomlSerializer</code> class</li>
+<li>Documentation for serialization rules</li>
+<li>Documentation for supported types</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<h2 id="openupm"><a class="header" href="#openupm">OpenUPM</a></h2>
+<p><a href="https://openupm.com/">OpenUPM</a> is an open source Unity package registry that allows you to easily install thousands of packages.</p>
+<p>You can install this library with the following CLI command:</p>
+<pre><code class="language-shell">$ openupm add com.underlogic.toml-serialization
+</code></pre>
+<h2 id="git-url"><a class="header" href="#git-url">Git URL</a></h2>
+<p>Starting with Unity 2019.3 you can add packages via git url.
+You can add this package by the following url: <code>https://github.com/UnderLogic/runtime-variables</code></p>
+<p>Using this method will allow you to update the package through the Unity Package Manager.</p>
+<h2 id="local-package"><a class="header" href="#local-package">Local Package</a></h2>
+<p>Alternatively, you can clone the git repository and add the package locally.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
+<h2 id="context"><a class="header" href="#context">Context</a></h2>
+<p><a href="https://toml.io/en/">TOML</a> is a data format similar to JSON, but looks like an INI file.
+It is designed to be easy to read and write by humans, and is a good alternative to JSON for configuration files.</p>
+<p>It also maps well to hash tables and dictionaries, which makes it a good choice for serializing data.</p>
+<h2 id="samples"><a class="header" href="#samples">Samples</a></h2>
+<p>The <code>Samples~</code> folder contains sample scenes showcasing various aspects of the library in action.
+It is recommended to import and play around with them in Unity to get a feel for how to use the library.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="define-a-model"><a class="header" href="#define-a-model">Define a Model</a></h1>
+<h2 id="overview-1"><a class="header" href="#overview-1">Overview</a></h2>
+<p>The first step to using TOML in Unity is to define a model class (or struct) that represents the data you want to serialize or deserialize.</p>
+<p>It can be as simple as a single class, or it can be a complex hierarchy of classes.
+The serializer will automatically serialize and deserialize the entire object graph, if possible.</p>
+<p>A common use case is to define a model class that represents a configuration file, let's say <code>PlayerSettings</code>:</p>
+<h2 id="player-settings-model"><a class="header" href="#player-settings-model">Player Settings Model</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerSettings
+{
+    private string _playerName = &quot;Player&quot;;
+    private int _credits;
+    
+    private string _difficultyLevel = &quot;Normal&quot;;
+    
+    private float _soundVolume = 1.0f;
+    private float _musicVolume = 1.0f;
+    
+    // ... other fields
+    
+    [NonSerialized]
+    private DateTime _lastSavedAt;  // will not be serialized
+}
+</code></pre>
+<p>The model class must be marked with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.serializableattribute"><code>SerializableAttribute</code></a> attribute, which tells the serializer to include the class in the serialization process.</p>
+<p>If you have fields you do not want to be serialized, you can mark them with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.nonserializedattribute"><code>NonSerializedAttribute</code></a> attribute.
+They will be ignored by the serializer and deserializer.</p>
+<h2 id="field-attributes"><a class="header" href="#field-attributes">Field Attributes</a></h2>
+<p>The TOML serializer supports a number of attributes that can be applied to fields to control how they are serialized and deserialized.</p>
+<p>For more information on the attributes, see the <a href="getting-started/../attributes/attributes.html">Attributes</a> page.</p>
+<h2 id="constructors"><a class="header" href="#constructors">Constructors</a></h2>
+<p>It is recommended that you have a parameterless constructor for your model classes.
+You can use constructor chaining to call a constructor with parameters, if you need to.</p>
+<p>This is because the serializer will create an instance of your model class using the parameterless constructor, and then populate the fields using the deserialized data.
+If you do not have a parameterless constructor, the serializer will throw an exception.</p>
+<p>By default, all classes have a parameterless constructor, but if you have a custom constructor, you will need to add a parameterless constructor yourself.
+All structs have a parameterless constructor as they are value types.</p>
+<h2 id="serializing-to-a-file"><a class="header" href="#serializing-to-a-file">Serializing to a File</a></h2>
+<p>In the <a href="getting-started/./serialize-to-file.html">next step</a>, we will serialize the <code>PlayerSettings</code> model to a TOML file.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="serialize-to-file"><a class="header" href="#serialize-to-file">Serialize to File</a></h1>
+<h2 id="overview-2"><a class="header" href="#overview-2">Overview</a></h2>
+<p>Once you have <a href="getting-started/define-a-model.html">defined a model</a>, you can serialize it to a TOML file.
+You can also load it from a TOML file if you have a model that matches the structure of the file.</p>
+<p>In this example, we are going to assume this is the first time we are serializing this model so no file exists yet.</p>
+<h2 id="serializer-example"><a class="header" href="#serializer-example">Serializer Example</a></h2>
+<p>In order to serialize a model to a TOML file, you need to use the <a href="getting-started/../serialization/toml-serializer.html"><code>TomlSerializer</code></a> <code>Serialize</code> static method.</p>
+<p>To do this in Unity, we can create a simple <code>MonoBehaviour</code> that does this on the <code>Start</code> method.</p>
+<p>Alternatively, you can use the <a href="getting-started/../serialization/toml-exporter.html"><code>TomlExporter</code></a> which does this for you, assuming your data is a <code>ScriptableObject</code>.</p>
+<pre><code class="language-csharp">using System.IO;
+using UnityEngine;
+
+public class PlayerSettingsSaver : MonoBehaviour
+{
+    private PlayerSettings _playerSettings;
+
+    private void Awake()
+    {
+        // Initialize the player settings
+        _playerSettings = new PlayerSettings();
+    }
+
+    private void Start()
+    {
+        // Save the player settings to a TOML file in the persistent data path
+        var filePath = Path.Combine(Application.persistentDataPath, &quot;player-settings.toml&quot;);
+        TomlSerializer.Serialize(settings, filePath);
+    }
+}
+</code></pre>
+<p>As you can see, we are creating a new instance of the <code>PlayerSettings</code> class and then serializing it to a file.</p>
+<p>Obviously, you would want to do this when the player saves their settings, but for the sake of this example, we are doing it on the <code>Start</code> method.</p>
+<h2 id="toml-output"><a class="header" href="#toml-output">TOML Output</a></h2>
+<pre><code class="language-toml">playerName = &quot;Player&quot;
+credits = 0
+difficultyLevel = &quot;Normal&quot;
+soundVolume = 1.0
+musicVolume = 1.0
+</code></pre>
+<h2 id="load-from-a-file"><a class="header" href="#load-from-a-file">Load from a File</a></h2>
+<p>In the <a href="getting-started/deserialize-from-file.html">next step</a>, we will load the <code>PlayerSettings</code> model from a TOML file.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="deserialize-from-file"><a class="header" href="#deserialize-from-file">Deserialize from File</a></h1>
+<h2 id="overview-3"><a class="header" href="#overview-3">Overview</a></h2>
+<p>Once you have <a href="getting-started/define-a-model.html">defined a model</a>, you can deserialize it from a TOML file.
+In the <a href="getting-started/serialize-to-file.html">previous step</a>, we serialized a <code>PlayerSettings</code> model to a TOML file.</p>
+<p>In some cases you may only be consuming TOML files and not creating them.
+You can still use the TOML serializer to deserialize a model from a TOML file.</p>
+<h2 id="deserializer-example"><a class="header" href="#deserializer-example">Deserializer Example</a></h2>
+<p>In order to deserialize a model from a TOML file, you need to use the <a href="getting-started/../serialization/toml-serializer.html"><code>TomlSerializer</code></a> <code>Deserialize</code> or <code>DeserializeInto</code> static methods.</p>
+<p>To do this in Unity, we can create a simple <code>MonoBehaviour</code> that does this on the <code>Start</code> method.</p>
+<p>Alternatively, you can use the <a href="getting-started/../deserialization/toml-importer.html"><code>TomlImporter</code></a> which does this for you, assuming your data is a <code>ScriptableObject</code>.</p>
+<pre><code class="language-csharp">using System.IO;
+using UnityEngine;
+
+public class PlayerSettingsLoader : MonoBehaviour
+{
+    private PlayerSettings _playerSettings;
+
+    private void Awake()
+    {
+        // Initialize the player settings
+        _playerSettings = new PlayerSettings();
+    }
+
+    private void Start()
+    {
+        // Load the player settings from a TOML file in the persistent data path
+        var filePath = Path.Combine(Application.persistentDataPath, &quot;player-settings.toml&quot;);
+        using (var reader = new StreamReader(filePath))
+        {
+            TomlSerializer.DeserializeInto(reader, _playerSettings);
+        }
+    }
+}
+</code></pre>
+<p>As you can see, we are creating a new instance of the <code>PlayerSettings</code> class and then deserializing it from a file.</p>
+<p>Obviously, you would want to do this on application load but for the sake of this example, we are doing it on the <code>Start</code> method.</p>
+<h2 id="deserialize-vs-deserializeinto"><a class="header" href="#deserialize-vs-deserializeinto">Deserialize vs. DeserializeInto</a></h2>
+<p>There are two ways to deserialize a model from a TOML file, and they behave the same way.</p>
+<p>The <code>Deserialize&lt;T&gt;</code> method will create a new instance of the model and return it.
+The requirement is that the <code>T</code> being passed in is a class or struct that has a parameterless constructor.</p>
+<p>In some cases, you may want to deserialize a model into an existing instance.
+You can use the <code>DeserializeInto&lt;T&gt;</code> method for this.</p>
+<p>This is common when you are loading a model from a file and then updating it with new values.
+Or the type you are deserializing does not have a parameterless constructor.</p>
+<h2 id="scriptable-objects"><a class="header" href="#scriptable-objects">Scriptable Objects</a></h2>
+<p>One example of needing the <code>DeserializeInto</code> method this is when deserializing a <code>ScriptableObject</code> in Unity.
+You may have an existing instance of a <code>ScriptableObject</code> that you want to deserialize into.</p>
+<pre><code class="language-csharp">// Assume PlayerSettings is a ScriptableObject
+
+// Deserialize into an existing ScriptableObject
+TomlSerializer.DeserializeInto(tomlString, _playerSettings);
+
+// Deserialize into a new ScriptableObject
+var newSettings = ScriptableObject.CreateInstance&lt;PlayerSettings&gt;();
+tomlSerializer.DeserializeInto(tomlString, newSettings);
+
+// This will not work with ScriptableObjects, use the above instead
+var newSettings = TomlSerializer.Deserialize&lt;PlayerSettings&gt;(tomlString);
+</code></pre>
+<p>You can also do the same for deserializing into <code>MonotBehaviour</code> instances.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="supported-types"><a class="header" href="#supported-types">Supported Types</a></h1>
+<p>This package library aims to support the most common use cases for serializing and deserializing data.</p>
+<p>To see more information how these are serialized into TOML, see the <a href="serialization-rules.html">Serialization Rules</a> page sections.</p>
+<h2 id="scalars"><a class="header" href="#scalars">Scalars</a></h2>
+<p>The following scalar types are supported:</p>
+<ul>
+<li><code>bool</code></li>
+<li><code>char</code></li>
+<li><code>string</code></li>
+<li><code>sbyte</code></li>
+<li><code>short</code></li>
+<li><code>int</code></li>
+<li><code>long</code></li>
+<li><code>byte</code></li>
+<li><code>ushort</code></li>
+<li><code>uint</code></li>
+<li><code>float</code></li>
+<li><code>double</code></li>
+<li><code>DateTime</code></li>
+</ul>
+<p><strong>NOTE:</strong> Unsigned 64-bit integer types (<code>ulong</code>) are not supported, per the <a href="https://toml.io/en/v1.0.0#integer">TOML specification</a>.</p>
+<h2 id="enum-values"><a class="header" href="#enum-values">Enum Values</a></h2>
+<p>Enum values are supported including bitflags marked with the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-7.0">FlagsAttribute</a>.</p>
+<h2 id="object-values"><a class="header" href="#object-values">Object Values</a></h2>
+<p>Boxed <code>object</code> values are supported.
+This can be useful when used in conjunction with arrays, lists, and dictionaries for mixed collections.</p>
+<h2 id="structs"><a class="header" href="#structs">Structs</a></h2>
+<p>Custom struct types are supported and must be marked with the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.serializableattribute?view=net-6.0"><code>SerializableAttribute</code></a> attribute.</p>
+<h2 id="classes"><a class="header" href="#classes">Classes</a></h2>
+<p>Custom class types are supported and must be marked with the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.serializableattribute?view=net-6.0"><code>SerializableAttribute</code></a> attribute.</p>
+<p>Unity's <code>ScriptableObject</code> and <code>MonoBehaviour</code> types are supported.</p>
+<h2 id="arrays"><a class="header" href="#arrays">Arrays</a></h2>
+<p>Arrays of any supported type are allowed and can be serialized.
+Jagged arrays are supported, but multidimensional arrays are not.</p>
+<h2 id="lists"><a class="header" href="#lists">Lists</a></h2>
+<p>Lists of any supported type are allowed and can be serialized.
+This includes <code>IList</code> non-generic and <code>IList&lt;T&gt;</code> generic interfaces.</p>
+<h2 id="dictionaries"><a class="header" href="#dictionaries">Dictionaries</a></h2>
+<p>Dictionaries are supported if <code>TKey</code> is <code>string</code> and <code>TValue</code> is one of the supported types.
+This includes custom types, array types, and nested dictionary types as a value.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="limitations-1"><a class="header" href="#limitations-1">Limitations</a></h1>
+<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<p>This package library is not intended to support every aspect of the TOML 1.0 specification.</p>
+<p>Instead, it is intended to provide a simple, easy-to-use, and performant library for serializing and deserializing objects to and from TOML format for the majority of use cases.</p>
+<p>With that, there are some limitations to the serialization process. These may be solved in future versions of the library.</p>
+<h2 id="field-name-collisions"><a class="header" href="#field-name-collisions">Field Name Collisions</a></h2>
+<p>When serializing an object to TOML, the library will attempt to use the field name as the key in the TOML document.
+It will strip the leading underscore (<code>_</code>) from the field name if it exists and use the remaining name as the key.</p>
+<p>If the object being serialized has two fields, one named <code>_name</code> and the other named <code>name</code>, the library will throw an exception.</p>
+<h3 id="example"><a class="header" href="#example">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class SomeObject
+{
+    private string _name;
+    private string name;  // &lt;-- Will throw an exception on serialize
+}
+</code></pre>
+<p>This is usually not a problem, as you should not have two fields with the same name in the same object.</p>
+<h3 id="workarounds"><a class="header" href="#workarounds">Workarounds</a></h3>
+<ol>
+<li>Rename one of the fields.</li>
+<li>Use the <a href="attributes/toml-key-attribute.html"><code>TomlKeyAttribute</code></a> attribute to specify a different key name for the field.</li>
+<li>Use the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.nonserializedattribute?view=net-6.0"><code>NonSerializedAttribute</code></a> to exclude one of the fields from serialization.</li>
+</ol>
+<h2 id="key-names"><a class="header" href="#key-names">Key Names</a></h2>
+<p>When serializing an object the library will attempt to use the field name as the key in the TOML document.
+For nested objects beyond the first level, the library will use dot (<code>.</code>) notation to represent the table name.</p>
+<p>For key-value pairs, the key will never be serialized using dot notation.</p>
+<p>The library does not attempt to escape the key names in any way.
+This is usually not a problem, as C# field names usually are alphanumeric.</p>
+<h2 id="multiline-inline-tables"><a class="header" href="#multiline-inline-tables">Multiline Inline Tables</a></h2>
+<p>This library does not support multiline inline tables.
+However, standard tables are supported as well as single-line inline tables.</p>
+<h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
+<pre><code class="language-toml"># This is a valid standard table that spans multiple lines.
+[table]
+value = &quot;bar&quot;
+
+# This is a valid single-line inline table.
+inline_table = { foo = &quot;bar&quot;, baz = &quot;qux&quot; }
+
+
+# This is an invalid multiline inline table.
+inline_table = {
+    foo = &quot;bar&quot;,
+    baz = &quot;qux&quot;
+}
+</code></pre>
+<p>The TOML specification highly recommends using standard tables over inline tables where possible.</p>
+<h2 id="interfaces"><a class="header" href="#interfaces">Interfaces</a></h2>
+<p>This library does not support two-way serialization of fields that represent interfaces.
+This is because the library does not know which concrete type to use when deserializing the data.</p>
+<p>Since fields can be made private you should not need to serialize interfaces.
+Instead your backing fields should be of the concrete type, and the interface should be a property that can be accessed publicly.</p>
+<h2 id="abstract--derived-classes"><a class="header" href="#abstract--derived-classes">Abstract &amp; Derived Classes</a></h2>
+<p>This library does not support two-way serialization of abstract or base classes.
+This is because the library does not know which concrete type to use when deserializing the data.</p>
+<p>When deserializing a base class, the library will only serialize the fields that are defined in the base class.
+This can cause issues if the concrete type has additional fields that are not defined in the base class.</p>
+<p>You should always use specific concrete types when serializing and deserializing data.</p>
+<h2 id="deeply-nested-objects"><a class="header" href="#deeply-nested-objects">Deeply Nested Objects</a></h2>
+<p>When serializing deeply nested objects, the library may incorrectly serialize the object or inline some of the fields.</p>
+<p>While this is not a problem for most use cases, it is something to be aware of if you notice awkwardly formatted TOML documents.</p>
+<h2 id="multidimensional-arrays"><a class="header" href="#multidimensional-arrays">Multidimensional Arrays</a></h2>
+<p>This library does not support multidimensional arrays.
+This is because it is not possible to represent multidimensional arrays in TOML.</p>
+<p>However, jagged arrays (&quot;arrays of arrays&quot;) are supported for scalar types.
+They must be all of the same type, or boxed as <code>object</code> arrays.</p>
+<p>For example, you can use <code>int[][]</code> but not <code>int[,]</code>.</p>
+<h2 id="unsigned-64-bit-integers"><a class="header" href="#unsigned-64-bit-integers">Unsigned 64-bit Integers</a></h2>
+<p>The <code>ulong</code> type is not supported by the TOML specification, so they are not supported by this library.
+Unsigned 32-bit integers (<code>uint</code>) are supported, however.</p>
+<p>You can use signed 64-bit integers (<code>long</code>) instead, as they are supported by the TOML specification.
+All integer values are stored as signed 64-bit integers in the TOML document.</p>
+<p>If you need large integer values, use <code>long</code> instead of <code>int</code> or <code>uint</code>.</p>
+<h2 id="floating-point-precision"><a class="header" href="#floating-point-precision">Floating Point Precision</a></h2>
+<p>When serializing floating point numbers, the library will use the default precision of the <code>double</code> type, which is 15 digits.
+Any digits beyond the 15th will be rounded.</p>
+<p>This is usually not a problem, but it is something to be aware of if you notice floating point numbers being rounded.</p>
+<h2 id="monetary-values"><a class="header" href="#monetary-values">Monetary Values</a></h2>
+<p>The <code>decimal</code> type is not supported. For storing monetary values, either use a <code>string</code> for the value or <code>int</code> for the value in cents.</p>
+<p>Due to rounding errors, the <code>float</code> and <code>double</code> types are not recommended for storing monetary values.</p>
+<h3 id="example-2"><a class="header" href="#example-2">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class InAppPurchase
+{
+    private int _priceInCents = 1299;
+    private string _price = &quot;12.99&quot;
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="under-the-hood"><a class="header" href="#under-the-hood">Under the Hood</a></h1>
+<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<p>This document is intended for developers who wish to understand the inner workings of the TOML serializer.
+It is not required reading for users of the library.</p>
+<p>It also serves as documentation for the serialization and deserialization process at a more granular level.</p>
+<p>All of these are marked as <code>internal</code> and not exposed to the public API of this library.
+The only exception is the <code>TomlSerializer</code> class, which is the entry point for serialization and deserialization.</p>
+<h2 id="marshalling"><a class="header" href="#marshalling">Marshalling</a></h2>
+<p>The <code>TomlSerializer</code> uses an internal marshalling process to convert objects to and from TOML.
+These objects serve as a bridge between the TOML document and the object being serialized or deserialized.</p>
+<p>These are the <code>TomlValue</code> derived classes below:</p>
+<ul>
+<li><code>TomlNull</code></li>
+<li><code>TomlBoolean</code></li>
+<li><code>TomlDateTime</code></li>
+<li><code>TomlFloat</code></li>
+<li><code>TomlInteger</code></li>
+<li><code>TomlString</code></li>
+<li><code>TomlArray</code></li>
+<li><code>TomlTable</code></li>
+<li><code>TomlTableArray</code></li>
+</ul>
+<p>The <code>TomlArray</code>, <code>TomlTable</code> and <code>TomlTableArray</code> can contain any of the above types as well (nested).</p>
+<p>The <code>TomlTable</code> can be inline or standard (expanded). This is determined by the <code>TomlTable.IsInline</code> property.</p>
+<h2 id="serialization"><a class="header" href="#serialization">Serialization</a></h2>
+<p>The serialization process is broken down into three steps done by the <code>TomlSerializer</code> class:</p>
+<ol>
+<li>Iterate over the object's fields</li>
+<li>Marshal each field's value into a TOML value (recursively)</li>
+<li>Write the TOML root table</li>
+</ol>
+<h3 id="field-iteration"><a class="header" href="#field-iteration">Field Iteration</a></h3>
+<p>The <code>TomlSerializer</code> class iterates over the fields of the object using reflection, ignoring any fields marked with the <code>NonSerialized</code> attribute.</p>
+<p>It will recursively iterate over any nested objects, and supports arrays, lists, and dictionaries.</p>
+<h3 id="field-marshaling"><a class="header" href="#field-marshaling">Field Marshaling</a></h3>
+<p>The <code>TomlSerializer</code> class converts each field's value into a <code>TomlValue</code> based on the field's type.
+See the above possible <code>TomlValue</code> types.</p>
+<p>The value is added to the root table, child table, or child array using the field's name as the key.</p>
+<h3 id="root-table-writing"><a class="header" href="#root-table-writing">Root Table Writing</a></h3>
+<p>The <code>TomlSerializer</code> class writes the root table to the TOML document using the <code>TomlWriter</code> class.</p>
+<p>The <code>TomlWriter</code> class is responsible for writing the TOML document to a string, stream, or writer and all of the formatting.</p>
+<h2 id="deserialization"><a class="header" href="#deserialization">Deserialization</a></h2>
+<p>The deserialization process is broken down into three steps done by the <code>TomlSerializer</code> class:</p>
+<ol>
+<li>Parse the TOML document into marshalled objects</li>
+<li>Create the deserialized object</li>
+<li>Unmarshal the TOML root table into the deserialized object (recursively)</li>
+</ol>
+<p><strong>NOTE:</strong> In the <code>DeserializeInto</code> method, the deserialized object is passed in as a parameter instead of being created.</p>
+<h3 id="toml-document-parsing"><a class="header" href="#toml-document-parsing">TOML Document Parsing</a></h3>
+<p>The <code>TomlSerializer</code> class reads the TOML document using the <code>TomlReader</code> class.</p>
+<p>The <code>TomlReader</code> class is responsible for reading the TOML document from a string, stream, or reader and parsing it into <code>TomlValue</code> objects.</p>
+<p>The <code>TomlLineBuffer</code> class is used to aid parsing of multiline strings, lists, and dictionaries.
+It acts as an enumerable over the actual lines of the document (ignoring comments and whitespace).</p>
+<h3 id="object-creation"><a class="header" href="#object-creation">Object Creation</a></h3>
+<p>The <code>TomlSerializer</code> class creates the deserialized object using the <code>Activator</code> or <code>Array</code> static class methods.
+This is done by calling the default constructor of the object's type.</p>
+<h3 id="field-deserialization"><a class="header" href="#field-deserialization">Field Deserialization</a></h3>
+<p>The <code>TomlSerializer</code> class converts each parsed <code>TomlValue</code> to the field's type and sets it.
+This includes scalar values, complex types, arrays, lists, and dictionaries.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="field-selection"><a class="header" href="#field-selection">Field Selection</a></h1>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
+<p>This library uses reflection to determine which fields to serialize and deserialize within an object.</p>
+<p>By default, all public <strong>and</strong> private instance fields are serialized and deserialized unless they are marked with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.nonserializedattribute?view=net-6.0"><code>NonSerializedAttribute</code></a>.</p>
+<p>Properties are <strong>not</strong> serialized or deserialized.
+This is because properties may not have a backing field, or may be read-only.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="field-naming"><a class="header" href="#field-naming">Field Naming</a></h1>
+<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
+<p>This library uses reflection to determine the name of each field when serializing an object into TOML.</p>
+<p>By default, the name of each field is used as the key in the TOML document.
+This can be overridden by using the <a href="serialization-rules/../attributes/toml-key-attribute.html"><code>TomlKeyAttribute</code></a>.</p>
+<p>Any leading underscores (<code>_</code>) are removed from the field name before it is used as the key in the TOML document, unless explicitly named.</p>
+<h2 id="name-casing"><a class="header" href="#name-casing">Name Casing</a></h2>
+<p>By default, each field is named as-is using the same casing as the field name.</p>
+<p>This can be overriden by using one of the casing attributes:</p>
+<ul>
+<li><a href="serialization-rules/../attributes/toml-camel-case-attribute.html"><code>TomlCamelCaseAttribute</code></a></li>
+<li><a href="serialization-rules/../attributes/toml-pascal-case-attribute.html"><code>TomlPascalCaseAttribute</code></a></li>
+<li><a href="serialization-rules/../attributes/toml-snake-case-attribute.html"><code>TomlSnakeCaseAttribute</code></a></li>
+<li><a href="serialization-rules/../attributes/toml-kebab-case-attribute.html"><code>TomlKebabCaseAttribute</code></a></li>
+</ul>
+<h3 id="example-3"><a class="header" href="#example-3">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerCharacter
+{
+    private string _name;
+    private int _level;
+    private int _experience;
+}
+</code></pre>
+<p>This object will be serialized to the following TOML document:</p>
+<pre><code class="language-toml">name = &quot;Hero&quot;
+level = 7
+experience = 1250
+</code></pre>
+<p>Notice that the leading underscore (<code>_</code>) was removed from the field names in the TOML document.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="field-ordering"><a class="header" href="#field-ordering">Field Ordering</a></h1>
+<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
+<p>This library uses reflection to determine the order of each field to serialize and deserialize within an object.</p>
+<p>By default, the fields are serialized and deserialized in the order they are declared in the object.</p>
+<h2 id="table-order"><a class="header" href="#table-order">Table Order</a></h2>
+<p>When writing the object as a TOML table, the fields are written in the following way:</p>
+<ol>
+<li>All key-value pairs of the table are written.</li>
+<li>All nested tables are written.</li>
+<li>All nested table arrays are written.</li>
+</ol>
+<p>This is done recursively for each nested table.</p>
+<h2 id="example-4"><a class="header" href="#example-4">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerCharacter
+{
+    private string _name;
+    private int _level;
+    private int _experience;
+    private PlayerStats _stats;
+    private List&lt;InventoryItem&gt; _inventory;
+}
+</code></pre>
+<p>This object will be serialized to the following TOML document:</p>
+<pre><code class="language-toml">name = &quot;Hero&quot;
+level = 7
+experience = 1250
+
+[stats]
+health = 100
+mana = 50
+
+[[inventory]]
+name = &quot;Sword&quot;
+durability = 84
+
+[[inventory]]
+name = &quot;Shield&quot;
+durability = 99
+</code></pre>
+<p>Notice that fields are written in the order they are declared in the object, and nested tables are written after the key-value pairs of the parent table.</p>
+<p>Even if the <code>_stats</code> and <code>_inventory</code> fields were declared before the <code>_name</code>, <code>_level</code>, and <code>_experience</code> fields, they would still be written after them.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="field-mapping"><a class="header" href="#field-mapping">Field Mapping</a></h1>
+<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
+<p>This library uses reflection to determine the name of each field when deserializing TOML into an object.</p>
+<p>By default, the name of each field is used as the key in the TOML document.
+This can be overridden by using the <a href="serialization-rules/../attributes/toml-key-attribute.html"><code>TomlKeyAttribute</code></a>.</p>
+<p>Any leading underscores (<code>_</code>) are removed from the field name before it is used as the key in the TOML document, unless explicitly named.</p>
+<h2 id="name-casing-1"><a class="header" href="#name-casing-1">Name Casing</a></h2>
+<p>By default, each field is named as-is using the same casing as the field name.</p>
+<p>This can be overriden by using one of the casing attributes:</p>
+<ul>
+<li><a href="serialization-rules/../attributes/toml-camel-case-attribute.html"><code>TomlCamelCaseAttribute</code></a></li>
+<li><a href="serialization-rules/../attributes/toml-pascal-case-attribute.html"><code>TomlPascalCaseAttribute</code></a></li>
+<li><a href="serialization-rules/../attributes/toml-snake-case-attribute.html"><code>TomlSnakeCaseAttribute</code></a></li>
+<li><a href="serialization-rules/../attributes/toml-kebab-case-attribute.html"><code>TomlKebabCaseAttribute</code></a></li>
+</ul>
+<h3 id="example-5"><a class="header" href="#example-5">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerCharacter
+{
+    private string _name;
+    private int _level;
+    private int _experience;
+}
+</code></pre>
+<p>This object can be deserialized from the following TOML document:</p>
+<pre><code class="language-toml">name = &quot;Hero&quot;
+level = 7
+experience = 1250
+</code></pre>
+<p>Notice that the leading underscore (<code>_</code>) in the field name is ignored when deserializing the TOML document into the object.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="value-coercion"><a class="header" href="#value-coercion">Value Coercion</a></h1>
+<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
+<p>When deserialize a TOML document into an object, the TOML values are coerced into the target type of the object field when possible.</p>
+<p>This is only possible when the target type can be converted using a normal cast operation.
+It is <strong>not</strong> possible to convert between types that are not implicitly convertible.</p>
+<p><strong>NOTE:</strong> These are intentionally very limited to prevent silent errors when deserializing TOML documents.</p>
+<h2 id="float--integer-values"><a class="header" href="#float--integer-values">Float =&gt; Integer Values</a></h2>
+<p>When deserializing a floating point number into an integer field, the floating point number will be truncated to the nearest whole integer value.</p>
+<h3 id="example-6"><a class="header" href="#example-6">Example</a></h3>
+<pre><code class="language-toml">radius = 3.14
+</code></pre>
+<p>This would be coerced into any integer field as <code>3</code>. Any fractional part of the number is discarded.</p>
+<h2 id="integer--float-values"><a class="header" href="#integer--float-values">Integer =&gt; Float Values</a></h2>
+<p>When deserializing an integer into a floating point number field, the integer will be converted to a floating point number.</p>
+<h3 id="example-7"><a class="header" href="#example-7">Example</a></h3>
+<pre><code class="language-toml">radius = 3
+</code></pre>
+<p>This would be coerced into any floating point number field as <code>3.0</code>. There is no loss of precision in this case.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="boolean"><a class="header" href="#boolean">Boolean</a></h1>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>bool</code> value fields.</p>
+<h2 id="serialization-1"><a class="header" href="#serialization-1">Serialization</a></h2>
+<p>Boolean values are serialized as either <code>true</code> or <code>false</code> as a <a href="https://toml.io/en/v1.0.0#boolean">TOML boolean</a>.
+These are always lowercase.</p>
+<h2 id="deserialization-1"><a class="header" href="#deserialization-1">Deserialization</a></h2>
+<p>Boolean values are deserialized from TOML as either <code>true</code> or <code>false</code>, case-insensitive.</p>
+<h2 id="example-8"><a class="header" href="#example-8">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerAccount
+{
+    private bool _isPremium;
+    private bool _isBanned;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">isPremium = true
+isBanned = false
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="character"><a class="header" href="#character">Character</a></h1>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>char</code> value fields.</p>
+<h2 id="serialization-2"><a class="header" href="#serialization-2">Serialization</a></h2>
+<p>Character values are serialized as a single character <a href="https://toml.io/en/v1.0.0#string">TOML string</a>.</p>
+<h2 id="deserialization-2"><a class="header" href="#deserialization-2">Deserialization</a></h2>
+<p>Character values are deserialized from TOML as a single character string.</p>
+<p>If the string is empty, the character value is set to <code>'\0'</code>.</p>
+<p>If the string is longer than one character, only the first character is used.</p>
+<h2 id="example-9"><a class="header" href="#example-9">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class SystemLocale
+{
+    private char _thousandsSeparator;
+    private char _decimalSeparator;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">thousandsSeparator = &quot;,&quot;
+decimalSeparator = &quot;.&quot;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="string"><a class="header" href="#string">String</a></h1>
+<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>string</code> value fields.</p>
+<h2 id="literal-strings"><a class="header" href="#literal-strings">Literal Strings</a></h2>
+<p>Literal strings are serialized using the single quote (<code>'</code>) character, with no escaping of special characters.</p>
+<p>For literal strings containing single quotes, the string must be enclosed in triple quotes (<code>'''</code>).</p>
+<h2 id="multiline-strings"><a class="header" href="#multiline-strings">Multiline Strings</a></h2>
+<p>Multiline strings are serialized using the triple quote (<code>&quot;&quot;&quot;</code>) character.</p>
+<p>Literal multiline strings are serialized using the triple single quote (<code>'''</code>) character.</p>
+<h2 id="escaped-strings"><a class="header" href="#escaped-strings">Escaped Strings</a></h2>
+<p>Basic strings must escape the following characters:</p>
+<ul>
+<li><code>\\</code> (backslash)</li>
+<li><code>\&quot;</code> (double quote)</li>
+<li><code>\n</code> (newline)</li>
+<li><code>\r</code> (carriage return)</li>
+<li><code>\t</code> (tab)</li>
+<li><code>\uXXXX</code> (unicode character)</li>
+</ul>
+<h2 id="serialization-3"><a class="header" href="#serialization-3">Serialization</a></h2>
+<p>String values are serialized as <a href="https://toml.io/en/v1.0.0#string">TOML basic strings</a> by default.</p>
+<p>Strings can be serialized as literal strings in TOML via the <a href="type-serialization/../attributes/toml-literal-attribute.html"><code>TomlLiteralAttribute</code></a>.</p>
+<p>Strings can be serialized as multiline strings in TOML via the <a href="type-serialization/../attributes/toml-multiline-attribute.html"><code>TomlMultilineAttribute</code></a>.</p>
+<h2 id="deserialization-3"><a class="header" href="#deserialization-3">Deserialization</a></h2>
+<p>String values are deserialized from TOML as any of the valid TOML string types (basic, literal, or multiline).</p>
+<h2 id="example-10"><a class="header" href="#example-10">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class Quest
+{
+    private string _name;
+    
+    [TomlMultiline]
+    private string _description;
+    
+    [TomlLiteral]
+    private string _scriptPath;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">name = &quot;The Quest for the Holy Grail&quot;
+description = &quot;&quot;&quot;
+The Quest for the Holy Grail is a 1975 British musical comedy film directed and co-written by
+Terry Gilliam and Terry Jones, and starring Graham Chapman, John Cleese, Eric Idle, Terry Gilliam,
+Terry Jones, Michael Palin, and Carol Cleveland.&quot;&quot;&quot;
+scriptPath = 'C:\Users\Arthur\Documents\quest.py'
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="enum"><a class="header" href="#enum">Enum</a></h1>
+<h2 id="overview-14"><a class="header" href="#overview-14">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>Enum</code> value fields.</p>
+<h2 id="bit-flags"><a class="header" href="#bit-flags">Bit Flags</a></h2>
+<p>Enums can be bitflags marked with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-6.0"><code>FlagsAttribute</code></a>.</p>
+<h2 id="serialization-4"><a class="header" href="#serialization-4">Serialization</a></h2>
+<p>Enum values are serialized as a <a href="https://toml.io/en/v1.0.0#string">TOML string</a>.</p>
+<p>If the enum is marked with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-6.0"><code>FlagsAttribute</code></a>, the enum value is serialized as a comma-separated list of enum values.</p>
+<h2 id="deserialization-4"><a class="header" href="#deserialization-4">Deserialization</a></h2>
+<p>Enum values are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#string">TOML string</a>.</p>
+<h2 id="example-11"><a class="header" href="#example-11">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class Hero
+{
+    private string _name;
+    private int _level;
+    private HeroClass _class;
+    private StatusEffects _statusEffects;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">name = &quot;Gandalf&quot;
+level = 100
+class = &quot;Wizard&quot;
+statusEffects = &quot;Poisoned, Confused&quot;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="integer"><a class="header" href="#integer">Integer</a></h1>
+<h2 id="overview-15"><a class="header" href="#overview-15">Overview</a></h2>
+<p>This library supports serializing and deserializing the following integer value fields:</p>
+<h3 id="signed-types"><a class="header" href="#signed-types">Signed Types</a></h3>
+<ul>
+<li><code>sbyte</code> (signed 8-bit integer)</li>
+<li><code>short</code> (signed 16-bit integer)</li>
+<li><code>int</code> (signed 32-bit integer)</li>
+<li><code>long</code> (signed 64-bit integer)</li>
+</ul>
+<h3 id="unsigned-types"><a class="header" href="#unsigned-types">Unsigned Types</a></h3>
+<ul>
+<li><code>byte</code> (unsigned 8-bit integer)</li>
+<li><code>ushort</code> (unsigned 16-bit integer)</li>
+<li><code>uint</code> (unsigned 32-bit integer)</li>
+</ul>
+<p><strong>NOTE:</strong> 64-bit unsigned integers (<code>ulong</code>) is not supported because TOML does not support them.</p>
+<h2 id="serialization-5"><a class="header" href="#serialization-5">Serialization</a></h2>
+<p>Integer values are serialized as a <a href="https://toml.io/en/v1.0.0#integer">TOML integer</a>, in decimal (base 10) by default.</p>
+<p>The number format can be changed by specifying one of the following attributes:</p>
+<ul>
+<li><a href="type-serialization/../attributes/toml-hex-number-attribute.html"><code>TomlHexNumberAttribute</code></a> (base 16)</li>
+<li><a href="type-serialization/../attributes/toml-octal-number-attribute.html"><code>TomlOctalNumberAttribute</code></a> (base 8)</li>
+<li><a href="type-serialization/../attributes/toml-binary-number-attribute.html"><code>TomlBinaryNumberAttribute</code></a> (base 2)</li>
+</ul>
+<h2 id="deserialization-5"><a class="header" href="#deserialization-5">Deserialization</a></h2>
+<p>Integer values are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#integer">TOML integer</a>.</p>
+<p>Underscores (<code>_</code>) can be used as digit separators for clarity.</p>
+<p>Any valid number format is supported, including: decimal, hexadecimal, octal, and binary. These are specified with <code>0x</code>, <code>0o</code>, and <code>0b</code> prefixes.</p>
+<h2 id="example-12"><a class="header" href="#example-12">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerStats
+{
+    private int _health;
+    private int _mana;
+    private int _strength;
+    private int _dexterity;
+    private int _intelligence;
+    private int _endurance;
+    private int _luck;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">health = 100
+mana = 25
+strength = 9
+dexterity = 7
+intelligence = 3
+endurance = 8
+luck = 5
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="floating-point"><a class="header" href="#floating-point">Floating Point</a></h1>
+<h2 id="overview-16"><a class="header" href="#overview-16">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>float</code> and <code>double</code> value fields.</p>
+<p><strong>NOTE:</strong> The <code>decimal</code> type is not supported because TOML does not support it.</p>
+<h2 id="special-values"><a class="header" href="#special-values">Special Values</a></h2>
+<p>The following special values are supported:</p>
+<ul>
+<li><code>NaN</code> (not a number) as <code>nan</code> or <code>-nan</code></li>
+<li><code>PositiveInfinity</code> as <code>inf</code> or <code>+inf</code></li>
+<li><code>NegativeInfinity</code> as <code>-inf</code></li>
+</ul>
+<h2 id="serialization-6"><a class="header" href="#serialization-6">Serialization</a></h2>
+<p>Floating point values are serialized as a <a href="https://toml.io/en/v1.0.0#float">TOML float</a>.</p>
+<h2 id="deserialization-6"><a class="header" href="#deserialization-6">Deserialization</a></h2>
+<p>Floating point values are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#float">TOML float</a>.</p>
+<p>Underscores (<code>_</code>) can be used as digit separators for clarity.</p>
+<p>Scientific notation is supported using the <code>e</code> character. Any of the special values are supported.</p>
+<h2 id="example-13"><a class="header" href="#example-13">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerStats
+{
+    private float _health;
+    private float _maxHealth;
+    private float _mana;
+    private float _maxMana;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">health = 50.0
+maxHealth = 100.0
+mana = 20.0
+maxMana = 40.0
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="datetime"><a class="header" href="#datetime">DateTime</a></h1>
+<h2 id="overview-17"><a class="header" href="#overview-17">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>DateTime</code> value fields.</p>
+<h2 id="serialization-7"><a class="header" href="#serialization-7">Serialization</a></h2>
+<p>DateTime values are serialized as a <a href="https://toml.io/en/v1.0.0#local-date-time">TOML date-time</a>.</p>
+<p>They are serialized in ISO 8601 format, with the following format: <code>yyyy-MM-dd HH:mm:ss.FFFZ</code> by default.</p>
+<p>The <code>Z</code> at the end indicates that the time is in UTC, and the <code>T</code> separator is omitted for clarity.</p>
+<p>The format can be changed by specifying the <a href="type-serialization/../attributes/toml-datetime-format-attribute.html"><code>TomlDateTimeFormatAttribute</code></a>.</p>
+<h2 id="deserialization-7"><a class="header" href="#deserialization-7">Deserialization</a></h2>
+<p>DateTime values are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#local-date-time">TOML date-time</a>.</p>
+<p>Any format that is supported by the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.datetime.parse?view=net-7.0"><code>DateTime.Parse</code></a> method will be deserialized.</p>
+<h2 id="example-14"><a class="header" href="#example-14">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerAccount
+{
+    private DateTime _createdDate;
+    private DateTime _lastLoginDate;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">createdDate = 2021-01-01 00:00:00Z
+lastLoginDate = 2022-08-04 00:00:00Z
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="array"><a class="header" href="#array">Array</a></h1>
+<h2 id="overview-18"><a class="header" href="#overview-18">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>Array</code> value fields.</p>
+<p>Any type that is supported can be serialized and deserialized as an array of that type.</p>
+<p><strong>NOTE:</strong> It is recommended to use <a href="type-serialization/list.html"><code>List</code></a> fields instead of <code>Array</code> fields, when possible.</p>
+<h2 id="mixed-arrays"><a class="header" href="#mixed-arrays">Mixed Arrays</a></h2>
+<p>Arrays can contain mixed types as long as the array is defined as <code>object[]</code>.</p>
+<p>Each element in the array will be serialized as its own TOML value.</p>
+<h2 id="jagged-arrays"><a class="header" href="#jagged-arrays">Jagged Arrays</a></h2>
+<p>Multidimensional arrays (ex: <code>int[,]</code>) are not supported.</p>
+<p>Instead, use jagged arrays (ex: <code>int[][]</code>).</p>
+<h2 id="serialization-8"><a class="header" href="#serialization-8">Serialization</a></h2>
+<p>Array values are serialized differently based on their element type.</p>
+<ul>
+<li>Scalar types are serialized as a <a href="https://toml.io/en/v1.0.0#array">TOML array</a>.</li>
+<li>Mixed types are serialized as a <a href="https://toml.io/en/v1.0.0#array">TOML array</a>.</li>
+<li>Complex types are serialized as a <a href="https://toml.io/en/v1.0.0#array-of-tables">TOML table array</a>.</li>
+<li>Jagged arrays serialized as a <a href="https://toml.io/en/v1.0.0#array-of-arrays">TOML array of arrays</a>.</li>
+</ul>
+<p>By default, TOML arrays are serialized as inline arrays. This can be changed by marking the field with the <a href="type-serialization/../attributes/toml-multiline-attribute.html"><code>TomlMultilineAttribute</code></a>.</p>
+<h2 id="deserialization-8"><a class="header" href="#deserialization-8">Deserialization</a></h2>
+<p>Array values are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#array">TOML array</a> or <a href="https://toml.io/en/v1.0.0#array-of-tables">TOML table array</a>.</p>
+<p>Mixed arrays are supported, but must be defined as <code>object[]</code>.</p>
+<h2 id="example-15"><a class="header" href="#example-15">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerInventory
+{
+    private string[] tags;
+    private Item[] _items;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">tags = [&quot;loot&quot;, &quot;common&quot;]
+
+[[items]]
+name = &quot;Sword&quot;
+weight = 5.1
+
+[[items]]
+name = &quot;Shield&quot;
+weight = 10.2
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="list"><a class="header" href="#list">List</a></h1>
+<h2 id="overview-19"><a class="header" href="#overview-19">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>List&lt;T&gt;</code> value fields.</p>
+<p>Any type that is supported can be serialized and deserialized as a list of that type.</p>
+<h2 id="mixed-lists"><a class="header" href="#mixed-lists">Mixed Lists</a></h2>
+<p>List can contain mixed types as long as the list is defined as <code>List&lt;object&gt;</code>.</p>
+<p>Each element in the list will be serialized as its own TOML value.</p>
+<h2 id="serialization-9"><a class="header" href="#serialization-9">Serialization</a></h2>
+<p>List values are serialized differently based on their element type.</p>
+<ul>
+<li>Scalar types are serialized as a <a href="https://toml.io/en/v1.0.0#array">TOML array</a>.</li>
+<li>Mixed types are serialized as a <a href="https://toml.io/en/v1.0.0#array">TOML array</a>.</li>
+<li>Complex types are serialized as a <a href="https://toml.io/en/v1.0.0#array-of-tables">TOML table array</a>.</li>
+</ul>
+<p>By default, TOML arrays are serialized as inline arrays. This can be changed by marking the field with the <a href="type-serialization/../attributes/toml-multiline-attribute.html"><code>TomlMultilineAttribute</code></a>.</p>
+<h2 id="deserialization-9"><a class="header" href="#deserialization-9">Deserialization</a></h2>
+<p>List values are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#array">TOML array</a> or <a href="https://toml.io/en/v1.0.0#array-of-tables">TOML table array</a>.</p>
+<p>Mixed lists are supported, but must be defined as <code>List&lt;object&gt;</code>.</p>
+<h2 id="example-16"><a class="header" href="#example-16">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerInventory
+{
+    private List&lt;string&gt; tags;
+    private List&lt;Item&gt; _items;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">tags = [&quot;loot&quot;, &quot;common&quot;]
+
+[[items]]
+name = &quot;Sword&quot;
+weight = 5.1
+
+[[items]]
+name = &quot;Shield&quot;
+weight = 10.2
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="dictionary"><a class="header" href="#dictionary">Dictionary</a></h1>
+<h2 id="overview-20"><a class="header" href="#overview-20">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>Dictionary&lt;string, TValue&gt;</code> fields, where <code>TValue</code> is a supported type.</p>
+<h2 id="mixed-dictionaries"><a class="header" href="#mixed-dictionaries">Mixed Dictionaries</a></h2>
+<p>Dictionary values can contain mixed types as long as the dictionary is defined as <code>Dictionary&lt;string, object&gt;</code>.</p>
+<p>Each value in the dictionary will be serialized as its own TOML value.</p>
+<h2 id="serialization-10"><a class="header" href="#serialization-10">Serialization</a></h2>
+<p>Dictionary values are serialized differently based on their value type.</p>
+<ul>
+<li>Scalar types are serialized as an <a href="https://toml.io/en/v1.0.0#inline-table">inline TOML table</a>, by default.</li>
+<li>Mixed types are serialized as an <a href="https://toml.io/en/v1.0.0#inline-table">inline TOML table</a>, by default.</li>
+<li>Complex types are serialized as a <a href="https://toml.io/en/v1.0.0#table">standard TOML table</a>, by default.</li>
+</ul>
+<p>To override the default behavior, mark the field with the <a href="type-serialization/../attributes/toml-inline-attribute.html"><code>TomlInlineAttribute</code></a> or <a href="type-serialization/../attributes/toml-expand-attribute.html"><code>TomlExpandAttribute</code></a>.</p>
+<h2 id="deserialization-10"><a class="header" href="#deserialization-10">Deserialization</a></h2>
+<p>Dictionary values are deserialized from TOML as an <a href="https://toml.io/en/v1.0.0#inline-table">inline TOML table</a> or <a href="https://toml.io/en/v1.0.0#table">standard TOML table</a>.</p>
+<p>Mixed dictionaries are supported, but must be defined as <code>Dictionary&lt;string, object&gt;</code>.</p>
+<h2 id="example-17"><a class="header" href="#example-17">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerEquipment
+{
+    private Dictionary&lt;string, string&gt; _tags;
+    private Dictionary&lt;string, Item&gt; _gear;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">tags = { loot = &quot;common&quot; }
+
+[gear.weapon]
+name = &quot;Sword&quot;
+weight = 5.1
+
+[gear.shield]
+name = &quot;Shield&quot;
+weight = 10.2
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="complex-type"><a class="header" href="#complex-type">Complex Type</a></h1>
+<h2 id="overview-21"><a class="header" href="#overview-21">Overview</a></h2>
+<p>This library supports serializing and deserializing complex type (<code>class</code> or <code>struct</code>) fields.</p>
+<p>The same serialization rules apply to nested types as they do to the top-level type.</p>
+<p>The complex type must be marked with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.serializableattribute"><code>SerializableAttribute</code></a>.</p>
+<h2 id="parameterless-constructor"><a class="header" href="#parameterless-constructor">Parameterless Constructor</a></h2>
+<p>The serializer requires a parameterless constructor (<code>new()</code>) for the type.
+This is because the serializer uses reflection to create an instance of the type to populate.</p>
+<p>All <code>struct</code> types have a parameterless constructor, so they are supported.</p>
+<p>You can use constructor chaining to create a parameterless constructor for a <code>class</code> type, initializing default values.</p>
+<h2 id="serialization-11"><a class="header" href="#serialization-11">Serialization</a></h2>
+<p>Complex type values are serialized as a <a href="https://toml.io/en/v1.0.0#table">TOML table</a>, by default.</p>
+<p>To override the default behavior, mark the field with the <a href="type-serialization/../attributes/toml-inline-attribute.html"><code>TomlInlineAttribute</code></a> or <a href="type-serialization/../attributes/toml-expand-attribute.html"><code>TomlExpandAttribute</code></a>.</p>
+<h2 id="deserialization-11"><a class="header" href="#deserialization-11">Deserialization</a></h2>
+<p>Complex type values are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#table">TOML table</a>.</p>
+<h2 id="example-18"><a class="header" href="#example-18">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerCharacter
+{
+    private string _name;
+    private int _level;
+    private int _experience;
+    private int _gold;
+    private int _health;
+    private int _mana;
+    private PlayerStats _stats;
+    private int _statPoints;
+}
+
+[Serializable]
+public class PlayerStats
+{
+    private int _stamina;
+    private int _strength;
+    private int _dexterity;
+    private int _intelligence;
+    private int _luck;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">name = &quot;Player&quot;
+level = 3
+experience = 1250
+gold = 150
+health = 75
+mana = 125
+statPoints = 2
+
+[stats]
+stamina = 2
+strength = 4
+dexterity = 6
+intelligence = 8
+luck = 5
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="scriptableobject"><a class="header" href="#scriptableobject">ScriptableObject</a></h1>
+<h2 id="overview-22"><a class="header" href="#overview-22">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>ScriptableObject</code> fields.</p>
+<p>These are serialized the same as a <a href="type-serialization/complex-type.html">Complex Type</a>.</p>
+<p>Similarly, they must also be marked with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.serializableattribute"><code>SerializableAttribute</code></a>.</p>
+<h2 id="serialization-12"><a class="header" href="#serialization-12">Serialization</a></h2>
+<p><code>ScriptableObject</code> fields are serialized as a <a href="https://toml.io/en/v1.0.0#table">TOML table</a>, by default.</p>
+<p>To override the default behavior, mark the field with the <a href="type-serialization/../attributes/toml-inline-attribute.html"><code>TomlInlineAttribute</code></a> or <a href="type-serialization/../attributes/toml-expand-attribute.html"><code>TomlExpandAttribute</code></a>.</p>
+<p>Use the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.nonserializedattribute"><code>NonSerializedAttribute</code></a> to prevent a field from being serialized.</p>
+<h2 id="deserialization-12"><a class="header" href="#deserialization-12">Deserialization</a></h2>
+<p><code>ScriptableObject</code> fields are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#table">TOML table</a>.</p>
+<p>You must use the <code>DeserializeInto</code> method to deserialize into a <code>ScriptableObject</code>.
+This is because the serializer cannot create a new instance of the <code>ScriptableObject</code> type.</p>
+<p>You can manually create instances via <a href="https://docs.unity3d.com/ScriptReference/ScriptableObject.CreateInstance.html"><code>ScriptableObject.CreateInstance</code></a> and pass them to <code>DeserializeInto</code>.</p>
+<h2 id="example-19"><a class="header" href="#example-19">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerCharacter : ScriptableObject
+{
+    private string _name;
+    private int _level;
+    private int _experience;
+    private int _gold;
+    private int _health;
+    private int _mana;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">name = &quot;Player&quot;
+level = 2
+experience = 250
+gold = 85
+health = 100
+mana = 50
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="monobehaviour"><a class="header" href="#monobehaviour">MonoBehaviour</a></h1>
+<h2 id="overview-23"><a class="header" href="#overview-23">Overview</a></h2>
+<p>This library supports serializing and deserializing <code>MonoBehaviour</code> fields.</p>
+<p>These are serialized the same as a <a href="type-serialization/scriptable-object.html">ScriptableObject</a>.</p>
+<p>Similarly, they must also be marked with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.serializableattribute"><code>SerializableAttribute</code></a>.</p>
+<h2 id="serialization-13"><a class="header" href="#serialization-13">Serialization</a></h2>
+<p><code>MonoBehaviour</code> fields are serialized as a <a href="https://toml.io/en/v1.0.0#table">TOML table</a>, by default.</p>
+<p>To override the default behavior, mark the field with the <a href="type-serialization/../attributes/toml-inline-attribute.html"><code>TomlInlineAttribute</code></a> or <a href="type-serialization/../attributes/toml-expand-attribute.html"><code>TomlExpandAttribute</code></a>.</p>
+<p>Use the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.nonserializedattribute"><code>NonSerializedAttribute</code></a> to prevent a field from being serialized.</p>
+<h2 id="deserialization-13"><a class="header" href="#deserialization-13">Deserialization</a></h2>
+<p><code>MonoBehaviour</code> fields are deserialized from TOML as a <a href="https://toml.io/en/v1.0.0#table">TOML table</a>.</p>
+<p>You must use the <code>DeserializeInto</code> method to deserialize into a <code>MonoBehaviour</code>.
+This is because the serializer cannot create a new instance of the <code>MonoBehaviour</code> type.</p>
+<h2 id="example-20"><a class="header" href="#example-20">Example</a></h2>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerCharacter : MonoBehaviour
+{
+    private string _name;
+    private int _level;
+    private int _experience;
+    private int _gold;
+    private int _health;
+    private int _mana;
+}
+</code></pre>
+<p>Can be serialized and deserialized as the following TOML document:</p>
+<pre><code class="language-toml">name = &quot;Player&quot;
+level = 2
+experience = 250
+gold = 85
+health = 100
+mana = 50
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="serialization-14"><a class="header" href="#serialization-14">Serialization</a></h1>
+<h2 id="overview-24"><a class="header" href="#overview-24">Overview</a></h2>
+<p>Serialization is the process of converting an object into a TOML document.
+Deserialization is the process of converting a TOML document back into an object representation.</p>
+<p>The <a href="serialization/toml-serializer.html">TomlSerializer</a> class provides static methods for serializing objects to and from TOML format.</p>
+<p>You can read more about serialization in the <a href="serialization/serialization-rules.html">Serialization Rules</a> page.
+For more information how each individual type is serialized, see the type-specific serialization pages.</p>
+<p>Please note the <a href="limitations.html">Limitations</a> of the serialization process.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlserializer"><a class="header" href="#tomlserializer">TomlSerializer</a></h1>
+<p>Static class that provides methods for serializing and deserializing objects to and from TOML format.</p>
+<h2 id="description"><a class="header" href="#description">Description</a></h2>
+<p>Provides static methods for serializing objects to and from TOML via <code>string</code>, <code>Stream</code>, <code>TextReader</code> or <code>TextWriter</code> instances.</p>
+<p>For more information on what can be serialized, see the <a href="serialization/../supported-types.html">Supported Types</a> page.</p>
+<p>For more information on how objects are serialized to TOML, see the <a href="serialization/../serialization-rules.html">Serialization Rules</a> page.</p>
+<p><strong>NOTE</strong>: There are <a href="serialization/../limitations.html">limitations</a> to the serialization process.</p>
+<h2 id="public-methods"><a class="header" href="#public-methods">Public Methods</a></h2>
+<ul>
+<li>
+<p><code>Serialize(object) : string</code> - Returns a string containing the TOML representation of the serialized object.</p>
+</li>
+<li>
+<p><code>Serialize(object, Stream, bool?)</code> - Writes the TOML representation of the serialized object to the specified stream.</p>
+</li>
+<li>
+<p><code>Serialize(object, TextWriter)</code> - Writes the TOML representation of the serialized object using the specified text writer.</p>
+</li>
+<li>
+<p><code>Deserialize&lt;T&gt;(string) : T</code> - Returns an object of type <code>T</code> deserialized from the TOML string.</p>
+</li>
+<li>
+<p><code>Deserialize&lt;T&gt;(Stream, bool?) : T</code> - Returns an object of type <code>T</code> deserialized from the TOML stream.</p>
+</li>
+<li>
+<p><code>Deserialize&lt;T&gt;(TextReader) : T</code> - Returns an object of type <code>T</code> deserialized from the TOML text reader.</p>
+</li>
+<li>
+<p><code>DeserializeInto(string, object)</code> - Deserializes the TOML string into the specified object, overwriting any existing values.</p>
+</li>
+<li>
+<p><code>DeserializeInto(Stream, object, bool?)</code> - Deserializes the TOML stream into the specified object, overwriting any existing values.</p>
+</li>
+<li>
+<p><code>DeserializeInto(TextReader, object)</code> - Deserializes the TOML text reader into the specified object, overwriting any existing values.</p>
+</li>
+</ul>
+<p><strong>NOTE:</strong> The <code>Stream</code> methods do not close the stream after writing to it.
+To close the stream after writing to it, set the optional <code>leaveOpen</code> parameter to <code>false</code>.</p>
+<h2 id="serialization-15"><a class="header" href="#serialization-15">Serialization</a></h2>
+<p>The <code>TomlSerializer</code> class can be used to serialize objects to TOML.</p>
+<p>The object being serialized <strong>must</strong> be decorated with the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.serializableattribute?view=net-6.0"><code>SerializableAttribute</code></a>.
+Any child fields that are object types must also be decorated with the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.serializableattribute?view=net-6.0"><code>SerializableAttribute</code></a>.</p>
+<h3 id="example-21"><a class="header" href="#example-21">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerCharacter
+{
+    private string _name;
+    private int _level;
+    private int _health;
+    private int _maxHealth;
+    private int _gold;
+}
+
+// Somewhere else in your code...
+
+public void SavePlayerCharacter(PlayerCharacter playerCharacter)
+{
+    var directory = UnityEngine.Application.persistentDataPath;
+    var saveFile = Path.Combine(directory, &quot;save.toml&quot;);
+    
+    using (var stream = File.OpenWrite(saveFile))
+    {
+        TomlSerializer.Serialize(playerCharacter, stream);
+    }
+}
+</code></pre>
+<p>After running the above code, the <code>save.toml</code> file will contain the following:</p>
+<pre><code class="language-toml">name = &quot;Player 1&quot;
+level = 7
+health = 160
+maxHealth = 200
+gold = 1250
+</code></pre>
+<h2 id="deserialization-14"><a class="header" href="#deserialization-14">Deserialization</a></h2>
+<p>The <code>TomlSerializer</code> class can be used to deserialize objects from TOML.</p>
+<p>The object being deserialized <strong>must</strong> be decorated with the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.serializableattribute?view=net-6.0"><code>SerializableAttribute</code></a>.
+Any child fields that are object types must also be decorated with the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.serializableattribute?view=net-6.0"><code>SerializableAttribute</code></a>.</p>
+<p><strong>NOTE:</strong> When using the <code>Deserialize&lt;T&gt;</code> method, the <code>T</code> type parameter must have a parameterless constructor.</p>
+<h3 id="example-22"><a class="header" href="#example-22">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class PlayerCharacter
+{
+    private string _name;
+    private int _level;
+    private int _health;
+    private int _maxHealth;
+    private int _gold;
+}
+
+// Somewhere else in your code...
+
+public void LoadPlayerCharacter()
+{
+    var directory = UnityEngine.Application.persistentDataPath;
+    var fileToLoad = Path.Combine(directory, &quot;save.toml&quot;);
+    
+    using (var stream = File.OpenRead(fileToLoad))
+    {
+        var playerCharacter = TomlSerializer.Deserialize&lt;PlayerCharacter&gt;(stream);
+        // or...
+        var playerCharacter = new PlayerCharacter();
+        TomlSerializer.DeserializeInto(stream, playerCharacter);
+    }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlexporter"><a class="header" href="#tomlexporter">TomlExporter</a></h1>
+<p>A <code>MonoBehaviour</code> class component.</p>
+<h2 id="description-1"><a class="header" href="#description-1">Description</a></h2>
+<p>Component that provides methods for exporting <code>ScriptableObject</code> data to TOML files from Unity scenes.</p>
+<h2 id="serialized-fields-inspector"><a class="header" href="#serialized-fields-inspector">Serialized Fields (Inspector)</a></h2>
+<ul>
+<li><code>targetObject : ScriptableObject</code> - The <code>ScriptableObject</code> to export to a TOML file.</li>
+<li><code>outputFile : string</code> - The path to the TOML file to export to.</li>
+<li><code>usePersistentDataPath : bool</code> - Whether to use the persistent data path for the exported TOML file.</li>
+<li><code>ensureDirectoryExists : bool</code> - Whether to create the directory for the exported TOML file, if it does not exist.</li>
+</ul>
+<p><strong>NOTE:</strong> The <code>outputFile</code> can include directories, but the directory must already exist unless <code>ensureDirectoryExists</code> is <code>true</code>.</p>
+<h2 id="public-events-inspector"><a class="header" href="#public-events-inspector">Public Events (Inspector)</a></h2>
+<ul>
+<li><code>onExport : UnityEvent</code> - The actions to perform when the export process completes successfully.</li>
+<li><code>onError : UnityEvent&lt;Exception&gt;</code> - The actions to perform when the export process fails.</li>
+</ul>
+<h2 id="public-properties"><a class="header" href="#public-properties">Public Properties</a></h2>
+<ul>
+<li><code>TargetObject : ScriptableObject</code> <strong>(get, set)</strong> - The <code>ScriptableObject</code> to export to a TOML file.</li>
+<li><code>OutputFile : string</code> <strong>(get, set)</strong> - The path to the TOML file to export to.</li>
+<li><code>UsePersistentDataPath : bool</code> <strong>(get, set)</strong> - Whether to use the persistent data path for the exported TOML file.</li>
+<li><code>EnsureDirectoryExists : bool</code> <strong>(get, set)</strong> - Whether to create the directory for the exported TOML file, if it does not exist.</li>
+</ul>
+<h2 id="public-methods-1"><a class="header" href="#public-methods-1">Public Methods</a></h2>
+<ul>
+<li><code>Export()</code> - Exports the source object to a TOML file with the default output file name.</li>
+<li><code>ExportAs(string)</code> - Exports the source object to a TOML file with the specified file name.</li>
+</ul>
+<h2 id="output-directory"><a class="header" href="#output-directory">Output Directory</a></h2>
+<p>If <code>usePersistentDataPath</code> is <code>true</code>, the output directory will be appended to the persistent data path, otherwise it will be appended to the application data path.</p>
+<div class="table-wrapper"><table><thead><tr><th>usePersistentDataPath</th><th>Resolved Path</th></tr></thead><tbody>
+<tr><td><strong>true</strong></td><td><code>Application.persistentDataPath</code> + <code>filename</code></td></tr>
+<tr><td><strong>false</strong></td><td><code>Application.dataPath</code> + <code>filename</code></td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="tomlimporter"><a class="header" href="#tomlimporter">TomlImporter</a></h1>
+<p>A <code>MonoBehaviour</code> class component.</p>
+<h2 id="description-2"><a class="header" href="#description-2">Description</a></h2>
+<p>Component that provides methods for importing TOML data into <code>ScriptableObject</code> instances from Unity scenes.</p>
+<h2 id="serialized-fields-inspector-1"><a class="header" href="#serialized-fields-inspector-1">Serialized Fields (Inspector)</a></h2>
+<ul>
+<li><code>targetObject : ScriptableObject</code> - The <code>ScriptableObject</code> to import TOML data into.</li>
+<li><code>inputFile : string</code> - The path to the TOML file to import from.</li>
+<li><code>usePersistentDataPath : bool</code> - Whether to use the persistent data path for the imported TOML file.</li>
+</ul>
+<p><strong>NOTE:</strong> The <code>inputFile</code> can include directories, but the directory must already exist.</p>
+<h2 id="public-events-inspector-1"><a class="header" href="#public-events-inspector-1">Public Events (Inspector)</a></h2>
+<ul>
+<li><code>onImport : UnityEvent</code> - The actions to perform when the import process completes successfully.</li>
+<li><code>onError : UnityEvent&lt;Exception&gt;</code> - The actions to perform when the import process fails.</li>
+</ul>
+<h2 id="public-properties-1"><a class="header" href="#public-properties-1">Public Properties</a></h2>
+<ul>
+<li><code>TargetObject : ScriptableObject</code> <strong>(get, set)</strong> - The <code>ScriptableObject</code> to import TOML data into.</li>
+<li><code>InputFile : string</code> <strong>(get, set)</strong> - The path to the TOML file to import from.</li>
+<li><code>UsePersistentDataPath : bool</code> <strong>(get, set)</strong> - Whether to use the persistent data path for the imported TOML file.</li>
+</ul>
+<h2 id="public-methods-2"><a class="header" href="#public-methods-2">Public Methods</a></h2>
+<ul>
+<li><code>Import()</code> - Imports TOML data from a file with the default input file name.</li>
+<li><code>ImportFrom(string)</code> - Imports TOML data from a file with the specified file name.</li>
+</ul>
+<h2 id="input-directory"><a class="header" href="#input-directory">Input Directory</a></h2>
+<p>If <code>usePersistentDataPath</code> is <code>true</code>, the input directory will be appended to the persistent data path, otherwise it will be appended to the application data path.</p>
+<div class="table-wrapper"><table><thead><tr><th>usePersistentDataPath</th><th>Resolved Path</th></tr></thead><tbody>
+<tr><td><strong>true</strong></td><td><code>Application.persistentDataPath</code> + <code>filename</code></td></tr>
+<tr><td><strong>false</strong></td><td><code>Application.dataPath</code> + <code>filename</code></td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="attributes"><a class="header" href="#attributes">Attributes</a></h1>
+<h2 id="overview-25"><a class="header" href="#overview-25">Overview</a></h2>
+<p>Attributes are used to customize the serialization and deserialization behavior of a <code>class</code>, <code>struct</code>, or <code>field</code>.</p>
+<h2 id="composition"><a class="header" href="#composition">Composition</a></h2>
+<p>Many attributes can be composed together to provide a more specific behavior.</p>
+<p>For example, the <a href="attributes/toml-multiline-attribute.html"><code>TomlLiteralAttribute</code></a> attribute can be used in conjunction with the <a href="attributes/toml-multiline-attribute.html"><code>TomlMultilineAttribute</code></a> attribute to specify that a string should be serialized as a literal string and that the string should be serialized as a multiline string.</p>
+<h2 id="inheritance"><a class="header" href="#inheritance">Inheritance</a></h2>
+<p>Attributes are <strong>not</strong> inherited by derived classes, but they are inherited by fields of derived classes.</p>
+<p>For example, a derived class inheriting from a base class marked with the <a href="attributes/toml-casing-attribute.html"><code>TomlCasingAttribute</code></a>
+will not inherit the casing behavior of the base class, but a field of the derived class will inherit the casing behavior of the base class.</p>
+<h2 id="non-serialized-fields"><a class="header" href="#non-serialized-fields">Non-Serialized Fields</a></h2>
+<p>Fields marked with the <a href="https://learn.microsoft.com/en-us/dotnet/api/system.nonserializedattribute?view=net-6.0"><code>NonSerializedAttribute</code></a> will not be serialized or deserialized.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlbinarynumberattribute"><a class="header" href="#tomlbinarynumberattribute">TomlBinaryNumberAttribute</a></h1>
+<h2 id="overview-26"><a class="header" href="#overview-26">Overview</a></h2>
+<p>The <code>TomlBinaryNumberAttribute</code> can be applied to any integer type <code>field</code> to serialize it as binary numbers.</p>
+<p><strong>NOTE:</strong> This attribute has no effect on deserialization, as the number format is inferred from the TOML document.</p>
+<h2 id="effect"><a class="header" href="#effect">Effect</a></h2>
+<p>When applied to a <code>field</code>, it will serialize the integer number as a binary number when serializing to TOML.</p>
+<p>The value will be prefixed with <code>0b</code> when serialized.</p>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<h3 id="example-23"><a class="header" href="#example-23">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class FileInfo
+{
+    private string _name;
+    private long _sizeInBytes;
+    
+    [TomlBinaryNumber]
+    private int _flags;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;file.txt&quot;
+sizeInBytes = 1024
+flags = 0b10110100
+</code></pre>
+<p>Notice that the <code>_flags</code> field is serialized as a binary number.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlcamelcase"><a class="header" href="#tomlcamelcase">TomlCamelCase</a></h1>
+<h2 id="overview-27"><a class="header" href="#overview-27">Overview</a></h2>
+<p>The <code>TomlCamelCaseAttribute</code> can be applied to any <code>class</code>, <code>struct</code>, or <code>field</code>.
+It will cause the serializer to use <code>camelCase</code> when serializing the value or values to TOML.</p>
+<h2 id="effect-1"><a class="header" href="#effect-1">Effect</a></h2>
+<ul>
+<li>When applied to a <code>class</code> or <code>struct</code>, it will cause the serializer to use <code>camelCase</code> when writing each field of the class or struct to TOML.</li>
+<li>When applied to a <code>field</code>, it will cause the serializer to use <code>camelCase</code> when writing the key of the field to TOML.</li>
+</ul>
+<p><strong>NOTE:</strong> This is will be ignored if the <a href="attributes/toml-key-attribute.html"><code>TomlKeyAttribute</code></a> is applied to the field.</p>
+<h2 id="inheritance-1"><a class="header" href="#inheritance-1">Inheritance</a></h2>
+<p>This attribute is <strong>not</strong> inherited by derived classes. However, fields of base classes marked with this attribute will still be serialized using <code>camelCase</code>.</p>
+<p>It is also not propagated to child objects when serializing nested complex types.
+You must apply this attribute to other complex types within the object graph if you want them to be serialized using <code>camelCase</code>.</p>
+<h2 id="usage-1"><a class="header" href="#usage-1">Usage</a></h2>
+<h3 id="class-example"><a class="header" href="#class-example">Class Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+[TomlCamelCase]
+public class Quest
+{
+    private string _questName;
+    private string _questDescription;
+    private int _minLevel;
+    private bool _isRepeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">questName = &quot;Gather 10 Wood&quot;
+questDescription = &quot;Gather 10 pieces of wood.&quot;
+minLevel = 1
+isRepeatable = true
+</code></pre>
+<p>Notice that the keys of the fields are serialized using <code>camelCase</code>.</p>
+<h3 id="field-example"><a class="header" href="#field-example">Field Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+[TomlSnakeCase]
+public class Quest
+{
+    [TomlCamelCase]
+    private int _questId;
+    
+    private string _questName;
+    private string _questDescription;
+    private int _minLevel;
+    private bool _isRepeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">questId = 1
+quest_name = &quot;Gather 10 Wood&quot;
+quest_description = &quot;Gather 10 pieces of wood.&quot;
+min_level = 1
+is_repeatable = true
+</code></pre>
+<p>Notice that the key of the <code>_questId</code> field is serialized using <code>camelCase</code> even though the class is serialized using <code>snake_case</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomldatetimeformatattribute"><a class="header" href="#tomldatetimeformatattribute">TomlDateTimeFormatAttribute</a></h1>
+<h2 id="overview-28"><a class="header" href="#overview-28">Overview</a></h2>
+<p>The <code>TomlDateTimeFormatAttribute</code> can be applied to any <code>DateTime</code> <code>field</code> to serialize it as a specific date-time format.</p>
+<p><strong>NOTE:</strong> This attribute has no effect on deserialization, as the date-time format is inferred from the TOML document.</p>
+<h2 id="effect-2"><a class="header" href="#effect-2">Effect</a></h2>
+<p>When applied to a <code>field</code>, it will serialize the <code>DateTime</code> as a specific date-time format when serializing to TOML.</p>
+<p>The value will be serialized according to the specified format string.</p>
+<h2 id="public-properties-2"><a class="header" href="#public-properties-2">Public Properties</a></h2>
+<ul>
+<li><code>DateTimeFormat : string</code> <strong>(get)</strong> - The format string to use when serializing the <code>DateTime</code>.</li>
+</ul>
+<h2 id="usage-2"><a class="header" href="#usage-2">Usage</a></h2>
+<h3 id="example-24"><a class="header" href="#example-24">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class FileInfo
+{
+    private string _name;
+    private long _sizeInBytes;
+    
+    [TomlDateTimeFormat(&quot;yyyy-MM-dd&quot;)]
+    private DateTime _lastModified;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;file.txt&quot;
+sizeInBytes = 1024
+lastModified = 2020-01-01
+</code></pre>
+<p>Notice that the <code>_lastModified</code> field is serialized as a specific date-time format.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlexpandattribute"><a class="header" href="#tomlexpandattribute">TomlExpandAttribute</a></h1>
+<h2 id="overview-29"><a class="header" href="#overview-29">Overview</a></h2>
+<p>The <code>TomlExpandAttribute</code> can be used to serialize a field as a standard table.
+It acts as a hint to the serializer to expand the dictionary of key-value pairs into a standard table instead of an inline table.</p>
+<p>It is the inverse of the <a href="attributes/toml-inline-attribute.html"><code>TomlInlineAttribute</code></a> attribute.</p>
+<p><strong>NOTE:</strong> This attribute has no effect on deserialization.</p>
+<h2 id="effect-3"><a class="header" href="#effect-3">Effect</a></h2>
+<p>When applied to a <code>field</code> that would be serialized as an inline table, it will instead be serialized as a standard table.</p>
+<p><strong>NOTE:</strong> This will be ignored when the parent object is serialized as an inline table, as inline tables cannot contain standard tables.</p>
+<h2 id="usage-3"><a class="header" href="#usage-3">Usage</a></h2>
+<h3 id="example-25"><a class="header" href="#example-25">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Quest
+{
+    private string _name;
+    private string _description;
+    private int _minLevel;
+    private bool _repeatable;
+    
+    [TomlExpand]
+    private Dictionary&lt;string, int&gt; _rewards;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;Gather 10 Wood&quot;
+description = &quot;Gather 10 pieces of wood.&quot;
+minLevel = 1
+repeatable = true
+
+[rewards]
+experience = 100
+gold = 50
+oakStick = 1
+apples = 5
+</code></pre>
+<p>Notice that the <code>_rewards</code> field is serialized as a standard table instead of an inline table.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlhexnumberattribute"><a class="header" href="#tomlhexnumberattribute">TomlHexNumberAttribute</a></h1>
+<h2 id="overview-30"><a class="header" href="#overview-30">Overview</a></h2>
+<p>The <code>TomlHexNumberAttribute</code> can be applied to any integer type <code>field</code> to serialize it as hexadecimal numbers.</p>
+<p><strong>NOTE:</strong> This attribute has no effect on deserialization, as the number format is inferred from the TOML document.</p>
+<h2 id="effect-4"><a class="header" href="#effect-4">Effect</a></h2>
+<p>When applied to a <code>field</code>, it will serialize the integer number as a hexadecimal number when serializing to TOML.</p>
+<p>By default, it will be serialized as a lowercase hexadecimal number. This can be changed by passing <code>true</code> in the constructor.</p>
+<p>The value will be prefixed with <code>0x</code> when serialized.</p>
+<h2 id="public-properties-3"><a class="header" href="#public-properties-3">Public Properties</a></h2>
+<ul>
+<li><code>IsUpperCase : bool</code> <strong>(get)</strong> - Whether the hexadecimal number should be serialized as an uppercase number.</li>
+</ul>
+<h2 id="usage-4"><a class="header" href="#usage-4">Usage</a></h2>
+<h3 id="example-26"><a class="header" href="#example-26">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class FileInfo
+{
+    private string _name;
+    private long _sizeInBytes;
+    
+    [TomlHexNumber]
+    private int _flags;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;file.txt&quot;
+sizeInBytes = 1024
+flags = 0x2c04
+</code></pre>
+<p>Notice that the <code>_flags</code> field is serialized as a hex number (lowercase).</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlinlineattribute"><a class="header" href="#tomlinlineattribute">TomlInlineAttribute</a></h1>
+<h2 id="overview-31"><a class="header" href="#overview-31">Overview</a></h2>
+<p>The <code>TomlInlineAttribute</code> can be used to serialize a field as an inline table.
+It acts as a hint to the serializer to write the dictionary of key-value pairs into an inline table.</p>
+<p>It is the inverse of the <a href="attributes/toml-expand-attribute.html"><code>TomlExpandAttribute</code></a> attribute.</p>
+<p><strong>NOTE:</strong> This attribute has no effect on deserialization.</p>
+<h2 id="effect-5"><a class="header" href="#effect-5">Effect</a></h2>
+<p>When applied to a <code>field</code> that would be serialized as a standard table, it will instead be serialized as an inline table.</p>
+<p><strong>NOTE:</strong> This will cause child objects to be serialized as inline tables as well, as inline tables cannot contain standard tables.</p>
+<h2 id="usage-5"><a class="header" href="#usage-5">Usage</a></h2>
+<h3 id="example-27"><a class="header" href="#example-27">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public struct Waypoint
+{
+    private int _x;
+    private int _y;
+}
+
+[Serializable]
+public class Quest
+{
+    private string _name;
+    private string _description;
+    private int _minLevel;
+    private bool _repeatable;
+    
+    [TomlInline]
+    private Dictionary&lt;string, Waypoint&gt; _waypoints;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;Gather 10 Wood&quot;
+description = &quot;Gather 10 pieces of wood.&quot;
+minLevel = 1
+repeatable = true
+waypoints = { &quot;start&quot; = { x = 0, y = 0 }, &quot;end&quot; = { x = 10, y = 10 } }
+</code></pre>
+<p>Notice that the <code>_waypoints</code> field is serialized as an inline table instead of a standard table.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlkebabcase"><a class="header" href="#tomlkebabcase">TomlKebabCase</a></h1>
+<h2 id="overview-32"><a class="header" href="#overview-32">Overview</a></h2>
+<p>The <code>TomlKebabCaseAttribute</code> can be applied to any <code>class</code>, <code>struct</code>, or <code>field</code>.
+It will cause the serializer to use <code>kebab-case</code> when serializing the value or values to TOML.</p>
+<p>This is the default string casing so applying this attribute has no effect unless you have changed the default string casing for a <code>class</code> or <code>struct</code>.</p>
+<h2 id="effect-6"><a class="header" href="#effect-6">Effect</a></h2>
+<ul>
+<li>When applied to a <code>class</code> or <code>struct</code>, it will cause the serializer to use <code>kebab-case</code> when writing each field of the class or struct to TOML.</li>
+<li>When applied to a <code>field</code>, it will cause the serializer to use <code>kebab-case</code> when writing the key of the field to TOML.</li>
+</ul>
+<p><strong>NOTE:</strong> This is will be ignored if the <a href="attributes/toml-key-attribute.html"><code>TomlKeyAttribute</code></a> is applied to the field.</p>
+<h2 id="inheritance-2"><a class="header" href="#inheritance-2">Inheritance</a></h2>
+<p>This attribute is <strong>not</strong> inherited by derived classes. However, fields of base classes marked with this attribute will still be serialized using <code>kebab-case</code>.</p>
+<p>It is also not propagated to child objects when serializing nested complex types.
+You must apply this attribute to other complex types within the object graph if you want them to be serialized using <code>kebab-case</code>.</p>
+<h2 id="usage-6"><a class="header" href="#usage-6">Usage</a></h2>
+<h3 id="class-example-1"><a class="header" href="#class-example-1">Class Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+[TomlKebabCase]
+public class Quest
+{
+    private string _questName;
+    private string _questDescription;
+    private int _minLevel;
+    private bool _isRepeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">quest-name = &quot;Gather 10 Wood&quot;
+quest-description = &quot;Gather 10 pieces of wood.&quot;
+min-level = 1
+is-repeatable = true
+</code></pre>
+<p>Notice that the keys of the fields are serialized using <code>kebab-case</code>.</p>
+<h3 id="field-example-1"><a class="header" href="#field-example-1">Field Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Quest
+{
+    [TomlKebabCase]
+    private int _questId;
+    
+    private string _questName;
+    private string _questDescription;
+    private int _minLevel;
+    private bool _isRepeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">quest-id = 1
+questName = &quot;Gather 10 Wood&quot;
+questDescription = &quot;Gather 10 pieces of wood.&quot;
+minLevel = 1
+isRepeatable = true
+</code></pre>
+<p>Notice that the key of the <code>_questId</code> field is serialized using <code>kebab-case</code> while the other keys are serialized using the default casing.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlkeyattribute"><a class="header" href="#tomlkeyattribute">TomlKeyAttribute</a></h1>
+<h2 id="overview-33"><a class="header" href="#overview-33">Overview</a></h2>
+<p>The <code>TomlKeyAttribute</code> is used to customize the name of a field when serializing to TOML.</p>
+<p>It is also used when deserializing from TOML to map the TOML key to the field.</p>
+<p><strong>NOTE:</strong> The key can only contain alphanumeric characters, underscores (<code>_</code>), and hyphens (<code>-</code>).</p>
+<h2 id="effect-7"><a class="header" href="#effect-7">Effect</a></h2>
+<p>When applied to a <code>field</code>, it will override the key of the field when serializing to TOML.</p>
+<p>When deserializing from TOML, it will map the TOML key to the field.</p>
+<p><strong>NOTE:</strong> Two fields cannot have the same key within the same object.</p>
+<h2 id="public-properties-4"><a class="header" href="#public-properties-4">Public Properties</a></h2>
+<ul>
+<li><code>Key: string</code> <strong>(get)</strong> - The key to use when serializing and deserializing the field.</li>
+</ul>
+<h2 id="usage-7"><a class="header" href="#usage-7">Usage</a></h2>
+<h3 id="example-28"><a class="header" href="#example-28">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Quest
+{
+    [TomlKey(&quot;quest_name&quot;)]
+    private string _name;
+
+    [TomlKey(&quot;quest_description&quot;)]
+    private string _description;
+
+    [TomlKey(&quot;quest_completed&quot;)]
+    private bool _completed;
+    
+    [TomlKey(&quot;quest_completed_date&quot;)]
+    private DateTime _completedDate;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">quest_name = &quot;Save the Princess&quot;
+quest_description = &quot;The princess has been kidnapped by a dragon.&quot;
+quest_completed = true
+quest_completed_date = 2020-01-01T00:00:00Z
+</code></pre>
+<p>Notice that the class fields have all been renamed to their corresponding TOML keys, prefixed with <code>quest_</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlliteralattribute"><a class="header" href="#tomlliteralattribute">TomlLiteralAttribute</a></h1>
+<h2 id="overview-34"><a class="header" href="#overview-34">Overview</a></h2>
+<p>The <code>TomlLiteralAttribute</code> can be used to serialize a <code>field</code> as a literal string.
+It acts as a hint to the serializer to write the field as a literal string, which will not escape any values.</p>
+<p>It can be combined with the <a href="attributes/toml-multiline-attribute.html"><code>TomlMultilineAttribute</code></a> attribute to serialize a field as a literal multi-line string.</p>
+<p><strong>NOTE:</strong> This attribute has no effect on deserialization.</p>
+<h2 id="effect-8"><a class="header" href="#effect-8">Effect</a></h2>
+<ul>
+<li>When applied to a <code>field</code> that would be serialized as a string, it will instead be serialized as a literal string using the single quote character (<code>'</code>).</li>
+<li>When applied to a <code>field</code> that would be serialized as a multi-line string, it will instead be serialized as a literal multi-line string using the triple single quote character (<code>'''</code>).</li>
+<li>When applied to a <code>field</code> that would be serialized as a string array, it will instead be serialized as a literal string array using the single quote character (<code>'</code>).</li>
+</ul>
+<p>If the string value contains a single quote character, the string will be escaped with triple single quotes (<code>'''</code>).</p>
+<h2 id="usage-8"><a class="header" href="#usage-8">Usage</a></h2>
+<h3 id="scalar-example"><a class="header" href="#scalar-example">Scalar Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Quest
+{
+    private string _name;
+    
+    [TomlLiteral] 
+    private string _description;
+    
+    private int _minLevel;
+    private bool _repeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;Gather 10 Wood&quot;
+description = 'Gather 10 pieces of wood for &quot;Old Choppy&quot;.'
+minLevel = 1
+repeatable = true
+</code></pre>
+<p>Here the <code>_description</code> field has been serialized as a literal string, which means that the quotes around &quot;Old Choppy&quot; are not escaped.</p>
+<h3 id="list-example"><a class="header" href="#list-example">List Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class QuestLog
+{
+    [TomlLiteral]
+    private List&lt;string&gt; _completedQuests;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">completedQuests = [ 'Gathering Wood', 'The &quot;Lost&quot; Ring', '''Where's My Cow?''' ]
+</code></pre>
+<p>Here the <code>_completedQuests</code> field has been serialized as a literal array, which means that the quotes around &quot;Lost&quot; are not escaped.
+The third element in the array is a literal multi-line string, which is serialized using triple single quotes (<code>'''</code>) to escape the single quote character.</p>
+<p>This can be combined with the <a href="attributes/toml-multiline-attribute.html"><code>TomlMultilineAttribute</code></a> attribute to serialize the list as a multi-line array.</p>
+<h3 id="dictionary-example"><a class="header" href="#dictionary-example">Dictionary Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Inventory
+{
+    [TomlLiteral]
+    private Dictionary&lt;string, string&gt; _equipment;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">equipment = { sword = 'The &quot;Firey&quot; Sword', shield = 'Aegis', helmet = '''Zeus' Helm''' }
+</code></pre>
+<p>Here the <code>_equipment</code> field has been serialized as a literal table, which means that the quotes around &quot;Firey&quot; are not escaped.
+The third element in the table is a literal multi-line string, which is serialized using triple single quotes (<code>'''</code>) to escape the single quote character.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlmultilineattribute"><a class="header" href="#tomlmultilineattribute">TomlMultilineAttribute</a></h1>
+<h2 id="overview-35"><a class="header" href="#overview-35">Overview</a></h2>
+<p>The <code>TomlMultilineAttribute</code> can be used to serialize a <code>field</code> as multi-line.</p>
+<p><strong>NOTE:</strong> This attribute has no effect on deserialization.</p>
+<h2 id="effect-9"><a class="header" href="#effect-9">Effect</a></h2>
+<ul>
+<li>When applied to a <code>field</code> that would be serialized as a string, it will instead be serialized as a multi-line string using the triple double quote character (<code>&quot;&quot;&quot;</code>).</li>
+<li>When applied to a <code>field</code> that would be serialized as a literal string, it will instead be serialized as a literal multi-line string using the triple single quote character (<code>'''</code>).</li>
+<li>When applied to a <code>field</code> that would be serialized as an array or list, it will instead be serialized as a multi-line array with each element on a new line.</li>
+</ul>
+<h2 id="usage-9"><a class="header" href="#usage-9">Usage</a></h2>
+<h3 id="string-example"><a class="header" href="#string-example">String Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Quest
+{
+    private string _name;
+
+    private string _description;
+    private int _minLevel;
+    private bool _repeatable;
+    
+    [TomlLiteral]
+    [TomlMultiline]
+    private string _questText;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;Gather 10 Wood&quot;
+description = &quot;Gather 10 pieces of wood.&quot;
+minLevel = 1
+repeatable = true
+quest_text = '''
+Hello adventurer!
+Are you interested in a quest?
+I need you to gather 10 pieces of wood for me, &quot;Old Choppy&quot;.
+
+I'll pay you 10 gold for your troubles.'''
+</code></pre>
+<p>Notice that the <code>_questText</code> field has been serialized as a literal multi-line string, which means that the quotes around &quot;Old Choppy&quot; are not escaped.
+All whitespace will be preserved after the first newline after the triple quotes.</p>
+<h3 id="array-example"><a class="header" href="#array-example">Array Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Guardian
+{
+    private string _name;
+    private float _aggroRadius;
+    
+    [TomlMultiline]
+    private List&lt;string&gt; _dialogueOptions;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;Guardian&quot;
+aggroRadius = 10.0
+dialogueOptions = [
+    &quot;Hello adventurer!&quot;,
+    &quot;Are you interested in a quest?&quot;,
+    &quot;Halt! You are not welcome here!&quot;,
+]
+</code></pre>
+<p>Notice that the <code>_dialogueOptions</code> field has been serialized as a multi-line array, with each element on a new line.</p>
+<p>Each item will be indent with 4 spaces, which is the default indentation for TOML.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomloctalnumberattribute"><a class="header" href="#tomloctalnumberattribute">TomlOctalNumberAttribute</a></h1>
+<h2 id="overview-36"><a class="header" href="#overview-36">Overview</a></h2>
+<p>The <code>TomlOctalNumberAttribute</code> can be applied to any integer type <code>field</code> to serialize it as octal numbers.</p>
+<p><strong>NOTE:</strong> This attribute has no effect on deserialization, as the number format is inferred from the TOML document.</p>
+<h2 id="effect-10"><a class="header" href="#effect-10">Effect</a></h2>
+<p>When applied to a <code>field</code>, it will serialize the integer number as an octal number when serializing to TOML.</p>
+<p>The value will be prefixed with <code>0o</code> when serialized.</p>
+<h2 id="usage-10"><a class="header" href="#usage-10">Usage</a></h2>
+<h3 id="example-29"><a class="header" href="#example-29">Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class FileInfo
+{
+    private string _name;
+    private long _sizeInBytes;
+    
+    [TomlOctalNumber]
+    private int _permissions;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">name = &quot;file.txt&quot;
+sizeInBytes = 1024
+permissions = 0o644
+</code></pre>
+<p>Notice that the <code>_permissions</code> field is serialized as an octal number.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlpascalcase"><a class="header" href="#tomlpascalcase">TomlPascalCase</a></h1>
+<h2 id="overview-37"><a class="header" href="#overview-37">Overview</a></h2>
+<p>The <code>TomlPascalCaseAttribute</code> can be applied to any <code>class</code>, <code>struct</code>, or <code>field</code>.
+It will cause the serializer to use <code>PascalCase</code> when serializing the value or values to TOML.</p>
+<p>This is the default string casing so applying this attribute has no effect unless you have changed the default string casing for a <code>class</code> or <code>struct</code>.</p>
+<h2 id="effect-11"><a class="header" href="#effect-11">Effect</a></h2>
+<ul>
+<li>When applied to a <code>class</code> or <code>struct</code>, it will cause the serializer to use <code>PascalCase</code> when writing each field of the class or struct to TOML.</li>
+<li>When applied to a <code>field</code>, it will cause the serializer to use <code>PascalCase</code> when writing the key of the field to TOML.</li>
+</ul>
+<p><strong>NOTE:</strong> This is will be ignored if the <a href="attributes/toml-key-attribute.html"><code>TomlKeyAttribute</code></a> is applied to the field.</p>
+<h2 id="inheritance-3"><a class="header" href="#inheritance-3">Inheritance</a></h2>
+<p>This attribute is <strong>not</strong> inherited by derived classes. However, fields of base classes marked with this attribute will still be serialized using <code>PascalCase</code>.</p>
+<p>It is also not propagated to child objects when serializing nested complex types.
+You must apply this attribute to other complex types within the object graph if you want them to be serialized using <code>PascalCase</code>.</p>
+<h2 id="usage-11"><a class="header" href="#usage-11">Usage</a></h2>
+<h3 id="class-example-2"><a class="header" href="#class-example-2">Class Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+[TomlPascalCase]
+public class Quest
+{
+    private string _questName;
+    private string _questDescription;
+    private int _minLevel;
+    private bool _isRepeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">QuestName = &quot;Gather 10 Wood&quot;
+QuestDescription = &quot;Gather 10 pieces of wood.&quot;
+MinLevel = 1
+IsRepeatable = true
+</code></pre>
+<p>Notice that the keys of the fields are serialized using <code>PascalCase</code>.</p>
+<h3 id="field-example-2"><a class="header" href="#field-example-2">Field Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Quest
+{
+    [TomlPascalCase]
+    private int _questId;
+    
+    private string _questName;
+    private string _questDescription;
+    private int _minLevel;
+    private bool _isRepeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">QuestId = 1
+questName = &quot;Gather 10 Wood&quot;
+questDescription = &quot;Gather 10 pieces of wood.&quot;
+minLevel = 1
+isRepeatable = true
+</code></pre>
+<p>Notice that the key of the <code>_questId</code> field is serialized using <code>PascalCase</code> while the other keys are serialized using the default casing.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tomlsnakecase"><a class="header" href="#tomlsnakecase">TomlSnakeCase</a></h1>
+<h2 id="overview-38"><a class="header" href="#overview-38">Overview</a></h2>
+<p>The <code>TomlSnakeCaseAttribute</code> can be applied to any <code>class</code>, <code>struct</code>, or <code>field</code>.
+It will cause the serializer to use <code>snake_case</code> when serializing the value or values to TOML.</p>
+<p>This is the default string casing so applying this attribute has no effect unless you have changed the default string casing for a <code>class</code> or <code>struct</code>.</p>
+<h2 id="effect-12"><a class="header" href="#effect-12">Effect</a></h2>
+<ul>
+<li>When applied to a <code>class</code> or <code>struct</code>, it will cause the serializer to use <code>snake_case</code> when writing each field of the class or struct to TOML.</li>
+<li>When applied to a <code>field</code>, it will cause the serializer to use <code>snake_case</code> when writing the key of the field to TOML.</li>
+</ul>
+<p>By default, it will be serialized as lowercase. This can be changed by passing <code>true</code> in the constructor for <code>UPPER_SNAKE_CASE</code> instead.</p>
+<p><strong>NOTE:</strong> This is will be ignored if the <a href="attributes/toml-key-attribute.html"><code>TomlKeyAttribute</code></a> is applied to the field.</p>
+<h2 id="inheritance-4"><a class="header" href="#inheritance-4">Inheritance</a></h2>
+<p>This attribute is <strong>not</strong> inherited by derived classes. However, fields of base classes marked with this attribute will still be serialized using <code>snake_case</code>.</p>
+<p>It is also not propagated to child objects when serializing nested complex types.
+You must apply this attribute to other complex types within the object graph if you want them to be serialized using <code>snake_case</code>.</p>
+<h2 id="public-properties-5"><a class="header" href="#public-properties-5">Public Properties</a></h2>
+<ul>
+<li><code>IsUpperCase : bool</code> <strong>(get)</strong> - Whether the string should be serialized as an uppercase string.</li>
+</ul>
+<h2 id="usage-12"><a class="header" href="#usage-12">Usage</a></h2>
+<h3 id="class-example-3"><a class="header" href="#class-example-3">Class Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+[TomlSnakeCase]
+public class Quest
+{
+    private string _questName;
+    private string _questDescription;
+    private int _minLevel;
+    private bool _isRepeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">quest_name = &quot;Gather 10 Wood&quot;
+quest_description = &quot;Gather 10 pieces of wood.&quot;
+min_level = 1
+is_repeatable = true
+</code></pre>
+<p>Notice that the keys of the fields are serialized using <code>snake_case</code>.</p>
+<h3 id="field-example-3"><a class="header" href="#field-example-3">Field Example</a></h3>
+<pre><code class="language-csharp">[Serializable]
+public class Quest
+{
+    [TomlSnakeCase]
+    private int _questId;
+    
+    private string _questName;
+    private string _questDescription;
+    private int _minLevel;
+    private bool _isRepeatable;
+}
+</code></pre>
+<p>Would serialize into...</p>
+<pre><code class="language-toml">quest_id = 1
+questName = &quot;Gather 10 Wood&quot;
+questDescription = &quot;Gather 10 pieces of wood.&quot;
+minLevel = 1
+isRepeatable = true
+</code></pre>
+<p>Notice that the key of the <code>_questId</code> field is serialized using <code>snake_case</code> while the other fields are serialized using the default casing.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            </nav>
+
+        </div>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+    </body>
+</html>
